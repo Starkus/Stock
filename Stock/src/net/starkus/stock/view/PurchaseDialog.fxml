@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="374.0" prefWidth="540.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.PurchaseDialogController">
+   <children>
+      <SplitPane dividerPositions="0.7212643678160919" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="350.0" prefWidth="450.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="285.0" prefWidth="448.0">
+               <children>
+                  <TableView fx:id="productTable" layoutX="35.0" layoutY="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="codeColumn" prefWidth="120.0" text="Codigo" />
+                      <TableColumn fx:id="nameColumn" minWidth="200.0" prefWidth="-1.0" text="Nombre" />
+                        <TableColumn fx:id="priceColumn" maxWidth="120.0" prefWidth="75.0" text="Precio" />
+                        <TableColumn fx:id="quantColumn" maxWidth="120.0" prefWidth="75.0" text="Cantidad" />
+                        <TableColumn fx:id="subtColumn" maxWidth="120.0" prefWidth="75.0" text="Subtotal" />
+                    </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+          <AnchorPane maxHeight="110.0" minHeight="0.0" minWidth="0.0" prefHeight="110.0" prefWidth="0.0">
+               <children>
+                  <HBox layoutX="170.0" layoutY="15.0" prefHeight="42.0" prefWidth="200.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="12.0">
+                     <children>
+                        <TextField fx:id="codeField" onAction="#handleCodeEntered" promptText="Codigo">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <TextField fx:id="quantField" onAction="#handleAddItem" promptText="Cantidad">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <TextField fx:id="subtField" editable="false" promptText="Subtotal">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox layoutX="426.0" layoutY="30.0" prefHeight="33.0" prefWidth="225.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handleOK" prefWidth="120.0" text="Listo">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleCancel" prefWidth="120.0" text="Cancelar">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
