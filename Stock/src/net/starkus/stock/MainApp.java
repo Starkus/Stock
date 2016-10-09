@@ -2,8 +2,7 @@ package net.starkus.stock;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.Dictionary;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 
 import javax.xml.bind.JAXBContext;
@@ -14,17 +13,23 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import net.starkus.stock.model.HistoryWrapper;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductListWrapper;
-import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.ProductList;
+import net.starkus.stock.view.AddStockDialogController;
 import net.starkus.stock.view.HomeController;
 import net.starkus.stock.view.ProductEditDialogController;
 import net.starkus.stock.view.ProductOverviewController;
@@ -38,6 +43,8 @@ public class MainApp extends Application {
 	
 	private ObservableList<Product> productList = FXCollections.observableArrayList();
 	private SortedList<Product> sortedProducts;
+	
+	private ObservableList<ProductList> history = FXCollections.observableArrayList();
 
 	
 	
@@ -64,6 +71,10 @@ public class MainApp extends Application {
 	
 	public SortedList<Product> getSortedProductData() {
 		return sortedProducts;
+	}
+	
+	public ObservableList<ProductList> getHistory() {
+		return history;
 	}
 	
 	public void showHome() {
@@ -142,7 +153,7 @@ public class MainApp extends Application {
 	}
 	
 	
-	public Purchase showPurchaseDialog() {
+	public ProductList showPurchaseDialog() {
 		try {
 			// Load the fxml file and create a new stage for the popup dialog.
 			FXMLLoader loader = new FXMLLoader();
@@ -164,7 +175,44 @@ public class MainApp extends Application {
 			
 			dialogStage.showAndWait();
 			
+			history.add(controller.getPurchase());
+			saveHistoryToFile(getHistoryFilePath());
+			
 			return controller.getPurchase();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	public ProductList showAddStockDialog() {
+		try {
+			// Load the fxml file and create a new stage for the popup dialog.
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/AddStockDialog.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+			
+			// Create the dialog Stage.
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Agregar stock");
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			
+			// Uhh... lets see here...
+			AddStockDialogController controller = loader.getController();
+			controller.setMainApp(this);
+			controller.setDialogStage(dialogStage);
+			
+			dialogStage.showAndWait();
+			
+			//history.add(controller.getPurchase());
+			//saveHistoryToFile(getHistoryFilePath());
+			
+			return controller.getProductList();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -178,6 +226,18 @@ public class MainApp extends Application {
 		
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("Stock");
+		
+		File file = new File(System.getenv("APPDATA") + "/Stock/history.xml");
+		setHistoryFilePath(file);
+		
+		if (file.exists()) {
+			loadHistoryFromFile(file);
+		}
+		
+		Preferences prefs = Preferences.systemNodeForPackage(MainApp.class);
+		if (prefs.get("cash", "NULL") == "NULL") {
+			prefs.putFloat("cash", 10000.0f);
+		}
 		
 		initRootLayout();
 		
@@ -200,6 +260,8 @@ public class MainApp extends Application {
 			
 			primaryStage.show();
 			
+			setExitPrompt(scene);
+			
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -210,7 +272,43 @@ public class MainApp extends Application {
 		}
 	}
 	
+	private void setExitPrompt(Scene scene) {
+		
+		scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
+			
+			@Override
+			public void handle(WindowEvent event) {
+				
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Salir");
+				alert.setHeaderText("Estas seguro de que queres salir?");
+				alert.setContentText("Se perderan los cambios no guardados.");
+				
+				ButtonType guardar_y_salir = new ButtonType("Guardar y salir");
+				ButtonType salir = new ButtonType("Salir");
+				ButtonType cancelar = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
+				
+				alert.getButtonTypes().setAll(guardar_y_salir, salir, cancelar);
+
+				Optional<ButtonType> result = alert.showAndWait();
+				
+				if (result.get() == salir){
+					// Go ahead.
+					
+				} else if (result.get() == guardar_y_salir){
+					// Save and let the event close the app
+					saveProductDataToFile(getProductFilePath());
+					saveHistoryToFile(getHistoryFilePath());
+					
+				} else {
+					// Vanish the close event
+				    event.consume();
+				}
+			}
+		});
+	}
 	
+
 	
 	public File getProductFilePath() {
 		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
@@ -235,6 +333,25 @@ public class MainApp extends Application {
 		}
 	}
 	
+	public File getHistoryFilePath() {
+		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+		String filePath = prefs.get("filePathHistory", null);
+		if (filePath != null) {
+			return new File(filePath);
+		} else {
+			return null;
+		}
+	}
+	
+	public void setHistoryFilePath(File file) {
+		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+		if (file != null) {
+			prefs.put("filePathHistory", file.getPath());
+		} else {
+			prefs.remove("filePathHistory");
+		}
+	}
+	
 	
 	public void loadProductDataFromFile(File file) {
 		try  {
@@ -250,6 +367,7 @@ public class MainApp extends Application {
 			setProductFilePath(file);
 		
 		} catch (Exception e) {
+			e.printStackTrace();
 			Alert alert = new Alert(AlertType.ERROR);
     		alert.setTitle("Error!");
     		alert.setHeaderText("No se ha podido leer los datos.");
@@ -277,6 +395,61 @@ public class MainApp extends Application {
 			Alert alert = new Alert(AlertType.ERROR);
     		alert.setTitle("Error!");
     		alert.setHeaderText("No se ha podido guardar los datos.");
+    		alert.setContentText("Imposible escribir el archivo:\n" + file.getAbsolutePath());
+    		
+    		alert.showAndWait();
+		}
+	}
+	
+	public void loadHistoryFromFile(File file) {
+		try  {
+			JAXBContext context = JAXBContext
+					.newInstance(HistoryWrapper.class);
+			Unmarshaller um = context.createUnmarshaller();
+			
+			HistoryWrapper wrapper = (HistoryWrapper) um.unmarshal(file);
+			
+			history.clear();
+			history.addAll(wrapper.getHistory());
+			
+			setHistoryFilePath(file);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			Alert alert = new Alert(AlertType.ERROR);
+    		alert.setTitle("Error!");
+    		alert.setHeaderText("No se ha podido leer el historial.");
+    		alert.setContentText("Imposible leer archivo:\n" + file.getAbsolutePath());
+    		
+    		alert.showAndWait();
+		}
+	}
+	
+	public void saveHistoryToFile(File file) {
+		try {
+			JAXBContext context = JAXBContext
+					.newInstance(HistoryWrapper.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			
+			HistoryWrapper wrapper = new HistoryWrapper();
+			wrapper.setHistory(history);
+			
+			if (!file.getParentFile().exists())
+				file.getParentFile().mkdirs();
+			
+			if (!file.exists())
+				file.createNewFile();
+			
+			m.marshal(wrapper, file);
+			
+			setHistoryFilePath(file);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error!");
+			alert.setHeaderText("No se ha podido guardar el historial.");
     		alert.setContentText("Imposible escribir el archivo:\n" + file.getAbsolutePath());
     		
     		alert.showAndWait();

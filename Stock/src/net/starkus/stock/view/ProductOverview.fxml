@@ -5,6 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import net.starkus.stock.model.AutoCompleteTextField?>
 
 <AnchorPane prefHeight="450.0" prefWidth="900.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.ProductOverviewController">
    <children>
@@ -27,7 +28,7 @@
                         </TableView>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" styleClass="background">
                            <children>
-                              <TextField fx:id="filterField" maxWidth="1.7976931348623157E308" onAction="#handleFilter" prefHeight="10.0" promptText="Filtro" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
+                              <AutoCompleteTextField fx:id="filterField" maxWidth="1.7976931348623157E308" onAction="#handleFilter" prefHeight="10.0" promptText="Filtro" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
                            </children>
                         </AnchorPane>
                     </items>

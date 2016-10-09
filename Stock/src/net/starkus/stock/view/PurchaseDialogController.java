@@ -1,29 +1,27 @@
 package net.starkus.stock.view;
 
+import java.time.LocalDateTime;
+
 import javafx.application.Platform;
 import javafx.beans.property.SimpleFloatProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.ProductList;
+import net.starkus.stock.util.DateUtil;
 
 public class PurchaseDialogController {
 	
 	private MainApp mainApp;
 	
-	private Purchase purchase;
+	private ProductList purchase;
 	private Stage dialogStage;
 	
 	
@@ -58,7 +56,7 @@ public class PurchaseDialogController {
      */
     @FXML
     private void initialize() {
-    	purchase = new Purchase();
+    	purchase = new ProductList();
     	
     	productTable.setItems(purchase.getProductData());
     	
@@ -90,7 +88,7 @@ public class PurchaseDialogController {
 		this.dialogStage = dialogStage;
 	}
 	
-	public Purchase getPurchase() {
+	public ProductList getPurchase() {
 		return purchase;
 	}
 	
@@ -105,9 +103,13 @@ public class PurchaseDialogController {
 
 		String c = codeField.getText();
 		
-		// If no code, do nothing
-		if (c.length() == 0 || c == null)
+		// If no code, conclude purchase
+		if (c.length() == 0 || c == null) {
+			
+			handleOK();
 			return;
+		}
+		
 		
 		long code = Long.parseLong(c);
 		
@@ -140,7 +142,7 @@ public class PurchaseDialogController {
 		quantField.setText("");
 		
 		codeField.requestFocus();
-		codeField.selectAll();
+		codeField.setText("");
 		return;
 	}
 	
@@ -152,6 +154,11 @@ public class PurchaseDialogController {
 	
 	@FXML
 	private void handleOK() {
+		
+		purchase.setCreationDate(LocalDateTime.now());
+		
+		System.out.println(DateUtil.format(purchase.getCreationDate()));
+		
 		dialogStage.close();
 	}
 }

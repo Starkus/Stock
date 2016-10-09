@@ -9,8 +9,8 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.Product;
 
 public class ProductOverviewController {
@@ -37,11 +37,11 @@ public class ProductOverviewController {
 	private Label sellPriceLabel;
 	
 	@FXML
-	private TextField filterField;
+	private AutoCompleteTextField filterField;
 	
 	
 	private MainApp mainApp;
-	
+
 	private Stage dialogStage;
 	
 	
@@ -90,6 +90,10 @@ public class ProductOverviewController {
     	this.mainApp = mainApp;
     	
     	handleFilter();
+
+    	for (Product p : mainApp.getProductData()) {
+    		filterField.getEntries().add(p.getName());
+    	}
     }
     
 	public void setDialogStage(Stage dialogStage) {

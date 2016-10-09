@@ -3,10 +3,9 @@ package net.starkus.stock.view;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.MouseButton;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.ProductList;
 
 public class HomeController {
 
@@ -56,10 +55,19 @@ public class HomeController {
     
     @FXML
     private void handleNewPurchase() {
-    	Purchase purchase = mainApp.showPurchaseDialog();
+    	ProductList purchase = mainApp.showPurchaseDialog();
     	
     	if (purchase != null) {
     		purchase.substractItemsFromStock(mainApp.getSortedProductData());
+    	}
+    }
+    
+    @FXML
+    private void handleAddStock() {
+    	ProductList purchase = mainApp.showAddStockDialog();
+    	
+    	if (purchase != null) {
+    		purchase.addToStock(mainApp.getSortedProductData());
     	}
     }
     
