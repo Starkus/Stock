@@ -35,35 +35,23 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Precio venta">
+                        <Label text="Dinero en caja">
                            <padding>
                               <Insets left="8.0" right="8.0" />
                            </padding>
                         </Label>
-                        <Label text="Precio compra" GridPane.rowIndex="1">
+                        <Label text="Balance sesion" GridPane.rowIndex="1">
                            <padding>
                               <Insets left="8.0" right="8.0" />
                            </padding>
                         </Label>
-                        <Label text="Cantidad disponible" GridPane.rowIndex="2">
-                           <padding>
-                              <Insets left="8.0" right="8.0" />
-                           </padding>
-                        </Label>
-                        <Label text="Proveedor" GridPane.rowIndex="3">
-                           <padding>
-                              <Insets left="8.0" right="8.0" />
-                           </padding>
-                        </Label>
-                        <Label fx:id="sellPriceLabel" maxWidth="1.7976931348623157E308" minWidth="-Infinity" GridPane.columnIndex="1">
+                        <Label fx:id="cashField" maxWidth="1.7976931348623157E308" minWidth="-Infinity" GridPane.columnIndex="1">
                            <padding>
                               <Insets left="8.0" right="8.0" />
                            </padding></Label>
-                        <Label fx:id="buyPriceLabel" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="sesionBalanceField" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <padding>
                               <Insets left="8.0" right="8.0" />
                            </padding></Label>

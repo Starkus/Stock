@@ -29,6 +29,19 @@ public class ProductList {
 		productList.add(product);
 	}
 	
+	public float getTotal(boolean sell) {
+		float total = 0;
+		
+		for (Product p : productList) {
+			if (sell)
+				total += p.getSellPrice() * p.getQuantity();
+			else
+				total += p.getBuyPrice() * p.getQuantity();
+		}
+		
+		return total;
+	}
+	
 	public void substractItemsFromStock(SortedList<Product> stock) {
 		
 		for (Product prod : productList) {

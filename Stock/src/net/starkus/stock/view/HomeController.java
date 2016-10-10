@@ -1,9 +1,12 @@
 package net.starkus.stock.view;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.paint.Color;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
 
@@ -21,6 +24,11 @@ public class HomeController {
 	private TableColumn<Product, Number> priceColumn;
 	@FXML
 	private TableColumn<Product, Number> quanColumn;
+
+	@FXML
+	private Label cashField;
+	@FXML
+	private Label sesionBalanceField;
 	
 	
 	/**
@@ -40,6 +48,8 @@ public class HomeController {
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
     	priceColumn.setCellValueFactory(cellData -> cellData.getValue().sellPriceProperty());
     	quanColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
+    	
+    	updateCashField();
     }
     
     /**
@@ -53,6 +63,26 @@ public class HomeController {
     	stockTable.setItems(mainApp.getProductData());
     }
     
+    private void updateCashField() {
+    	cashField.setText(Float.toString(CashBox.getCash()));
+
+    	String balance = Float.toString(CashBox.getSessionBalance());
+    	
+    	if (balance.startsWith("0")) {
+        	sesionBalanceField.setTextFill(null);
+    	}
+    	if (balance.startsWith("-")) {
+        	sesionBalanceField.setTextFill(Color.RED);
+    	}
+    	else {
+    		balance = "+" + balance;
+        	sesionBalanceField.setTextFill(Color.LIGHTGREEN);
+    	}
+    	
+    	sesionBalanceField.setText(balance);
+    	
+    }
+    
     @FXML
     private void handleNewPurchase() {
     	ProductList purchase = mainApp.showPurchaseDialog();
@@ -61,6 +91,10 @@ public class HomeController {
     		purchase.substractItemsFromStock(mainApp.getSortedProductData());
     		
     		mainApp.setSomethingChanged(true);
+    		
+    		CashBox.put(purchase.getTotal(true));
+        	
+        	updateCashField();
     	}
     }
     
@@ -72,6 +106,10 @@ public class HomeController {
     		purchase.addToStock(mainApp.getSortedProductData());
     		
     		mainApp.setSomethingChanged(true);
+    		
+    		CashBox.substract(purchase.getTotal(false));
+        	
+        	updateCashField();
     	}
     }
     
