@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
@@ -40,11 +41,15 @@ public class PurchaseDialogController {
 	
 	
 	@FXML
-	private TextField codeField;
+	private AutoCompleteTextField codeNameField;
 	@FXML
 	private TextField quantField;
 	@FXML
 	private TextField subtField;
+
+	
+	private Product productBuffer;
+	
 	
 
 	public PurchaseDialogController() {
@@ -70,7 +75,7 @@ public class PurchaseDialogController {
 			
 			@Override
 			public void run() {
-		    	codeField.requestFocus();
+				codeNameField.requestFocus();
 			}
 		});
     }
@@ -82,6 +87,10 @@ public class PurchaseDialogController {
      */
     public void setMainApp(MainApp mainApp) {
     	this.mainApp = mainApp;
+
+    	for (Product p : mainApp.getProductData()) {
+    		codeNameField.getEntries().add(p.getName());
+    	}
     }
     
 	public void setDialogStage(Stage dialogStage) {
@@ -95,13 +104,51 @@ public class PurchaseDialogController {
 	
 	@FXML
 	private void handleCodeEntered() {
+		
+		
+		// If entry, use entry
+		if (codeNameField.getResults().size() > 0) {
+			codeNameField.setText(codeNameField.getResults().getFirst());
+		}
+		
+		String text = codeNameField.getText();
+		long code = -1;
+		Product product = null;
+		
+		// If no text, conclude operation
+		if (text.length() == 0 || text == null) {
+			
+			handleOK();
+			return;
+		}
+		
+		try {
+			code = Long.parseLong(text);
+			
+			product = BinarySearch.findProductByCode(code, mainApp.getSortedProductData());
+		}
+		catch (NumberFormatException e) {
+			
+			for (Product p : mainApp.getProductData()) {
+				if (text.equals(p.getName())) {
+					
+					product = p;
+					code = p.getCode();
+					
+					break;
+				}
+			}
+		}
+		
+		productBuffer = product;
+		
 		quantField.requestFocus();
 	}
 	
 	@FXML
 	private void handleAddItem() {
 
-		String c = codeField.getText();
+		String c = codeNameField.getText();
 		
 		// If no code, conclude purchase
 		if (c.length() == 0 || c == null) {
@@ -111,18 +158,14 @@ public class PurchaseDialogController {
 		}
 		
 		
-		long code = Long.parseLong(c);
-		
 		String q = quantField.getText();
 		
 		int quant = 1;
 		if (q.length() != 0 && q != null)
 			quant = Integer.parseInt(q);
 		
-		Product prod = BinarySearch.findProductByCode(code, mainApp.getSortedProductData());
-		
 		// If the product is not found
-		if (prod == null) {
+		if (productBuffer == null) {
 			
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("ERROR");
@@ -133,7 +176,7 @@ public class PurchaseDialogController {
 		
 		} else {
 		
-			Product productToAdd = prod.copy();
+			Product productToAdd = productBuffer.copy();
 			productToAdd.setQuantity(quant);
 			
 			purchase.add(productToAdd);
@@ -141,8 +184,8 @@ public class PurchaseDialogController {
 		
 		quantField.setText("");
 		
-		codeField.requestFocus();
-		codeField.setText("");
+		codeNameField.requestFocus();
+		codeNameField.setText("");
 		return;
 	}
 	

@@ -10,6 +10,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.WindowEvent;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,8 @@ public class AutoCompleteTextField extends TextField
 {
 	/** The existing autocomplete entries. */
 	private final SortedSet<String> entries;
+	/** Sorry I need this externally.      */
+	private final LinkedList<String> searchResult;
 	/** The popup used to select an entry. */
 	private ContextMenu entriesPopup;
 	
@@ -32,18 +35,22 @@ public class AutoCompleteTextField extends TextField
 	public AutoCompleteTextField() {
 		super();
 		entries = new TreeSet<>();
+		searchResult = new LinkedList<>();
 		entriesPopup = new ContextMenu();
 		
 		textProperty().addListener(new ChangeListener<String>()
 		{
 			@Override
 			public void changed(ObservableValue<? extends String> observableValue, String s, String s2) {
+				
+				searchResult.clear();
+				
 				if (getText().length() == 0)
 				{
 					entriesPopup.hide();
 				} else
 				{
-					LinkedList<String> searchResult = new LinkedList<>();
+					// Can't add them right away, cause non-cap-sensitive checking.
 					//searchResult.addAll(entries.subSet(getText(), getText() + Character.MAX_VALUE));
 					
 					for (String e : entries) {
@@ -53,7 +60,7 @@ public class AutoCompleteTextField extends TextField
 					
 					if (entries.size() > 0)
 					{
-						populatePopup(searchResult);
+						populatePopup();
 						if (!entriesPopup.isShowing())
 						{
 							entriesPopup.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
@@ -72,7 +79,20 @@ public class AutoCompleteTextField extends TextField
 				entriesPopup.hide();
 			}
 		});
-
+		
+		// This sucks, but works... kinda. Causes an exception to show up, but it seems harmless.
+		// Triggers also when hidding context menu with Esc, or clicking on this text field.
+		// TODO - Improve this mess.
+		entriesPopup.setOnHiding(new EventHandler<WindowEvent>() {
+			
+			@Override
+			public void handle(WindowEvent event) {
+				if (isFocused()) {
+					getOnAction().handle(new ActionEvent());
+				}
+			}
+		});
+		
 	}
 
 	/**
@@ -84,12 +104,16 @@ public class AutoCompleteTextField extends TextField
 	public ContextMenu getPopup() {
 		return entriesPopup;
 	}
+	
+	public LinkedList<String> getResults() {
+		return searchResult;
+	}
 
 	/**
 	 * Populate the entry set with the given search results.  Display is limited to 10 entries, for performance.
 	 * @param searchResult The set of matching strings.
 	 */
-	private void populatePopup(List<String> searchResult) {
+	private void populatePopup() {
 		List<CustomMenuItem> menuItems = new LinkedList<>();
 		// If you'd like more entries, modify this line.
 		int maxEntries = 10;

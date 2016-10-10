@@ -160,6 +160,8 @@ public class ProductOverviewController {
     		boolean okClicked = mainApp.showProductEditDialog(selectedProduct);
     		if (okClicked) {
     			showProductDetails(selectedProduct);
+        		
+        		mainApp.setSomethingChanged(true);
     		}
     	} else {
     		// Nothing selected

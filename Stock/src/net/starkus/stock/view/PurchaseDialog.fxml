@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import net.starkus.stock.model.AutoCompleteTextField?>
 
 <AnchorPane prefHeight="374.0" prefWidth="540.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.PurchaseDialogController">
    <children>
@@ -27,11 +28,11 @@
                <children>
                   <HBox layoutX="170.0" layoutY="15.0" prefHeight="42.0" prefWidth="200.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="12.0">
                      <children>
-                        <TextField fx:id="codeField" onAction="#handleCodeEntered" promptText="Codigo">
+                        <AutoCompleteTextField fx:id="codeNameField" onAction="#handleCodeEntered" promptText="Codigo">
                            <HBox.margin>
                               <Insets left="4.0" right="4.0" />
                            </HBox.margin>
-                        </TextField>
+                        </AutoCompleteTextField>
                         <TextField fx:id="quantField" onAction="#handleAddItem" promptText="Cantidad">
                            <HBox.margin>
                               <Insets left="4.0" right="4.0" />

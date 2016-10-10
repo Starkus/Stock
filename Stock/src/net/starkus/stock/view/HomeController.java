@@ -59,6 +59,8 @@ public class HomeController {
     	
     	if (purchase != null) {
     		purchase.substractItemsFromStock(mainApp.getSortedProductData());
+    		
+    		mainApp.setSomethingChanged(true);
     	}
     }
     
@@ -68,6 +70,8 @@ public class HomeController {
     	
     	if (purchase != null) {
     		purchase.addToStock(mainApp.getSortedProductData());
+    		
+    		mainApp.setSomethingChanged(true);
     	}
     }
     

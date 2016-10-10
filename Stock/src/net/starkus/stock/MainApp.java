@@ -45,6 +45,10 @@ public class MainApp extends Application {
 	private SortedList<Product> sortedProducts;
 	
 	private ObservableList<ProductList> history = FXCollections.observableArrayList();
+	
+	// srsly?
+	private boolean somethingChanged = false;
+	private String title_ = "Stock";
 
 	
 	
@@ -279,6 +283,9 @@ public class MainApp extends Application {
 			@Override
 			public void handle(WindowEvent event) {
 				
+				if (!somethingChanged)
+					return;
+				
 				Alert alert = new Alert(AlertType.CONFIRMATION);
 				alert.setTitle("Salir");
 				alert.setHeaderText("Estas seguro de que queres salir?");
@@ -325,7 +332,8 @@ public class MainApp extends Application {
 		if (file != null) {
 			prefs.put("filePath", file.getPath());
 			
-			primaryStage.setTitle("Stock - " + file.getName());
+			this.title_ = "Stock - " + file.getName();
+			primaryStage.setTitle(this.title_);
 		} else {
 			prefs.remove("filePath");
 			
@@ -365,6 +373,9 @@ public class MainApp extends Application {
 			productList.addAll(wrapper.getProducts());
 			
 			setProductFilePath(file);
+			
+			// Clear the '*' from the title;
+			primaryStage.setTitle(this.title_);
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -390,6 +401,9 @@ public class MainApp extends Application {
 			m.marshal(wrapper, file);
 			
 			setProductFilePath(file);
+			
+			// Clear the '*' from the title;
+			primaryStage.setTitle(this.title_);
 		
 		} catch (Exception e) {
 			Alert alert = new Alert(AlertType.ERROR);
@@ -454,6 +468,14 @@ public class MainApp extends Application {
     		
     		alert.showAndWait();
 		}
+	}
+	
+	public void setSomethingChanged(boolean b) {
+		somethingChanged = b;
+		
+		if (!this.title_.equals("Stock"))
+			// Add an '*' to the title;
+			primaryStage.setTitle(this.title_ + '*');
 	}
 	
 	

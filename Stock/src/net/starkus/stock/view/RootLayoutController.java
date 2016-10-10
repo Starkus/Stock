@@ -5,12 +5,44 @@ import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import net.starkus.stock.MainApp;
 
 public class RootLayoutController {
 	
 	private MainApp mainApp;
+	
+
+	@FXML
+	private MenuItem newCmd;
+	@FXML
+	private MenuItem openCmd;
+	@FXML
+	private MenuItem saveCmd;
+	@FXML
+	private MenuItem saveAsCmd;
+	@FXML
+	private MenuItem closeCmd;
+	
+	
+	
+	/**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @FXML
+    private void initialize() {
+
+    	newCmd.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+    	openCmd.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+    	saveCmd.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+    	saveAsCmd.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
+    	closeCmd.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
+    }
 	
 	public void setMainApp(MainApp m) {
 		this.mainApp = m;
