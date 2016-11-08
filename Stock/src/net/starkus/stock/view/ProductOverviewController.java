@@ -131,7 +131,7 @@ public class ProductOverviewController {
     	int selectedIndex = productTable.getSelectionModel().getSelectedIndex();
     	
     	if (selectedIndex >= 0) {
-    		productTable.getItems().remove(selectedIndex);
+    		mainApp.getProductData().remove(selectedIndex);
     	
     	} else {
     		// Nothing selected

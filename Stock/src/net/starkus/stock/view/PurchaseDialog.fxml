@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
+
 <?import net.starkus.stock.model.AutoCompleteTextField?>
 
 <AnchorPane prefHeight="374.0" prefWidth="540.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.PurchaseDialogController">
    <children>
-      <SplitPane dividerPositions="0.7212643678160919" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="350.0" prefWidth="450.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.7212643678160919" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="350.0" prefWidth="450.0" styleClass="background" stylesheets="@DarkMetro.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="285.0" prefWidth="448.0">
+          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="285.0" prefWidth="448.0" styleClass="background">
                <children>
                   <TableView fx:id="productTable" layoutX="35.0" layoutY="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
@@ -24,23 +26,18 @@
                   </TableView>
                </children>
             </AnchorPane>
-          <AnchorPane maxHeight="110.0" minHeight="0.0" minWidth="0.0" prefHeight="110.0" prefWidth="0.0">
+          <AnchorPane maxHeight="110.0" minHeight="0.0" minWidth="0.0" prefHeight="110.0" prefWidth="0.0" styleClass="background">
                <children>
-                  <HBox layoutX="170.0" layoutY="15.0" prefHeight="42.0" prefWidth="200.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="12.0">
+                  <HBox layoutX="170.0" layoutY="15.0" prefHeight="42.0" prefWidth="522.0" spacing="12.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="12.0">
                      <children>
-                        <AutoCompleteTextField fx:id="codeNameField" onAction="#handleCodeEntered" promptText="Codigo">
+                        <AutoCompleteTextField fx:id="codeNameField" onAction="#handleCodeEntered" maxWidth="1.7976931348623157E308" promptText="Codigo">
                            <HBox.margin>
                               <Insets left="4.0" right="4.0" />
                            </HBox.margin>
                         </AutoCompleteTextField>
-                        <TextField fx:id="quantField" onAction="#handleAddItem" promptText="Cantidad">
+                        <TextField fx:id="quantField" onAction="#handleAddItem" maxWidth="1.7976931348623157E308" promptText="Cantidad">
                            <HBox.margin>
-                              <Insets left="4.0" right="4.0" />
-                           </HBox.margin>
-                        </TextField>
-                        <TextField fx:id="subtField" editable="false" promptText="Subtotal">
-                           <HBox.margin>
-                              <Insets left="4.0" right="4.0" />
+                              <Insets />
                            </HBox.margin>
                         </TextField>
                      </children>

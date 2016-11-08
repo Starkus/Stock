@@ -1,5 +1,7 @@
 package net.starkus.stock.view;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -9,6 +11,7 @@ import net.starkus.stock.MainApp;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
+import net.starkus.stock.util.SaveUtil;
 
 public class HomeController extends DialogController {
 	
@@ -46,8 +49,17 @@ public class HomeController extends DialogController {
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
     	priceColumn.setCellValueFactory(cellData -> cellData.getValue().sellPriceProperty());
     	quanColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
+
+    	cashField.textProperty().bind(CashBox.cashProperty());
+    	sesionBalanceField.textProperty().bind(CashBox.sessionBalanceProperty());
     	
-    	updateCashField();
+    	CashBox.sessionBalanceProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				setBalanceFieldTextColor();
+			}
+		});
     }
     
     /**
@@ -62,30 +74,20 @@ public class HomeController extends DialogController {
     	stockTable.setItems(mainApp.getProductData());
     }
     
-    private void updateCashField() {
-    	cashField.setText(Float.toString(CashBox.getCash()));
+    private void setBalanceFieldTextColor() {
 
-    	String balance = Float.toString(CashBox.getSessionBalance());
+    	float balance = CashBox.getSessionBalance();
     	
-    	if (balance.startsWith("0")) {
+    	if (balance == 0f) {
         	sesionBalanceField.setTextFill(null);
     	}
-    	if (balance.startsWith("-")) {
+    	if (balance < 0f) {
         	sesionBalanceField.setTextFill(Color.RED);
     	}
     	else {
-    		balance = "+" + balance;
         	sesionBalanceField.setTextFill(Color.LIGHTGREEN);
     	}
     	
-    	sesionBalanceField.setText(balance);
-    	
-    }
-    
-    @Override
-    public void onFileLoad() {
-    	
-    	updateCashField();
     }
     
     @FXML
@@ -97,7 +99,7 @@ public class HomeController extends DialogController {
     		
     		CashBox.put(purchase.getTotal(true));
         	
-        	updateCashField();
+        	SaveUtil.saveToFile(mainApp.getSavefile());
     	}
     }
     
@@ -110,13 +112,15 @@ public class HomeController extends DialogController {
     		
     		CashBox.substract(purchase.getTotal(false));
         	
-        	updateCashField();
+        	SaveUtil.saveToFile(mainApp.getSavefile());
     	}
     }
     
     @FXML
     private void handleEditProducts() {
     	mainApp.showProductOverview();
+    	
+    	SaveUtil.saveToFile(mainApp.getSavefile());
     }
 
 }

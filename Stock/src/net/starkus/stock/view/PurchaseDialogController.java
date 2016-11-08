@@ -3,19 +3,25 @@ package net.starkus.stock.view;
 import java.time.LocalDateTime;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleFloatProperty;
+import javafx.collections.ListChangeListener.Change;
+import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Labeled;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
+import net.starkus.stock.model.ProductListWithTotal;
 import net.starkus.stock.util.DateUtil;
 
 public class PurchaseDialogController {
@@ -63,19 +69,43 @@ public class PurchaseDialogController {
     private void initialize() {
     	purchase = new ProductList();
     	
-    	productTable.setItems(purchase.getProductData());
+    	ObservableList<Product> items = purchase.getProductData();
+    	productTable.setItems(new ProductListWithTotal(items));
     	
     	codeColumn.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
     	priceColumn.setCellValueFactory(cellData -> cellData.getValue().sellPriceProperty());
     	quantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
-    	subtColumn.setCellValueFactory(cellData -> new SimpleFloatProperty(cellData.getValue().getSellPrice() * cellData.getValue().getQuantity()));
+    	subtColumn.setCellValueFactory(cellData -> cellData.getValue().sellSubtotalProperty());
+    	
+    	formatLastRow();
     	
     	Platform.runLater(new Runnable() {
-			
 			@Override
 			public void run() {
 				codeNameField.requestFocus();
+			}
+		});
+    }
+    
+    private void formatLastRow() {
+    	// FIXME - not working properly.
+    	// row factory just sets a CSS pseudoclass on the total row, for styling it differently:
+		productTable.setRowFactory(row -> new TableRow<Product>() {
+			@Override
+			public void updateItem(Product item, boolean empty) {
+				super.updateItem(item, empty);
+				
+				if (item == null || empty) {
+					setStyle("");
+				} else {
+					
+					if (item.getQuantity() != 1) {
+						for (int i=0; i < getChildren().size(); i++) {
+							((Labeled) getChildren().get(i)).setStyle("-fx-font-weight: bolder");
+						}
+					}
+				}
 			}
 		});
     }
@@ -170,7 +200,7 @@ public class PurchaseDialogController {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("ERROR");
 			alert.setHeaderText("Producto no encontrado!");
-			alert.setContentText("Agregue el producto para continuar.");
+			alert.setContentText("Introduzca un producto existente.");
 			
 			alert.showAndWait();
 		

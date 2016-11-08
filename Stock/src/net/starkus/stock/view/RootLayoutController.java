@@ -41,9 +41,21 @@ public class RootLayoutController {
 		this.mainApp = m;
 	}
 	
+	private File saveLoadDirectory() {
+		
+		String dir = System.getProperty("user.home");
+		
+		if (System.getProperty("os.name").toLowerCase().contains("win"))
+			dir += "\\Documents";
+		
+		return new File(dir);
+	}
+	
 	@FXML
 	private void handleImport() {
 		FileChooser fileChooser = new FileChooser();
+		
+		fileChooser.setInitialDirectory(saveLoadDirectory());
 		
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
 				"XML files (*.xml)", "*.xml");
@@ -61,6 +73,8 @@ public class RootLayoutController {
 	@FXML
 	private void handleExport() {
 		FileChooser fileChooser = new FileChooser();
+		
+		fileChooser.setInitialDirectory(saveLoadDirectory());
 		
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
 				"XML files (*.xml)", "*.xml");

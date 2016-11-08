@@ -16,6 +16,7 @@ import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
+import net.starkus.stock.model.ProductListWithTotal;
 import net.starkus.stock.util.DateUtil;
 
 public class AddStockDialogController {
@@ -63,13 +64,13 @@ public class AddStockDialogController {
     private void initialize() {
     	productList = new ProductList();
     	
-    	productTable.setItems(productList.getProductData());
+    	productTable.setItems(new ProductListWithTotal(productList.getProductData()));
     	
     	codeColumn.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
     	priceColumn.setCellValueFactory(cellData -> cellData.getValue().buyPriceProperty());
     	quantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
-    	subtColumn.setCellValueFactory(cellData -> new SimpleFloatProperty(cellData.getValue().getBuyPrice() * cellData.getValue().getQuantity()));
+    	subtColumn.setCellValueFactory(cellData -> cellData.getValue().buySubtotalProperty());
     	
     	Platform.runLater(new Runnable() {
 			

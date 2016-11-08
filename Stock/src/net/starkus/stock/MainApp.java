@@ -87,6 +87,10 @@ public class MainApp extends Application {
 		return currentDialogController;
 	}
 	
+	public File getSavefile() {
+		return savefile;
+	}
+	
 	
 	public void setTitle(String s) {
 		primaryStage.setTitle(s);

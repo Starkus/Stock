@@ -1,5 +1,6 @@
 package net.starkus.stock.model;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
@@ -16,6 +17,8 @@ public class Product implements Comparable<Product> {
 	private final FloatProperty buyPrice;
 	private final FloatProperty sellPrice;
 	private final IntegerProperty quantity;
+	private final FloatProperty buySubtotal;
+	private final FloatProperty sellSubtotal;
 
 	/**
 	 * Default constructor
@@ -44,6 +47,12 @@ public class Product implements Comparable<Product> {
 		this.sellPrice = new SimpleFloatProperty(sellPrice);
 		
 		this.quantity = new SimpleIntegerProperty(available);
+		
+		this.buySubtotal = new SimpleFloatProperty();
+		this.buySubtotal.bind(Bindings.multiply(quantity, buyPrice));
+		
+		this.sellSubtotal = new SimpleFloatProperty();
+		this.sellSubtotal.bind(Bindings.multiply(quantity, sellPrice));
 	}
 	
 	
@@ -116,6 +125,24 @@ public class Product implements Comparable<Product> {
 	
 	public IntegerProperty quantityProperty() {
 		return this.quantity;
+	}
+
+	
+	public float getBuySubtotal() {
+		return this.buySubtotal.get();
+	}
+	
+	public FloatProperty buySubtotalProperty() {
+		return this.buySubtotal;
+	}
+	
+	
+	public float getSellSubtotal() {
+		return this.sellSubtotal.get();
+	}
+	
+	public FloatProperty sellSubtotalProperty() {
+		return this.sellSubtotal;
 	}
 
 	@Override
