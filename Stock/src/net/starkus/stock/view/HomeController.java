@@ -10,9 +10,7 @@ import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
 
-public class HomeController {
-
-	private MainApp mainApp;
+public class HomeController extends DialogController {
 	
 	@FXML
 	private TableView<Product> stockTable;
@@ -43,7 +41,7 @@ public class HomeController {
      * after the fxml file has been loaded.
      */
     @FXML
-    private void initialize() {
+    void initialize() {
     	codeColumn.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
     	priceColumn.setCellValueFactory(cellData -> cellData.getValue().sellPriceProperty());
@@ -57,8 +55,9 @@ public class HomeController {
      * 
      * @param mainApp
      */
+    @Override
     public void setMainApp(MainApp mainApp) {
-    	this.mainApp = mainApp;
+    	super.setMainApp(mainApp);
     	
     	stockTable.setItems(mainApp.getProductData());
     }
@@ -83,14 +82,18 @@ public class HomeController {
     	
     }
     
+    @Override
+    public void onFileLoad() {
+    	
+    	updateCashField();
+    }
+    
     @FXML
     private void handleNewPurchase() {
     	ProductList purchase = mainApp.showPurchaseDialog();
     	
     	if (purchase != null) {
     		purchase.substractItemsFromStock(mainApp.getSortedProductData());
-    		
-    		mainApp.setSomethingChanged(true);
     		
     		CashBox.put(purchase.getTotal(true));
         	
@@ -104,8 +107,6 @@ public class HomeController {
     	
     	if (purchase != null) {
     		purchase.addToStock(mainApp.getSortedProductData());
-    		
-    		mainApp.setSomethingChanged(true);
     		
     		CashBox.substract(purchase.getTotal(false));
         	

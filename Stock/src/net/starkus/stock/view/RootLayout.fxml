@@ -11,10 +11,8 @@
         <menus>
           <Menu mnemonicParsing="false" text="Archivo">
             <items>
-                  <MenuItem fx:id="newCmd" mnemonicParsing="false" onAction="#handleNew" text="Nuevo" />
-                  <MenuItem fx:id="openCmd" mnemonicParsing="false" onAction="#handleOpen" text="Abrir..." />
-                  <MenuItem fx:id="saveCmd" mnemonicParsing="false" onAction="#handleSave" text="Guardar" />
-                  <MenuItem fx:id="saveAsCmd" mnemonicParsing="false" onAction="#handleSaveAs" text="Guardar como..." />
+                  <MenuItem fx:id="importCmd" mnemonicParsing="false" onAction="#handleImport" text="Importar..." />
+                  <MenuItem fx:id="exportCmd" mnemonicParsing="false" onAction="#handleExport" text="Exportar..." />
               <MenuItem fx:id="closeCmd" mnemonicParsing="false" onAction="#handleClose" text="Salir" />
             </items>
           </Menu>

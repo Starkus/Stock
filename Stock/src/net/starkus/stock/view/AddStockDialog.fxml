@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import net.starkus.stock.model.AutoCompleteTextField?>
+
+<AnchorPane prefHeight="450.0" prefWidth="800.0" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.AddStockDialogController">
+   <children>
+      <SplitPane dividerPositions="0.43333333333333335" prefHeight="160.0" prefWidth="200.0" styleClass="background" stylesheets="@DarkMetro.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="349.0" prefWidth="322.0">
+               <children>
+                  <GridPane prefHeight="135.0" prefWidth="152.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+						<AutoCompleteTextField fx:id="codeNameField" onAction="#handleCodeEntered" promptText="Codigo / nombre" />
+                        <TextField fx:id="quantField" onAction="#handleQuantEntered" promptText="Cantidad" GridPane.rowIndex="1" />
+                        <TextField fx:id="priceField" onAction="#handleAddItem" promptText="Precio unidad" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+                  <HBox alignment="BOTTOM_CENTER" layoutX="-8.0" layoutY="235.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+                     <children>
+                        <Button cancelButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleClean" text="Limpiar">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAddItem" text="Agregar">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <TableView fx:id="productTable" layoutX="14.0" layoutY="75.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0">
+                    <columns>
+                      <TableColumn fx:id="codeColumn" maxWidth="-1.0" minWidth="30.0" prefWidth="30.0" text="Codigo" />
+                      <TableColumn fx:id="nameColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="250.0" text="Nombre" />
+                        <TableColumn fx:id="quantColumn" maxWidth="100.0" prefWidth="60.0" text="Cantidad" />
+                        <TableColumn fx:id="priceColumn" maxWidth="100.0" prefWidth="60.0" text="Precio" />
+                        <TableColumn fx:id="subtColumn" maxWidth="100.0" prefWidth="60.0" text="Subtotal" />
+                    </columns>
+                  </TableView>
+                  <HBox alignment="BOTTOM_RIGHT" prefHeight="50.0" prefWidth="200.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handleOK" text="Aceptar">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancelar">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

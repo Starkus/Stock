@@ -3,11 +3,6 @@ package net.starkus.stock;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.prefs.Preferences;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -25,11 +20,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import net.starkus.stock.model.HistoryWrapper;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.ProductListWrapper;
+import net.starkus.stock.util.SaveUtil;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.view.AddStockDialogController;
+import net.starkus.stock.view.DialogController;
 import net.starkus.stock.view.HomeController;
 import net.starkus.stock.view.ProductEditDialogController;
 import net.starkus.stock.view.ProductOverviewController;
@@ -46,9 +41,12 @@ public class MainApp extends Application {
 	
 	private ObservableList<ProductList> history = FXCollections.observableArrayList();
 	
-	// srsly?
 	private boolean somethingChanged = false;
-	private String title_ = "Stock";
+	
+	private File savefile;
+	
+	private HomeController homeController;
+	private DialogController currentDialogController;
 
 	
 	
@@ -81,6 +79,20 @@ public class MainApp extends Application {
 		return history;
 	}
 	
+	public HomeController getHomeController() {
+		return homeController;
+	}
+	
+	public DialogController getCurrentDialogController() {
+		return currentDialogController;
+	}
+	
+	
+	public void setTitle(String s) {
+		primaryStage.setTitle(s);
+	}
+	
+	
 	public void showHome() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
@@ -92,6 +104,8 @@ public class MainApp extends Application {
 			// Give the controller access to the main app
 			HomeController controller = loader.getController();
 			controller.setMainApp(this);
+			
+			homeController = controller;
 		
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -180,7 +194,8 @@ public class MainApp extends Application {
 			dialogStage.showAndWait();
 			
 			history.add(controller.getPurchase());
-			saveHistoryToFile(getHistoryFilePath());
+			
+			SaveUtil.saveToFile(savefile);
 			
 			return controller.getPurchase();
 			
@@ -213,9 +228,6 @@ public class MainApp extends Application {
 			
 			dialogStage.showAndWait();
 			
-			//history.add(controller.getPurchase());
-			//saveHistoryToFile(getHistoryFilePath());
-			
 			return controller.getProductList();
 			
 		} catch (IOException e) {
@@ -231,16 +243,18 @@ public class MainApp extends Application {
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("Stock");
 		
-		File file = new File(System.getenv("APPDATA") + "/Stock/history.xml");
-		setHistoryFilePath(file);
+		// I'm not sure how much this property can vary, so I try not to be
+		// very specific here. It doesn't take long and is done just once so...
+		if (System.getProperty("os.name").toLowerCase().contains("win"))
+			savefile = new File(System.getenv("APPDATA") + "/Stock/save.xml");
+		else
+			savefile = new File(System.getProperty("user.home") + "/Stock/save.xml");
 		
-		if (file.exists()) {
-			loadHistoryFromFile(file);
-		}
+		// SaveUtil needs a reference to this instance.
+		SaveUtil.setMainApp(this);
 		
-		Preferences prefs = Preferences.systemNodeForPackage(MainApp.class);
-		if (prefs.get("cash", "NULL") == "NULL") {
-			prefs.putFloat("cash", 10000.0f);
+		if (savefile.exists()) {
+			SaveUtil.loadFromFile(savefile);
 		}
 		
 		initRootLayout();
@@ -264,18 +278,18 @@ public class MainApp extends Application {
 			
 			primaryStage.show();
 			
-			setExitPrompt(scene);
-			
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 		
-		File file = getProductFilePath();
-		if (file != null) {
-			loadProductDataFromFile(file);
-		}
+		// _ We already load this in start(), where is it better to load?
+		//if (savefile != null) {
+		//	loadFromFile(savefile);
+		//}
 	}
 	
+	// Obsolete
+	// TODO: clear this off.
 	private void setExitPrompt(Scene scene) {
 		
 		scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -304,8 +318,7 @@ public class MainApp extends Application {
 					
 				} else if (result.get() == guardar_y_salir){
 					// Save and let the event close the app
-					saveProductDataToFile(getProductFilePath());
-					saveHistoryToFile(getHistoryFilePath());
+					SaveUtil.saveToFile(savefile);
 					
 				} else {
 					// Vanish the close event
@@ -313,169 +326,6 @@ public class MainApp extends Application {
 				}
 			}
 		});
-	}
-	
-
-	
-	public File getProductFilePath() {
-		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-		String filePath = prefs.get("filePath", null);
-		if (filePath != null) {
-			return new File(filePath);
-		} else {
-			return null;
-		}
-	}
-	
-	public void setProductFilePath(File file) {
-		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-		if (file != null) {
-			prefs.put("filePath", file.getPath());
-			
-			this.title_ = "Stock - " + file.getName();
-			primaryStage.setTitle(this.title_);
-		} else {
-			prefs.remove("filePath");
-			
-			primaryStage.setTitle("Stock");
-		}
-	}
-	
-	public File getHistoryFilePath() {
-		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-		String filePath = prefs.get("filePathHistory", null);
-		if (filePath != null) {
-			return new File(filePath);
-		} else {
-			return null;
-		}
-	}
-	
-	public void setHistoryFilePath(File file) {
-		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-		if (file != null) {
-			prefs.put("filePathHistory", file.getPath());
-		} else {
-			prefs.remove("filePathHistory");
-		}
-	}
-	
-	
-	public void loadProductDataFromFile(File file) {
-		try  {
-			JAXBContext context = JAXBContext
-					.newInstance(ProductListWrapper.class);
-			Unmarshaller um = context.createUnmarshaller();
-			
-			ProductListWrapper wrapper = (ProductListWrapper) um.unmarshal(file);
-			
-			productList.clear();
-			productList.addAll(wrapper.getProducts());
-			
-			setProductFilePath(file);
-			
-			// Clear the '*' from the title;
-			primaryStage.setTitle(this.title_);
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR);
-    		alert.setTitle("Error!");
-    		alert.setHeaderText("No se ha podido leer los datos.");
-    		alert.setContentText("Imposible leer archivo:\n" + file.getAbsolutePath());
-    		
-    		alert.showAndWait();
-		}
-	}
-	
-	public void saveProductDataToFile(File file) {
-		try {
-			JAXBContext context = JAXBContext
-					.newInstance(ProductListWrapper.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			
-			ProductListWrapper wrapper = new ProductListWrapper();
-			wrapper.setProducts(productList);
-			
-			m.marshal(wrapper, file);
-			
-			setProductFilePath(file);
-			
-			// Clear the '*' from the title;
-			primaryStage.setTitle(this.title_);
-		
-		} catch (Exception e) {
-			Alert alert = new Alert(AlertType.ERROR);
-    		alert.setTitle("Error!");
-    		alert.setHeaderText("No se ha podido guardar los datos.");
-    		alert.setContentText("Imposible escribir el archivo:\n" + file.getAbsolutePath());
-    		
-    		alert.showAndWait();
-		}
-	}
-	
-	public void loadHistoryFromFile(File file) {
-		try  {
-			JAXBContext context = JAXBContext
-					.newInstance(HistoryWrapper.class);
-			Unmarshaller um = context.createUnmarshaller();
-			
-			HistoryWrapper wrapper = (HistoryWrapper) um.unmarshal(file);
-			
-			history.clear();
-			history.addAll(wrapper.getHistory());
-			
-			setHistoryFilePath(file);
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR);
-    		alert.setTitle("Error!");
-    		alert.setHeaderText("No se ha podido leer el historial.");
-    		alert.setContentText("Imposible leer archivo:\n" + file.getAbsolutePath());
-    		
-    		alert.showAndWait();
-		}
-	}
-	
-	public void saveHistoryToFile(File file) {
-		try {
-			JAXBContext context = JAXBContext
-					.newInstance(HistoryWrapper.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			
-			HistoryWrapper wrapper = new HistoryWrapper();
-			wrapper.setHistory(history);
-			
-			if (!file.getParentFile().exists())
-				file.getParentFile().mkdirs();
-			
-			if (!file.exists())
-				file.createNewFile();
-			
-			m.marshal(wrapper, file);
-			
-			setHistoryFilePath(file);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error!");
-			alert.setHeaderText("No se ha podido guardar el historial.");
-    		alert.setContentText("Imposible escribir el archivo:\n" + file.getAbsolutePath());
-    		
-    		alert.showAndWait();
-		}
-	}
-	
-	public void setSomethingChanged(boolean b) {
-		somethingChanged = b;
-		
-		if (!this.title_.equals("Stock"))
-			// Add an '*' to the title;
-			primaryStage.setTitle(this.title_ + '*');
 	}
 	
 	

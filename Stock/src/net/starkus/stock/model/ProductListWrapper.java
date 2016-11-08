@@ -3,7 +3,6 @@ package net.starkus.stock.model;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Wrapper to save product database.
@@ -12,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 
-@XmlRootElement(name = "products")
+//@XmlRootElement(name = "save")
 public class ProductListWrapper {
 
 	private List<Product> products;

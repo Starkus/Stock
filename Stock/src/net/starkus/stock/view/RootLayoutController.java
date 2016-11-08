@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.util.SaveUtil;
 
 public class RootLayoutController {
 	
@@ -18,13 +19,9 @@ public class RootLayoutController {
 	
 
 	@FXML
-	private MenuItem newCmd;
+	private MenuItem importCmd;
 	@FXML
-	private MenuItem openCmd;
-	@FXML
-	private MenuItem saveCmd;
-	@FXML
-	private MenuItem saveAsCmd;
+	private MenuItem exportCmd;
 	@FXML
 	private MenuItem closeCmd;
 	
@@ -37,10 +34,6 @@ public class RootLayoutController {
     @FXML
     private void initialize() {
 
-    	newCmd.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
-    	openCmd.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
-    	saveCmd.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
-    	saveAsCmd.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
     	closeCmd.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
     }
 	
@@ -49,13 +42,7 @@ public class RootLayoutController {
 	}
 	
 	@FXML
-	private void handleNew() {
-		mainApp.getProductData().clear();
-		mainApp.setProductFilePath(null);
-	}
-	
-	@FXML
-	private void handleOpen() {
+	private void handleImport() {
 		FileChooser fileChooser = new FileChooser();
 		
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
@@ -65,22 +52,14 @@ public class RootLayoutController {
 		File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
 		
 		if (file != null) {
-			mainApp.loadProductDataFromFile(file);
+			SaveUtil.loadFromFile(file);
+			
+			mainApp.getHomeController().onFileLoad();
 		}
 	}
 	
 	@FXML
-	private void handleSave() {
-		File productFile = mainApp.getProductFilePath();
-		if (productFile != null) {
-			mainApp.saveProductDataToFile(productFile);
-		} else {
-			handleSaveAs();
-		}
-	}
-	
-	@FXML
-	private void handleSaveAs() {
+	private void handleExport() {
 		FileChooser fileChooser = new FileChooser();
 		
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
@@ -93,7 +72,7 @@ public class RootLayoutController {
 			if (!file.getPath().endsWith(".xml")) {
 				file = new File(file.getPath() + ".xml");
 			}
-			mainApp.saveProductDataToFile(file);
+			SaveUtil.saveToFile(file);
 		}
 	}
 	
