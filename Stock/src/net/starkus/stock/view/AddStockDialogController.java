@@ -3,13 +3,13 @@ package net.starkus.stock.view;
 import java.time.LocalDateTime;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleFloatProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
@@ -41,6 +41,8 @@ public class AddStockDialogController {
 	@FXML
 	private TableColumn<Product, Number> subtColumn;
 	
+	@FXML
+	private Button OKButton;
 	
 	@FXML
 	private AutoCompleteTextField codeNameField;
@@ -106,11 +108,18 @@ public class AddStockDialogController {
 		Product product = null;
 		
 		
-		// If no text, conclude operation
+		// If no text, focus OK button
 		if (text.length() == 0 || text == null) {
 			
+			//OKButton.requestFocus();
 			handleOK();
 			return;
+		}
+		
+		
+		// If entry, use entry
+		if (codeNameField.getResults().size() > 0) {
+			codeNameField.setText(codeNameField.getResults().getFirst());
 		}
 		
 		

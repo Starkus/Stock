@@ -2,28 +2,24 @@ package net.starkus.stock;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.util.SaveUtil;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.view.AddStockDialogController;
+import net.starkus.stock.view.ClientOverviewController;
+import net.starkus.stock.view.DebtAssignDialogController;
 import net.starkus.stock.view.DialogController;
 import net.starkus.stock.view.HomeController;
 import net.starkus.stock.view.ProductEditDialogController;
@@ -39,9 +35,10 @@ public class MainApp extends Application {
 	private ObservableList<Product> productList = FXCollections.observableArrayList();
 	private SortedList<Product> sortedProducts;
 	
-	private ObservableList<ProductList> history = FXCollections.observableArrayList();
+	private ObservableList<Client> clientList = FXCollections.observableArrayList();
+	private SortedList<Client> sortedClients;
 	
-	private boolean somethingChanged = false;
+	private ObservableList<ProductList> history = FXCollections.observableArrayList();
 	
 	private File savefile;
 	
@@ -58,7 +55,10 @@ public class MainApp extends Application {
 		productList.add(new Product(8537023942L, "Xbox 360 Wireless Controller for Windows", 760, 1200));
 		productList.add(new Product(790520009944L, "Raid Casa y Jardin", 16, 24));
 		
+		clientList.add(new Client("Castor", 1337));
+		
 		sortedProducts = productList.sorted();
+		sortedClients = clientList.sorted();
 	}
 	
 	
@@ -74,6 +74,16 @@ public class MainApp extends Application {
 	public SortedList<Product> getSortedProductData() {
 		return sortedProducts;
 	}
+	
+	
+	public ObservableList<Client> getClients() {
+		return clientList;
+	}
+	
+	public SortedList<Client> getSortedClients() {
+		return sortedClients;
+	}
+	
 	
 	public ObservableList<ProductList> getHistory() {
 		return history;
@@ -116,6 +126,35 @@ public class MainApp extends Application {
 		}
 	}
 	
+	public Client showDebtDialog() {
+		try {
+			// Load up dialog
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/DebtAssignDialog.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Deuda");
+			dialogStage.setResizable(false);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			
+			DebtAssignDialogController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(this);
+			
+			dialogStage.showAndWait();
+			
+			return controller.getClient();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public void showProductOverview() {
 		try {
 			// Load product overview
@@ -133,11 +172,35 @@ public class MainApp extends Application {
 			
 			// Give the controller access to the main app
 			ProductOverviewController controller = loader.getController();
-			controller.setDialogStage(dialogStage);
+			//controller.setDialogStage(dialogStage); dunno what its for
 			controller.setMainApp(this);
 			
 			dialogStage.showAndWait();
 		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void showClientOverview() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/ClientOverview.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Clientes");
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			
+			ClientOverviewController controller = loader.getController();
+			
+			controller.setMainApp(this);
+			
+			dialogStage.showAndWait();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -285,53 +348,7 @@ public class MainApp extends Application {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		
-		// _ We already load this in start(), where is it better to load?
-		//if (savefile != null) {
-		//	loadFromFile(savefile);
-		//}
-	}
-	
-	// Obsolete
-	// TODO: clear this off.
-	private void setExitPrompt(Scene scene) {
-		
-		scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
-			
-			@Override
-			public void handle(WindowEvent event) {
-				
-				if (!somethingChanged)
-					return;
-				
-				Alert alert = new Alert(AlertType.CONFIRMATION);
-				alert.setTitle("Salir");
-				alert.setHeaderText("Estas seguro de que queres salir?");
-				alert.setContentText("Se perderan los cambios no guardados.");
-				
-				ButtonType guardar_y_salir = new ButtonType("Guardar y salir");
-				ButtonType salir = new ButtonType("Salir");
-				ButtonType cancelar = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
-				
-				alert.getButtonTypes().setAll(guardar_y_salir, salir, cancelar);
-
-				Optional<ButtonType> result = alert.showAndWait();
-				
-				if (result.get() == salir){
-					// Go ahead.
-					
-				} else if (result.get() == guardar_y_salir){
-					// Save and let the event close the app
-					SaveUtil.saveToFile(savefile);
-					
-				} else {
-					// Vanish the close event
-				    event.consume();
-				}
-			}
-		});
-	}
-	
+	}	
 	
 	
 	public Stage getPrimaryStage() {

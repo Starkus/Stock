@@ -58,7 +58,7 @@
                   </TableView>
                   <HBox alignment="BOTTOM_RIGHT" prefHeight="50.0" prefWidth="200.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#handleOK" text="Aceptar">
+                        <Button fx:id="OKButton" mnemonicParsing="false" onAction="#handleOK" text="Aceptar">
                            <HBox.margin>
                               <Insets left="4.0" right="4.0" />
                            </HBox.margin>

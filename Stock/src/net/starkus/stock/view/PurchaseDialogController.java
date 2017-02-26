@@ -1,28 +1,30 @@
 package net.starkus.stock.view;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener.Change;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.FloatProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.collections.ObservableList;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Labeled;
 import javafx.stage.Stage;
+import javafx.util.converter.NumberStringConverter;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
+import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.model.ProductListWithTotal;
-import net.starkus.stock.util.DateUtil;
 
 public class PurchaseDialogController {
 	
@@ -30,6 +32,11 @@ public class PurchaseDialogController {
 	
 	private ProductList purchase;
 	private Stage dialogStage;
+	
+	
+	private FloatProperty total;
+	private FloatProperty paying;
+	private FloatProperty debt;
 	
 	
 	@FXML
@@ -52,6 +59,12 @@ public class PurchaseDialogController {
 	private TextField quantField;
 	@FXML
 	private TextField subtField;
+	@FXML
+	private TextField totalField;
+	@FXML
+	private TextField payingField;
+	@FXML
+	private TextField debtField;
 
 	
 	private Product productBuffer;
@@ -59,6 +72,9 @@ public class PurchaseDialogController {
 	
 
 	public PurchaseDialogController() {
+		total = new SimpleFloatProperty();
+		paying = new SimpleFloatProperty();
+		debt = new SimpleFloatProperty();
 	}
 	
 	/**
@@ -79,6 +95,20 @@ public class PurchaseDialogController {
     	subtColumn.setCellValueFactory(cellData -> cellData.getValue().sellSubtotalProperty());
     	
     	formatLastRow();
+    	
+    	
+    	codeNameField.setAutoProc(true);
+    	
+    	
+    	total.bind(Bindings.createObjectBinding(() -> 
+    			items.stream().collect(Collectors.summingDouble(Product::getSellSubtotal)), items));
+    	totalField.textProperty().bind(Bindings.convert(total));
+    	
+    	Bindings.bindBidirectional(payingField.textProperty(), paying, new NumberStringConverter());
+    	
+    	debt.bind(Bindings.subtract(total, paying));
+    	debtField.textProperty().bind(Bindings.convert(debt));
+    	
     	
     	Platform.runLater(new Runnable() {
 			@Override
@@ -148,7 +178,7 @@ public class PurchaseDialogController {
 		// If no text, conclude operation
 		if (text.length() == 0 || text == null) {
 			
-			handleOK();
+			payingField.requestFocus();
 			return;
 		}
 		
@@ -180,10 +210,10 @@ public class PurchaseDialogController {
 
 		String c = codeNameField.getText();
 		
-		// If no code, conclude purchase
+		// If no code, focus on paying field
 		if (c.length() == 0 || c == null) {
 			
-			handleOK();
+			payingField.requestFocus();
 			return;
 		}
 		
@@ -212,6 +242,9 @@ public class PurchaseDialogController {
 			purchase.add(productToAdd);
 		}
 		
+		// Update paying field to be equal to the new total.
+		payingField.setText(Float.toString(total.get()));
+		
 		quantField.setText("");
 		
 		codeNameField.requestFocus();
@@ -228,9 +261,23 @@ public class PurchaseDialogController {
 	@FXML
 	private void handleOK() {
 		
+		if (debt.get() != 0) {
+			
+			Client debtor = mainApp.showDebtDialog();
+			
+			if (debtor == null)
+				return;
+			
+			System.out.println("Adding $" + Float.toString(debt.get()) + " to " + debtor.getName());
+			
+			debtor.add(debt.get());
+			
+			System.out.println(debtor.getName() + " owes $" + Float.toString(debtor.getBalance()));
+		}
+		
 		purchase.setCreationDate(LocalDateTime.now());
 		
-		System.out.println(DateUtil.format(purchase.getCreationDate()));
+		//System.out.println(DateUtil.format(purchase.getCreationDate()));
 		
 		dialogStage.close();
 	}

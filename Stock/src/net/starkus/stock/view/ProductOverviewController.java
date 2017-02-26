@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseButton;
-import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -13,7 +12,7 @@ import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.Product;
 
-public class ProductOverviewController {
+public class ProductOverviewController extends DialogController {
 	
 	@FXML
 	private TableView<Product> productTable;
@@ -38,11 +37,6 @@ public class ProductOverviewController {
 	
 	@FXML
 	private AutoCompleteTextField filterField;
-	
-	
-	private MainApp mainApp;
-
-	private Stage dialogStage;
 	
 	
 	private FilteredList<Product> filteredProductList;
@@ -86,19 +80,17 @@ public class ProductOverviewController {
      * 
      * @param mainApp
      */
+    @Override
     public void setMainApp(MainApp mainApp) {
     	this.mainApp = mainApp;
     	
     	handleFilter();
 
+    	// Add entries to auto-complete field
     	for (Product p : mainApp.getProductData()) {
     		filterField.getEntries().add(p.getName());
     	}
     }
-    
-	public void setDialogStage(Stage dialogStage) {
-		this.dialogStage = dialogStage;
-	}
     
     /**
      * Fills detail table

@@ -30,6 +30,8 @@ public class AutoCompleteTextField extends TextField
 	/** The popup used to select an entry. */
 	private ContextMenu entriesPopup;
 	
+	private boolean autoProc = false;
+	
 
 	/** Construct a new AutoCompleteTextField. */
 	public AutoCompleteTextField() {
@@ -65,20 +67,36 @@ public class AutoCompleteTextField extends TextField
 						{
 							entriesPopup.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
 						}
+						
 					} else
 					{
+						searchResult.clear();
 						entriesPopup.hide();
 					}
 				}
 			}
 		});
 
+		/*
+		 * Hide popup when out of focus.
+		 */
 		focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean aBoolean2) {
 				entriesPopup.hide();
 			}
 		});
+		
+		// Can't access "this" inside listener, so put it in a variable.
+		AutoCompleteTextField textFieldReference = this;
+		/*
+		entriesPopup.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (observable.getValue() == false)
+					System.out.println(textFieldReference.isFocused());
+			}
+		});*/
 		
 		// This sucks, but works... kinda. Causes an exception to show up, but it seems harmless.
 		// Triggers also when hidding context menu with Esc, or clicking on this text field.
@@ -87,7 +105,8 @@ public class AutoCompleteTextField extends TextField
 			
 			@Override
 			public void handle(WindowEvent event) {
-				if (isFocused()) {
+				System.out.println("Target: " + event.getTarget());
+				if (autoProc && textFieldReference.isFocused() && !textFieldReference.getText().isEmpty()) {
 					getOnAction().handle(new ActionEvent());
 				}
 			}
@@ -107,6 +126,10 @@ public class AutoCompleteTextField extends TextField
 	
 	public LinkedList<String> getResults() {
 		return searchResult;
+	}
+	
+	public void setAutoProc(boolean b) {
+		autoProc = b;
 	}
 
 	/**
