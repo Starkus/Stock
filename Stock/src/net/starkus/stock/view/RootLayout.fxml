@@ -16,9 +16,10 @@
               <MenuItem fx:id="closeCmd" mnemonicParsing="false" onAction="#handleClose" text="Salir" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Editar">
+          <Menu mnemonicParsing="false" text="Admin">
             <items>
-              <MenuItem mnemonicParsing="false" text="Borrar" />
+              <MenuItem onAction="#handleSetCash" mnemonicParsing="false" text="Caja" />
+              <MenuItem onAction="#handleChangePassword" mnemonicParsing="false" text="Cambiar contraseña" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Ayuda">

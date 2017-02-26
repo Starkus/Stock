@@ -15,9 +15,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Product;
+import net.starkus.stock.util.PasswordUtils;
 import net.starkus.stock.util.SaveUtil;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.view.AddStockDialogController;
+import net.starkus.stock.view.ChangePasswordDialogController;
 import net.starkus.stock.view.ClientOverviewController;
 import net.starkus.stock.view.DebtAssignDialogController;
 import net.starkus.stock.view.DialogController;
@@ -26,6 +28,7 @@ import net.starkus.stock.view.ProductEditDialogController;
 import net.starkus.stock.view.ProductOverviewController;
 import net.starkus.stock.view.PurchaseDialogController;
 import net.starkus.stock.view.RootLayoutController;
+import net.starkus.stock.view.SetCashDialogController;
 
 public class MainApp extends Application {
 	
@@ -40,6 +43,8 @@ public class MainApp extends Application {
 	
 	private ObservableList<ProductList> history = FXCollections.observableArrayList();
 	
+	private String password;
+	
 	private File savefile;
 	
 	private HomeController homeController;
@@ -50,6 +55,8 @@ public class MainApp extends Application {
 	public MainApp() {
 		
 		// Sample data
+		password = PasswordUtils.encodePassword("NYC");
+		
 		productList.add(new Product(78600010L, "TicTac Menta", 8, 13));
 		productList.add(new Product(78605831L, "TicTac Dupla Frutilla", 8, 13));
 		productList.add(new Product(8537023942L, "Xbox 360 Wireless Controller for Windows", 760, 1200));
@@ -88,6 +95,16 @@ public class MainApp extends Application {
 	public ObservableList<ProductList> getHistory() {
 		return history;
 	}
+	
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
 	
 	public HomeController getHomeController() {
 		return homeController;
@@ -152,6 +169,56 @@ public class MainApp extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public void showSetCashDialog() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/SetCashDialog.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Caja");
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			
+			SetCashDialogController controller = loader.getController();
+			controller.setMainApp(this);
+			controller.setDialogStage(dialogStage);
+			
+			dialogStage.showAndWait();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void showPasswordChangeDialog() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/ChangePasswordDialog.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Cambiar contraseña");
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			
+			ChangePasswordDialogController controller = loader.getController();
+			controller.setMainApp(this);
+			controller.setDialogStage(dialogStage);
+			
+			dialogStage.showAndWait();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

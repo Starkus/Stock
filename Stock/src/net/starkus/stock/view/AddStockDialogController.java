@@ -10,7 +10,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
@@ -19,13 +18,10 @@ import net.starkus.stock.model.ProductList;
 import net.starkus.stock.model.ProductListWithTotal;
 import net.starkus.stock.util.DateUtil;
 
-public class AddStockDialogController {
+public class AddStockDialogController extends DialogController {
 	
-	
-	private MainApp mainApp;
 	
 	private ProductList productList;
-	private Stage dialogStage;
 	
 	
 	@FXML
@@ -88,6 +84,7 @@ public class AddStockDialogController {
      * 
      * @param mainApp
      */
+    @Override
     public void setMainApp(MainApp mainApp) {
     	this.mainApp = mainApp;
 
@@ -95,10 +92,6 @@ public class AddStockDialogController {
     		codeNameField.getEntries().add(p.getName());
     	}
     }
-    
-	public void setDialogStage(Stage dialogStage) {
-		this.dialogStage = dialogStage;
-	}
 	
 	@FXML
 	private void handleCodeEntered() {

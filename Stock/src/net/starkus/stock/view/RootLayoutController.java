@@ -104,5 +104,18 @@ public class RootLayoutController {
 	private void handleClose() {
 		System.exit(0);
 	}
+	
+	@FXML
+	private void handleChangePassword() {
+		mainApp.showPasswordChangeDialog();
+		
+		SaveUtil.saveToFile(mainApp.getSavefile());
+	}
 
+	@FXML
+	private void handleSetCash() {
+		mainApp.showSetCashDialog();
+		
+		SaveUtil.saveToFile(mainApp.getSavefile());
+	}
 }

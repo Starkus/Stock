@@ -16,7 +16,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Labeled;
-import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
@@ -26,12 +25,9 @@ import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.model.ProductListWithTotal;
 
-public class PurchaseDialogController {
-	
-	private MainApp mainApp;
+public class PurchaseDialogController extends DialogController {
 	
 	private ProductList purchase;
-	private Stage dialogStage;
 	
 	
 	private FloatProperty total;
@@ -145,6 +141,7 @@ public class PurchaseDialogController {
      * 
      * @param mainApp
      */
+    @Override
     public void setMainApp(MainApp mainApp) {
     	this.mainApp = mainApp;
 
@@ -152,10 +149,6 @@ public class PurchaseDialogController {
     		codeNameField.getEntries().add(p.getName());
     	}
     }
-    
-	public void setDialogStage(Stage dialogStage) {
-		this.dialogStage = dialogStage;
-	}
 	
 	public ProductList getPurchase() {
 		return purchase;

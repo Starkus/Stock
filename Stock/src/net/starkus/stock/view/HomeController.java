@@ -126,6 +126,8 @@ public class HomeController extends DialogController {
     @FXML
     private void handleEditClients() {
     	mainApp.showClientOverview();
+    	
+    	SaveUtil.saveToFile(mainApp.getSavefile());
     }
 
 }

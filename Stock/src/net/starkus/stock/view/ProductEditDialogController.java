@@ -4,10 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Stage;
 import net.starkus.stock.model.Product;
 
-public class ProductEditDialogController {
+public class ProductEditDialogController extends DialogController {
 
 	@FXML
 	private TextField codeField;
@@ -21,18 +20,12 @@ public class ProductEditDialogController {
 	private TextField sellPriceMultField;
 	
 	
-	private Stage dialogStage;
 	private Product product;
 	private boolean okClicked = false;
 	
 	
 	@FXML
 	private void initialize() {
-	}
-	
-	
-	public void setDialogStage(Stage dialogStage) {
-		this.dialogStage = dialogStage;
 	}
 	
 	public void setProduct(Product product) {

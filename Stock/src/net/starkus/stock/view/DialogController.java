@@ -1,12 +1,14 @@
 package net.starkus.stock.view;
 
 import javafx.fxml.FXML;
+import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
 
 public class DialogController {
 	
 	@FXML
-	MainApp mainApp;
+	protected MainApp mainApp;
+	protected Stage dialogStage;
 	
 	
 	/**
@@ -17,6 +19,10 @@ public class DialogController {
 	public void setMainApp(MainApp mainApp) {
     	this.mainApp = mainApp;
     }
+	
+	public void setDialogStage(Stage dialogStage) {
+		this.dialogStage = dialogStage;
+	}
 	
 	public void onFileLoad() {
 	}

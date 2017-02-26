@@ -56,6 +56,10 @@ public class SaveUtil {
 			
 			CashBox.setCash(wrapper.getCashBox());
 			
+			String pass = wrapper.getPassword();
+			if (pass != null)
+				mainApp.setPassword(pass);
+			
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -98,6 +102,7 @@ public class SaveUtil {
 			wrapper.setClients(clientsWrapper);
 			wrapper.setHistory(historyWrapper);
 			wrapper.setCashBox(CashBox.getCash());
+			wrapper.setPassword(mainApp.getPassword());
 			
 			m.marshal(wrapper, file);
 			

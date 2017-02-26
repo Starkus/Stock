@@ -4,8 +4,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class CashBox {
-	
-	// TODO - Kinda get this working and push out version 0.1 or 0.01!
 
 	private static float cash = 0f;
 	private static float sessionBalance = 0f;

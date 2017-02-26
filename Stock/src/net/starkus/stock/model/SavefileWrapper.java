@@ -9,6 +9,7 @@ public class SavefileWrapper {
 	private ProductListWrapper productList;
 	private ClientListWrapper clientList;
 	private HistoryWrapper history;
+	private String password;
 	
 	public ProductListWrapper getProducts() {
 		return productList;
@@ -43,6 +44,15 @@ public class SavefileWrapper {
 	
 	public void setCashBox(float n) {
 		cashBox = n;
+	}
+	
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }
