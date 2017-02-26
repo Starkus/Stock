@@ -11,6 +11,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.CashBox;
+import net.starkus.stock.model.Client;
+import net.starkus.stock.model.ClientListWrapper;
 import net.starkus.stock.model.HistoryWrapper;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
@@ -36,13 +38,18 @@ public class SaveUtil {
 			SavefileWrapper wrapper = (SavefileWrapper) um.unmarshal(file);
 			
 			ProductListWrapper productsWrapper = wrapper.getProducts();
+			ClientListWrapper clientsWrapper = wrapper.getClients();
 			HistoryWrapper historyWrapper = wrapper.getHistory();
 			
 			ObservableList<Product> productList = mainApp.getProductData();
 			ObservableList<ProductList> history = mainApp.getHistory();
+			ObservableList<Client> clientList = mainApp.getClients();
 			
 			productList.clear();
 			productList.addAll(productsWrapper.getProducts());
+			
+			clientList.clear();
+			clientList.addAll(clientsWrapper.getClients());
 			
 			history.clear();
 			history.addAll(historyWrapper.getHistory());
@@ -72,19 +79,23 @@ public class SaveUtil {
 
 			// Get the stuff from mainApp.
 			ObservableList<Product> productList = mainApp.getProductData();
+			ObservableList<Client> clientList = mainApp.getClients();
 			ObservableList<ProductList> history = mainApp.getHistory();
 			
 			// Make the sub-wrappers
 			ProductListWrapper productsWrapper = new ProductListWrapper();
+			ClientListWrapper clientsWrapper = new ClientListWrapper();
 			HistoryWrapper historyWrapper = new HistoryWrapper();
 			// Main wrapper
 			SavefileWrapper wrapper = new SavefileWrapper();
 			
 			// Fill in the wrappers
 			productsWrapper.setProducts(productList);
+			clientsWrapper.setClients(clientList);
 			historyWrapper.setHistory(history);
 			
 			wrapper.setProducts(productsWrapper);
+			wrapper.setClients(clientsWrapper);
 			wrapper.setHistory(historyWrapper);
 			wrapper.setCashBox(CashBox.getCash());
 			

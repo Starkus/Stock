@@ -7,6 +7,7 @@ public class SavefileWrapper {
 	
 	private float cashBox;
 	private ProductListWrapper productList;
+	private ClientListWrapper clientList;
 	private HistoryWrapper history;
 	
 	public ProductListWrapper getProducts() {
@@ -15,6 +16,15 @@ public class SavefileWrapper {
 	
 	public void setProducts(ProductListWrapper products) {
 		this.productList = products;
+	}
+	
+	
+	public ClientListWrapper getClients() {
+		return clientList;
+	}
+	
+	public void setClients(ClientListWrapper clients) {
+		this.clientList = clients;
 	}
 	
 	
