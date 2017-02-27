@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<?import net.starkus.stock.model.AutoCompleteTextField?>
+
+<AnchorPane maxHeight="200.0" maxWidth="438.0" minHeight="171.0" minWidth="375.0" prefHeight="194.0" prefWidth="438.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.DebtAssignDialogController">
+   <children>
+      <HBox alignment="BOTTOM_RIGHT" layoutX="186.0" layoutY="86.0" spacing="14.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#handleOK" prefWidth="110.0" text="OK" />
+            <Button mnemonicParsing="false" onAction="#handleCancel" prefWidth="110.0" text="Cancelar" />
+         </children>
+      </HBox>
+      <AutoCompleteTextField fx:id="clientField" onAction="#handleClientEntered" layoutX="126.0" layoutY="100.0" promptText="Cliente" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="85.0" />
+      <Label alignment="CENTER" layoutX="50.0" layoutY="36.0" prefHeight="50.0" prefWidth="338.0" text="El pago es distinto al total. ¿Desea asignarle la deuda a un cliente?" wrapText="true" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="20.0" />
+   </children>
+</AnchorPane>

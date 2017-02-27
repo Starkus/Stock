@@ -55,12 +55,12 @@
                         </HBox>
                         <HBox alignment="BOTTOM_RIGHT" prefHeight="33.0" prefWidth="225.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#handleOK" prefWidth="120.0" text="Listo">
+                              <Button defaultButton="true" mnemonicParsing="false" onAction="#handleOK" prefWidth="120.0" text="Listo">
                                  <HBox.margin>
                                     <Insets left="4.0" right="4.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#handleCancel" prefWidth="120.0" text="Cancelar">
+                              <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" prefWidth="120.0" text="Cancelar">
                                  <HBox.margin>
                                     <Insets left="4.0" right="4.0" />
                                  </HBox.margin>

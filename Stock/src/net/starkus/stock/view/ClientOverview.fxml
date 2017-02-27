@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="400.0" minWidth="500.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.ClientOverviewController">
+   <children>
+      <AnchorPane prefHeight="278.0" prefWidth="500.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <TableView fx:id="clientTable" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+              <columns>
+                <TableColumn fx:id="nameColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="0.0" text="Cliente" />
+                <TableColumn fx:id="balanceColumn" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Balance" />
+              </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </children></AnchorPane>
+      <HBox alignment="CENTER" layoutX="150.0" layoutY="286.0" prefHeight="62.0" prefWidth="472.0" spacing="14.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#handleAddClient" prefHeight="33.0" prefWidth="33.0" text="+" textAlignment="JUSTIFY" textOverrun="CLIP" HBox.hgrow="NEVER" />
+            <TextField fx:id="nameField" onAction="#updateClientData" promptText="Nombre" />
+            <TextField fx:id="balanceField" onAction="#updateClientData" promptText="Balance" />
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
