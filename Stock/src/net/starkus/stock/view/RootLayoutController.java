@@ -94,7 +94,7 @@ public class RootLayoutController {
 	private void handleAbout() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Stock");
-		alert.setHeaderText("About.");
+		alert.setHeaderText("Stock v0.3.0");
 		alert.setContentText("Author: Starkus");
 		
 		alert.showAndWait();

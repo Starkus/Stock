@@ -41,18 +41,23 @@ public class SaveUtil {
 			ClientListWrapper clientsWrapper = wrapper.getClients();
 			HistoryWrapper historyWrapper = wrapper.getHistory();
 			
-			ObservableList<Product> productList = mainApp.getProductData();
-			ObservableList<ProductList> history = mainApp.getHistory();
-			ObservableList<Client> clientList = mainApp.getClients();
+			if (productsWrapper != null) {
+				ObservableList<Product> productList = mainApp.getProductData();
+				productList.clear();
+				productList.addAll(productsWrapper.getProducts());
+			}
+				
+			if (clientsWrapper != null) {
+				ObservableList<Client> clientList = mainApp.getClients();
+				clientList.clear();
+				clientList.addAll(clientsWrapper.getClients());				
+			}
 			
-			productList.clear();
-			productList.addAll(productsWrapper.getProducts());
-			
-			clientList.clear();
-			clientList.addAll(clientsWrapper.getClients());
-			
-			history.clear();
-			history.addAll(historyWrapper.getHistory());
+			if (historyWrapper != null) {
+				ObservableList<ProductList> history = mainApp.getHistory();
+				history.clear();
+				history.addAll(historyWrapper.getHistory());
+			}
 			
 			CashBox.setCash(wrapper.getCashBox());
 			

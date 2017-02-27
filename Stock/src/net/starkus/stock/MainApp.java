@@ -49,13 +49,16 @@ public class MainApp extends Application {
 	
 	private HomeController homeController;
 	private DialogController currentDialogController;
+	
+	
+	String css;
 
 	
 	
 	public MainApp() {
 		
 		// Sample data
-		password = PasswordUtils.encodePassword("NYC");
+		password = PasswordUtils.encodePassword("tigre");
 		
 		productList.add(new Product(78600010L, "TicTac Menta", 8, 13));
 		productList.add(new Product(78605831L, "TicTac Dupla Frutilla", 8, 13));
@@ -66,6 +69,8 @@ public class MainApp extends Application {
 		
 		sortedProducts = productList.sorted();
 		sortedClients = clientList.sorted();
+		
+		
 	}
 	
 	
