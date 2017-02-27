@@ -59,12 +59,12 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOk" prefHeight="33.0" prefWidth="109.0" text="Listo">
+            <Button defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOk" prefHeight="33.0" prefWidth="109.0" text="Listo">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" />
                </GridPane.margin>
             </Button>
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCancel" text="Cancelar" GridPane.columnIndex="1">
+            <Button cancelButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCancel" text="Cancelar" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" />
                </GridPane.margin>

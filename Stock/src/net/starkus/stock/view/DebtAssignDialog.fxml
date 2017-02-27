@@ -11,8 +11,8 @@
    <children>
       <HBox alignment="BOTTOM_RIGHT" layoutX="186.0" layoutY="86.0" spacing="14.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#handleOK" prefWidth="110.0" text="OK" />
-            <Button mnemonicParsing="false" onAction="#handleCancel" prefWidth="110.0" text="Cancelar" />
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#handleOK" prefWidth="110.0" text="OK" />
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" prefWidth="110.0" text="Cancelar" />
          </children>
       </HBox>
       <AutoCompleteTextField fx:id="clientField" onAction="#handleClientEntered" layoutX="126.0" layoutY="100.0" promptText="Cliente" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="85.0" />
