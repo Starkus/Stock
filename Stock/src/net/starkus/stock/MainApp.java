@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -441,6 +442,8 @@ public class MainApp extends Application {
 			
 			RootLayoutController controller = loader.getController();
 			controller.setMainApp(this);
+			
+			primaryStage.getIcons().add(new Image(getClass().getResource("icon.png").toExternalForm()));
 			
 			primaryStage.show();
 			
