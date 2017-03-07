@@ -5,20 +5,18 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import net.starkus.stock.model.CashBox;
 import net.starkus.stock.util.PasswordUtils;
 
-public class SetCashDialogController extends DialogController {
-
-	@FXML
-	private TextField passwordField;
-	@FXML
-	private TextField cashField;
+public class PasswordDialogController extends DialogController {
 	
 	@FXML
-	void initialize() {
+	TextField passwordField;
 	
-		cashField.setText(Float.toString(CashBox.getCash()));
+	private boolean passwordCorrect = false;
+	
+	
+	public boolean wasPasswordCorrect() {
+		return passwordCorrect;
 	}
 	
 	@FXML
@@ -40,33 +38,15 @@ public class SetCashDialogController extends DialogController {
 			return;
 		}
 		
-		try {
-			float cash = Float.parseFloat(cashField.getText());
-			CashBox.setCash(cash);
-			
-			dialogStage.close();
-			return;
-			
-		} catch (NumberFormatException e) {
-
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Numero invalido!");
-			alert.setHeaderText("Error de sintaxis");
-			alert.setContentText("No se ha podido interpretar el numero del balance. Por favor verifique.");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
-			
-			alert.showAndWait();
-			
-			cashField.requestFocus();
-			cashField.selectAll();
-			
-			return;
-		}
+		passwordCorrect = true;
+		
+		dialogStage.close();
 	}
 	
 	@FXML
 	private void handleCancel() {
+		
 		dialogStage.close();
 	}
+
 }

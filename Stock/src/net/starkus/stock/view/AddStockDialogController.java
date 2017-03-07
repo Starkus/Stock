@@ -10,6 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
@@ -31,11 +32,7 @@ public class AddStockDialogController extends DialogController {
 	@FXML
 	private TableColumn<Product, String> nameColumn;
 	@FXML
-	private TableColumn<Product, Number> priceColumn;
-	@FXML
 	private TableColumn<Product, Number> quantColumn;
-	@FXML
-	private TableColumn<Product, Number> subtColumn;
 	
 	@FXML
 	private Button OKButton;
@@ -44,11 +41,7 @@ public class AddStockDialogController extends DialogController {
 	private AutoCompleteTextField codeNameField;
 	@FXML
 	private TextField quantField;
-	@FXML
-	private TextField priceField;
 	
-	
-	private Product productBuffer;
 
 	
 	public AddStockDialogController() {
@@ -66,9 +59,9 @@ public class AddStockDialogController extends DialogController {
     	
     	codeColumn.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-    	priceColumn.setCellValueFactory(cellData -> cellData.getValue().buyPriceProperty());
     	quantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
-    	subtColumn.setCellValueFactory(cellData -> cellData.getValue().buySubtotalProperty());
+    	
+    	codeNameField.setAutoProc(true);
     	
     	Platform.runLater(new Runnable() {
 			
@@ -92,13 +85,36 @@ public class AddStockDialogController extends DialogController {
     		codeNameField.getEntries().add(p.getName());
     	}
     }
+    
+    private Product findProduct(String text) {
+    	
+    	Product product = null;
+    	
+    	try {
+			long code = Long.parseLong(text);
+			
+			product = BinarySearch.findProductByCode(code, mainApp.getSortedProductData());
+		}
+		catch (NumberFormatException e) {
+			
+			for (Product p : mainApp.getProductData()) {
+				if (text.equals(p.getName())) {
+					
+					product = p;
+					//code = p.getCode();
+					
+					break;
+				}
+			}
+		}
+    	
+    	return product;
+    }
 	
 	@FXML
 	private void handleCodeEntered() {
 		
 		String text = codeNameField.getText();
-		long code = -1;
-		Product product = null;
 		
 		
 		// If no text, focus OK button
@@ -115,79 +131,44 @@ public class AddStockDialogController extends DialogController {
 			codeNameField.setText(codeNameField.getResults().getFirst());
 		}
 		
-		
-		try {
-			code = Long.parseLong(text);
-			
-			product = BinarySearch.findProductByCode(code, mainApp.getSortedProductData());
-		}
-		catch (NumberFormatException e) {
-			
-			for (Product p : mainApp.getProductData()) {
-				if (text.equals(p.getName())) {
-					
-					product = p;
-					code = p.getCode();
-					
-					break;
-				}
-			}
-		}
-		
-		productBuffer = product;
-		
-		priceField.setText(Float.toString(product.getBuyPrice()));
-		
 		quantField.requestFocus();
-	}
-	
-	@FXML
-	private void handleQuantEntered() {
-		
-		if (quantField.getText().length() == 0)
-			quantField.setText("1");
-		
-		priceField.requestFocus();
 	}
 	
 	@FXML
 	private void handleAddItem() {
 		
 		String q = quantField.getText();
-		String p = priceField.getText();
 		
 		int quant = 1;
-		if (q.length() != 0 && q != null)
+		if (q.length() != 0 && q != null && !q.isEmpty())
 			quant = Integer.parseInt(q);
 		
-		float price = -1;
-		if (p.length() != 0 && p != null)
-			price = Float.parseFloat(p);
+		Product product = findProduct(codeNameField.getText());
 		
 		// If the product is not found
-		if (productBuffer == null) {
+		if (product == null) {
 			
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("ERROR");
 			alert.setHeaderText("Producto no encontrado!");
 			alert.setContentText("Agregue el producto para continuar.");
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
 			
 			alert.showAndWait();
 		
 		} else {
 		
-			Product productToAdd = productBuffer.copy();
+			Product productToAdd = product.copy();
 			productToAdd.setQuantity(quant);
-			productToAdd.setBuyPrice(price);
 			
 			productList.add(productToAdd);
 		}
 		
-		priceField.setText("");
 		quantField.setText("");
 		
 		codeNameField.requestFocus();
-		codeNameField.selectAll();
+		codeNameField.setText("");
 		return;
 	}
 	
@@ -199,6 +180,10 @@ public class AddStockDialogController extends DialogController {
 	
 	@FXML
 	private void handleOK() {
+		
+		if (!mainApp.showPasswordDialog()) {
+			return;
+		}
 		
 		productList.setCreationDate(LocalDateTime.now());
 		

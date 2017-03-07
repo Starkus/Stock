@@ -102,7 +102,7 @@ public class HomeController extends DialogController {
         	SaveUtil.saveToFile(mainApp.getSavefile());
     	}
     }
-    
+    /*
     @FXML
     private void handleAddStock() {
     	ProductList purchase = mainApp.showAddStockDialog();
@@ -115,7 +115,7 @@ public class HomeController extends DialogController {
         	SaveUtil.saveToFile(mainApp.getSavefile());
     	}
     }
-    
+    */
     @FXML
     private void handleEditProducts() {
     	mainApp.showProductOverview();

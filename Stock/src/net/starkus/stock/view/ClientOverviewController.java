@@ -1,8 +1,13 @@
 package net.starkus.stock.view;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -36,6 +41,26 @@ public class ClientOverviewController extends DialogController {
 		
 		clientTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> 
 				updateFields(newValue));
+		
+		clientTable.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.DELETE) {
+					
+					Alert alert = new Alert(AlertType.CONFIRMATION);
+					alert.setTitle("Eliminar cliente");
+					alert.setHeaderText("¿Seguro que desea eliminar el cliente seleccionado?");
+					DialogPane pane = alert.getDialogPane();
+					pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+					
+					alert.showAndWait();
+					
+					if (alert.getResult() == ButtonType.OK)
+						clientTable.getItems().remove(clientTable.getSelectionModel().getSelectedIndex());
+				}
+			}
+		});
 	}
 	
 	@Override
@@ -64,6 +89,8 @@ public class ClientOverviewController extends DialogController {
 			alert.setTitle("ERROR");
 			alert.setHeaderText("Campos vacíos");
 			alert.setContentText("Uno o mas campos estan vacíos. Por favor complete.");
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
 			
 			alert.showAndWait();
 			return;
@@ -82,6 +109,8 @@ public class ClientOverviewController extends DialogController {
 			alert.setTitle("Numero invalido!");
 			alert.setHeaderText("Error de sintaxis");
 			alert.setContentText("No se ha podido interpretar el numero del balance. Por favor verifique.");
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
 			
 			alert.showAndWait();
 			return;

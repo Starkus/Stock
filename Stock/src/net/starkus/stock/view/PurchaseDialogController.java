@@ -15,6 +15,8 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Labeled;
 import javafx.util.converter.NumberStringConverter;
 import net.starkus.stock.MainApp;
@@ -254,23 +256,33 @@ public class PurchaseDialogController extends DialogController {
 	@FXML
 	private void handleOK() {
 		
-		if (debt.get() != 0) {
+		if (debt.get() > 0) {
 			
 			Client debtor = mainApp.showDebtDialog();
 			
 			if (debtor == null)
 				return;
 			
-			System.out.println("Adding $" + Float.toString(debt.get()) + " to " + debtor.getName());
-			
 			debtor.add(debt.get());
-			
-			System.out.println(debtor.getName() + " owes $" + Float.toString(debtor.getBalance()));
 		}
+		else if (debt.get() < 0) {
+			
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Vuelto");
+			alert.setHeaderText("El excedente es de $" + Float.toString(debt.get()));
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+			
+			alert.showAndWait();
+			
+			if (alert.getResult() == ButtonType.CANCEL)
+				return;
+			
+			// Clean out excedents
+			payingField.setText(totalField.getText());
+		}	
 		
 		purchase.setCreationDate(LocalDateTime.now());
-		
-		//System.out.println(DateUtil.format(purchase.getCreationDate()));
 		
 		dialogStage.close();
 	}

@@ -145,3 +145,21 @@
 	-fx-font-family: "Segoe UI Semibold";
     -fx-font-size: 32pt;
 }
+
+/* Alerts */
+.dialog-pane {
+    -fx-background-color: #1d1d1d;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: white;
+}
+
+.dialog-pane:header .header-panel {
+    -fx-background-color: #1d1d1d;
+}
+
+.dialog-pane:header .header-panel .label {
+    -fx-font-size: 20;
+    -fx-font-family: "Segoe UI Light";
+}

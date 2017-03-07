@@ -4,6 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 
 <BorderPane prefHeight="650.0" prefWidth="1150.0" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.RootLayoutController">
    <top>
@@ -19,6 +20,8 @@
           <Menu mnemonicParsing="false" text="Admin">
             <items>
               <MenuItem onAction="#handleSetCash" mnemonicParsing="false" text="Caja" />
+              <MenuItem onAction="#handleAddStock" mnemonicParsing="false" text="Agregar stock" />
+              <SeparatorMenuItem />
               <MenuItem onAction="#handleChangePassword" mnemonicParsing="false" text="Cambiar contraseña" />
             </items>
           </Menu>

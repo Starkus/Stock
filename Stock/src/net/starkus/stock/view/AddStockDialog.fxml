@@ -21,12 +21,10 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
 						<AutoCompleteTextField fx:id="codeNameField" onAction="#handleCodeEntered" promptText="Codigo / nombre" />
-                        <TextField fx:id="quantField" onAction="#handleQuantEntered" promptText="Cantidad" GridPane.rowIndex="1" />
-                        <TextField fx:id="priceField" onAction="#handleAddItem" promptText="Precio unidad" GridPane.rowIndex="2" />
+                        <TextField fx:id="quantField" onAction="#handleAddItem" promptText="Cantidad" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                   <HBox alignment="BOTTOM_CENTER" layoutX="-8.0" layoutY="235.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
@@ -52,8 +50,8 @@
                       <TableColumn fx:id="codeColumn" maxWidth="-1.0" minWidth="30.0" prefWidth="30.0" text="Codigo" />
                       <TableColumn fx:id="nameColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="250.0" text="Nombre" />
                         <TableColumn fx:id="quantColumn" maxWidth="100.0" prefWidth="60.0" text="Cantidad" />
-                        <TableColumn fx:id="priceColumn" maxWidth="100.0" prefWidth="60.0" text="Precio" />
-                        <TableColumn fx:id="subtColumn" maxWidth="100.0" prefWidth="60.0" text="Subtotal" />
+                        <!-- <TableColumn fx:id="priceColumn" maxWidth="100.0" prefWidth="60.0" text="Precio" />
+                        <TableColumn fx:id="subtColumn" maxWidth="100.0" prefWidth="60.0" text="Subtotal" /> -->
                     </columns>
                   </TableView>
                   <HBox alignment="BOTTOM_RIGHT" prefHeight="50.0" prefWidth="200.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">

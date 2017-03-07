@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.Client;
@@ -90,6 +91,8 @@ public class DebtAssignDialogController extends DialogController {
 		alert.setTitle("No encontrado");
 		alert.setHeaderText("Cliente no encontrado!");
 		alert.setContentText("Desea crearlo ahora?");
+		DialogPane pane = alert.getDialogPane();
+		pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
 		
 		Optional<ButtonType> result = alert.showAndWait();
 		// If OK is clicked

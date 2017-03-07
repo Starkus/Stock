@@ -4,6 +4,7 @@ import java.io.File;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -11,6 +12,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.ProductList;
 import net.starkus.stock.util.SaveUtil;
 
 public class RootLayoutController {
@@ -94,8 +96,10 @@ public class RootLayoutController {
 	private void handleAbout() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Stock");
-		alert.setHeaderText("Stock v0.3.0");
+		alert.setHeaderText("Stock v0.3.1");
 		alert.setContentText("Author: Starkus");
+		DialogPane pane = alert.getDialogPane();
+		pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
 		
 		alert.showAndWait();
 	}
@@ -117,5 +121,16 @@ public class RootLayoutController {
 		mainApp.showSetCashDialog();
 		
 		SaveUtil.saveToFile(mainApp.getSavefile());
+	}
+	
+	@FXML
+	private void handleAddStock() {
+		ProductList purchase = mainApp.showAddStockDialog();
+    	
+    	if (purchase != null) {
+    		purchase.addToStock(mainApp.getSortedProductData());
+        	
+        	SaveUtil.saveToFile(mainApp.getSavefile());
+    	}
 	}
 }

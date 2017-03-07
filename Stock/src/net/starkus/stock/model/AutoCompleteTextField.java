@@ -10,12 +10,15 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.WindowEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import com.sun.javafx.event.EventUtil;
 
 /**
  * This class is a TextField which implements an "autocomplete" functionality, based on a supplied list of entries.
@@ -76,6 +79,10 @@ public class AutoCompleteTextField extends TextField
 				}
 			}
 		});
+		
+		entriesPopup.setAutoHide(true);
+		entriesPopup.setConsumeAutoHidingEvents(false);
+		entriesPopup.setOnAction(this.getOnAction());
 
 		/*
 		 * Hide popup when out of focus.
@@ -87,27 +94,13 @@ public class AutoCompleteTextField extends TextField
 			}
 		});
 		
-		// Can't access "this" inside listener, so put it in a variable.
-		AutoCompleteTextField textFieldReference = this;
-		/*
-		entriesPopup.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		this.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if (observable.getValue() == false)
-					System.out.println(textFieldReference.isFocused());
-			}
-		});*/
-		
-		// This sucks, but works... kinda. Causes an exception to show up, but it seems harmless.
-		// Triggers also when hidding context menu with Esc, or clicking on this text field.
-		// TODO - Improve this mess.
-		entriesPopup.setOnHiding(new EventHandler<WindowEvent>() {
-			
-			@Override
-			public void handle(WindowEvent event) {
-				System.out.println("Target: " + event.getTarget());
-				if (autoProc && textFieldReference.isFocused() && !textFieldReference.getText().isEmpty()) {
-					getOnAction().handle(new ActionEvent());
+			public void handle(KeyEvent event) {
+				
+				if (autoProc && event.getCode() == KeyCode.ENTER) {
+					EventUtil.fireEvent(new ActionEvent(), event.getTarget());
 				}
 			}
 		});
@@ -154,9 +147,11 @@ public class AutoCompleteTextField extends TextField
 					selectAll();
 					entriesPopup.hide();
 					
-					getOnAction().handle(new ActionEvent());
+					if (autoProc)
+						getOnAction().handle(new ActionEvent());
 				}
 			});
+			
 			menuItems.add(item);
 		}
 		entriesPopup.getItems().clear();

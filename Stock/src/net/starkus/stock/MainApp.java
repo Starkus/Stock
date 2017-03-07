@@ -24,6 +24,7 @@ import net.starkus.stock.view.ClientOverviewController;
 import net.starkus.stock.view.DebtAssignDialogController;
 import net.starkus.stock.view.DialogController;
 import net.starkus.stock.view.HomeController;
+import net.starkus.stock.view.PasswordDialogController;
 import net.starkus.stock.view.ProductEditDialogController;
 import net.starkus.stock.view.ProductOverviewController;
 import net.starkus.stock.view.PurchaseDialogController;
@@ -49,9 +50,6 @@ public class MainApp extends Application {
 	
 	private HomeController homeController;
 	private DialogController currentDialogController;
-	
-	
-	String css;
 
 	
 	
@@ -200,6 +198,35 @@ public class MainApp extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean showPasswordDialog() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/PasswordDialog.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+			
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Contraseña");
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.setResizable(false);
+			dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			
+			PasswordDialogController controller = loader.getController();
+			controller.setMainApp(this);
+			controller.setDialogStage(dialogStage);
+			
+			dialogStage.showAndWait();
+			
+			return controller.wasPasswordCorrect();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
 	}
 	
 	public void showPasswordChangeDialog() {

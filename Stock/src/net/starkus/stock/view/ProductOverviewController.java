@@ -3,6 +3,7 @@ package net.starkus.stock.view;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.control.Label;
@@ -131,6 +132,8 @@ public class ProductOverviewController extends DialogController {
     		alert.setTitle("No hay seleccion");
     		alert.setHeaderText("No hay un producto seleccionado.");
     		alert.setContentText("Seleccione un producto para eliminar.");
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
     		
     		alert.showAndWait();
     	}
@@ -159,6 +162,8 @@ public class ProductOverviewController extends DialogController {
     		alert.setTitle("No hay seleccion");
     		alert.setHeaderText("No hay un producto seleccionado.");
     		alert.setContentText("Seleccione un producto para editar.");
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
     		
     		alert.showAndWait();
     	}
