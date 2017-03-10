@@ -7,6 +7,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -57,6 +59,7 @@ public class PurchaseDialogController extends DialogController {
 	private TextField quantField;
 	@FXML
 	private TextField subtField;
+	
 	@FXML
 	private TextField totalField;
 	@FXML
@@ -112,6 +115,24 @@ public class PurchaseDialogController extends DialogController {
 			@Override
 			public void run() {
 				codeNameField.requestFocus();
+			}
+		});
+    	
+    	quantField.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (quantField.isFocused())
+					handleQuantEntered();
+			}
+		});
+    	
+    	subtField.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (subtField.isFocused())
+					handleSubtotalEntered();
 			}
 		});
     }
@@ -173,6 +194,8 @@ public class PurchaseDialogController extends DialogController {
 		// If no text, conclude operation
 		if (text.length() == 0 || text == null) {
 			
+			System.out.println(codeNameField.isFocused());
+			
 			payingField.requestFocus();
 			return;
 		}
@@ -195,13 +218,67 @@ public class PurchaseDialogController extends DialogController {
 			}
 		}
 		
-		productBuffer = product;
+		productBuffer = product.copy();
+		productBuffer.setQuantity(0);
 		
 		quantField.requestFocus();
 	}
 	
 	@FXML
+	private void handleQuantEntered() {
+		
+		String q = quantField.getText();
+		
+		float quant = 1;
+		if (q.length() != 0 && q != null) {
+			try {
+				quantField.setStyle("-fx-background-color: white;");
+				quant = Float.parseFloat(q);
+			}
+			catch (NumberFormatException e) {
+				quantField.setStyle("-fx-background-color: #ff7070;");
+			}
+		}
+		
+		productBuffer.setQuantity(quant);
+		
+		float subt = productBuffer.getSellSubtotal();
+		subtField.setText(String.format("%.2f", subt));
+		
+		//handleAddItem();
+		
+	}
+	
+	@FXML
+	private void handleSubtotalEntered() {
+		
+		String s = subtField.getText();
+		
+		float subt = 0;
+		if (s.length() != 0 && s != null) {
+			try {
+				subtField.setStyle("-fx-background-color: white;");
+				subt = Float.parseFloat(s);
+			}
+			catch (NumberFormatException e) {
+				subtField.setStyle("-fx-background-color: #ff7070;");
+			}
+		}
+		
+		float quant = subt / productBuffer.getSellPrice();
+		
+		productBuffer.setQuantity(Math.round(quant*100f) / 100f);
+		
+		quantField.setText(String.format("%.2f", quant));
+		
+		//handleAddItem();
+	}
+	
+	@FXML
 	private void handleAddItem() {
+		
+		if (productBuffer.getQuantity() == 0)
+			productBuffer.setQuantity(1);
 
 		String c = codeNameField.getText();
 		
@@ -211,13 +288,6 @@ public class PurchaseDialogController extends DialogController {
 			payingField.requestFocus();
 			return;
 		}
-		
-		
-		String q = quantField.getText();
-		
-		int quant = 1;
-		if (q.length() != 0 && q != null)
-			quant = Integer.parseInt(q);
 		
 		// If the product is not found
 		if (productBuffer == null) {
@@ -231,8 +301,7 @@ public class PurchaseDialogController extends DialogController {
 		
 		} else {
 		
-			Product productToAdd = productBuffer.copy();
-			productToAdd.setQuantity(quant);
+			Product productToAdd = productBuffer;
 			
 			purchase.add(productToAdd);
 		}
@@ -241,9 +310,10 @@ public class PurchaseDialogController extends DialogController {
 		payingField.setText(Float.toString(total.get()));
 		
 		quantField.setText("");
-		
-		codeNameField.requestFocus();
+
 		codeNameField.setText("");
+		codeNameField.requestFocus();
+		
 		return;
 	}
 	

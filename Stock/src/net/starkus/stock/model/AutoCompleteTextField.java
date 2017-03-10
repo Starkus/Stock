@@ -34,6 +34,7 @@ public class AutoCompleteTextField extends TextField
 	private ContextMenu entriesPopup;
 	
 	private boolean autoProc = false;
+	private boolean keyPressedOnThisField = false;
 	
 
 	/** Construct a new AutoCompleteTextField. */
@@ -82,7 +83,7 @@ public class AutoCompleteTextField extends TextField
 		
 		entriesPopup.setAutoHide(true);
 		entriesPopup.setConsumeAutoHidingEvents(false);
-		entriesPopup.setOnAction(this.getOnAction());
+		//entriesPopup.setOnAction(this.getOnAction());
 
 		/*
 		 * Hide popup when out of focus.
@@ -91,7 +92,17 @@ public class AutoCompleteTextField extends TextField
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean aBoolean2) {
 				entriesPopup.hide();
+				keyPressedOnThisField = false;
 			}
+		});
+		
+		this.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				keyPressedOnThisField = true;
+			}
+			
 		});
 		
 		this.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
@@ -99,7 +110,7 @@ public class AutoCompleteTextField extends TextField
 			@Override
 			public void handle(KeyEvent event) {
 				
-				if (autoProc && event.getCode() == KeyCode.ENTER) {
+				if (autoProc && event.getCode() == KeyCode.ENTER && keyPressedOnThisField) {
 					EventUtil.fireEvent(new ActionEvent(), event.getTarget());
 				}
 			}
@@ -147,8 +158,8 @@ public class AutoCompleteTextField extends TextField
 					selectAll();
 					entriesPopup.hide();
 					
-					if (autoProc)
-						getOnAction().handle(new ActionEvent());
+					//if (autoProc)
+					//	getOnAction().handle(new ActionEvent());
 				}
 			});
 			

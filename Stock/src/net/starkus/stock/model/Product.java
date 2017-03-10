@@ -2,10 +2,8 @@ package net.starkus.stock.model;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.FloatProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -16,7 +14,7 @@ public class Product implements Comparable<Product> {
 	private final StringProperty name;
 	private final FloatProperty buyPrice;
 	private final FloatProperty sellPrice;
-	private final IntegerProperty quantity;
+	private final FloatProperty quantity;
 	private final FloatProperty buySubtotal;
 	private final FloatProperty sellSubtotal;
 
@@ -38,7 +36,7 @@ public class Product implements Comparable<Product> {
 	public Product(long code, String name, float buyPrice, float sellPrice) {
 		this(code, name, buyPrice, sellPrice, 0);
 	}
-	public Product(long code, String name, float buyPrice, float sellPrice, int available) {
+	public Product(long code, String name, float buyPrice, float sellPrice, float quantity) {
 		
 		this.code = new SimpleLongProperty(code);
 		this.name = new SimpleStringProperty(name);
@@ -46,13 +44,13 @@ public class Product implements Comparable<Product> {
 		this.buyPrice = new SimpleFloatProperty(buyPrice);
 		this.sellPrice = new SimpleFloatProperty(sellPrice);
 		
-		this.quantity = new SimpleIntegerProperty(available);
+		this.quantity = new SimpleFloatProperty(quantity);
 		
 		this.buySubtotal = new SimpleFloatProperty();
-		this.buySubtotal.bind(Bindings.multiply(quantity, buyPrice));
+		this.buySubtotal.bind(Bindings.multiply(this.quantity, this.buyPrice));
 		
 		this.sellSubtotal = new SimpleFloatProperty();
-		this.sellSubtotal.bind(Bindings.multiply(quantity, sellPrice));
+		this.sellSubtotal.bind(Bindings.multiply(this.quantity, this.sellPrice));
 	}
 	
 	
@@ -115,15 +113,15 @@ public class Product implements Comparable<Product> {
 	}
 	
 	
-	public void setQuantity(int n) {
-		this.quantity.set(n);
+	public void setQuantity(float q) {
+		this.quantity.set(q);
 	}
 	
-	public int getQuantity() {
+	public float getQuantity() {
 		return this.quantity.get();
 	}
 	
-	public IntegerProperty quantityProperty() {
+	public FloatProperty quantityProperty() {
 		return this.quantity;
 	}
 
@@ -138,7 +136,8 @@ public class Product implements Comparable<Product> {
 	
 	
 	public float getSellSubtotal() {
-		return this.sellSubtotal.get();
+		float s = this.sellSubtotal.get();
+		return Math.round(s * 10f) / 10f;
 	}
 	
 	public FloatProperty sellSubtotalProperty() {
