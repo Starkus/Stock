@@ -145,8 +145,9 @@ public class PurchaseDialogController extends DialogController {
 			public void updateItem(Product item, boolean empty) {
 				super.updateItem(item, empty);
 				
+				setStyle("");
+				
 				if (item == null || empty) {
-					setStyle("");
 				} else {
 					
 					if (item.getQuantity() != 1) {
