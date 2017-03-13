@@ -235,7 +235,7 @@ public class HomeController extends DialogController {
 	    		mainApp.getHistory().add(purchase);
 	    		purchase.substractItemsFromStock(mainApp.getSortedProductData());
 	    		
-	    		CashBox.put(purchase.getTotal());
+	    		CashBox.put(purchase.getPaid());
 	        	
 	        	SaveUtil.saveToFile(mainApp.getSavefile());
 	    	}

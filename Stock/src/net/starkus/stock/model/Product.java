@@ -15,7 +15,6 @@ public class Product implements Comparable<Product> {
 	private final FloatProperty buyPrice; // LEGACY: left for retro-compatibility
 	private final FloatProperty sellPrice;
 	private final FloatProperty quantity;
-	private final FloatProperty buySubtotal;
 	private final FloatProperty sellSubtotal;
 
 	/**
@@ -45,9 +44,6 @@ public class Product implements Comparable<Product> {
 		this.sellPrice = new SimpleFloatProperty(sellPrice);
 		
 		this.quantity = new SimpleFloatProperty(quantity);
-		
-		this.buySubtotal = new SimpleFloatProperty();
-		this.buySubtotal.bind(Bindings.multiply(this.quantity, this.buyPrice));
 		
 		this.sellSubtotal = new SimpleFloatProperty();
 		this.sellSubtotal.bind(Bindings.multiply(this.quantity, this.sellPrice));

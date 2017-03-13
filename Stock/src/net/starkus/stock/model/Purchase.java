@@ -10,21 +10,51 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.SortedList;
 import net.starkus.stock.util.LocalDateTimeAdapter;
 
 public class Purchase extends ProductList {
 
-	private StringProperty client;
-	private FloatProperty paid;
-	private ObjectProperty<LocalDateTime> creationDate; 
+	private final StringProperty client;
+	private final FloatProperty paid;
+	private final ObjectProperty<LocalDateTime> creationDate; 
+	
+	private final StringProperty formattedDate;
+	private final FloatProperty total;
 	
 	
 	public Purchase() {
 		super();
-		this.creationDate = new SimpleObjectProperty<>(LocalDateTime.now());
+		creationDate = new SimpleObjectProperty<>(null);
 		client = new SimpleStringProperty();
 		paid = new SimpleFloatProperty();
+		
+		formattedDate = new SimpleStringProperty();
+		total = new SimpleFloatProperty();
+		
+		creationDate.addListener(new ChangeListener<LocalDateTime>() {
+
+			@Override
+			public void changed(ObservableValue<? extends LocalDateTime> observable, LocalDateTime oldValue,
+					LocalDateTime n) {
+				
+				String value = String.format("%d/%d/%d - %d:%d:%d", n.getDayOfMonth(), n.getMonthValue(), n.getYear(),
+						n.getHour(), n.getMinute(), n.getSecond());
+				
+				formattedDate.set(value);
+			}
+		});
+		
+		productList.addListener(new ListChangeListener<Product>() {
+
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Product> c) {
+				total.set(getTotal());
+			}
+		});
 	}
 	
 	
@@ -58,6 +88,18 @@ public class Purchase extends ProductList {
 		creationDate.set(date);
 	}
 	
+	public ObjectProperty<LocalDateTime> creationDateProperty() {
+		return creationDate;
+	}
+	
+	public StringProperty formattedDateProperty() {
+		return formattedDate;
+	}
+	
+	public FloatProperty totalProperty() {
+		return total;
+	}
+	
 	
 	public String getClient() {
 		return client.get();
@@ -65,6 +107,10 @@ public class Purchase extends ProductList {
 	
 	public void setClient(String clientName) {
 		client.set(clientName);
+	}
+	
+	public StringProperty clientProperty() {
+		return client;
 	}
 	
 	

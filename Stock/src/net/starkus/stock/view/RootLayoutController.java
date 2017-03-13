@@ -191,6 +191,13 @@ public class RootLayoutController {
 	@FXML
 	private void handleOpenHistory() {
 		
+		try {
+			Dialog.historyViewerDialog.init().showAndWait();
+		} 
+		catch (IOException e) {
+
+			e.printStackTrace();
+		}
 	}
 	
 	

@@ -13,6 +13,7 @@ import net.starkus.stock.view.ChangePasswordDialogController;
 import net.starkus.stock.view.ClientOverviewController;
 import net.starkus.stock.view.DebtAssignDialogController;
 import net.starkus.stock.view.DialogController;
+import net.starkus.stock.view.HistoryViewerController;
 import net.starkus.stock.view.PasswordDialogController;
 import net.starkus.stock.view.ProductEditDialogController;
 import net.starkus.stock.view.ProductOverviewController;
@@ -40,6 +41,9 @@ public class Dialog <T extends DialogController> {
 	
 	public static final Dialog<DebtAssignDialogController> debtAssignDialog =
 			new Dialog<DebtAssignDialogController>		("view/DebtAssignDialog.fxml").setTitle("Pago insuficiente");
+	
+	public static final Dialog<HistoryViewerController> historyViewerDialog = 
+			new Dialog<HistoryViewerController>			("view/HistoryViewer.fxml").setTitle("Historial");
 	
 	public static final Dialog<PasswordDialogController> passwordDialog =
 			new Dialog<PasswordDialogController>		("view/PasswordDialog.fxml").setTitle("Contraseña requerida");
