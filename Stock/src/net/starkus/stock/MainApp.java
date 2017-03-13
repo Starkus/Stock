@@ -18,7 +18,7 @@ import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.util.PasswordUtils;
 import net.starkus.stock.util.SaveUtil;
-import net.starkus.stock.model.ProductList;
+import net.starkus.stock.model.Purchase;
 import net.starkus.stock.view.DialogController;
 import net.starkus.stock.view.HomeController;
 import net.starkus.stock.view.RootLayoutController;
@@ -33,7 +33,7 @@ public class MainApp extends Application {
 	private ObservableList<Client> clientList = FXCollections.observableArrayList();
 	private SortedList<Client> sortedClients;
 	
-	private ObservableList<ProductList> history = FXCollections.observableArrayList();
+	private ObservableList<Purchase> history = FXCollections.observableArrayList();
 	
 	private String password;
 	
@@ -86,7 +86,7 @@ public class MainApp extends Application {
 	}
 	
 	
-	public ObservableList<ProductList> getHistory() {
+	public ObservableList<Purchase> getHistory() {
 		return history;
 	}
 	

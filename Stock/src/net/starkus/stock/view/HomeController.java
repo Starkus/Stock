@@ -25,7 +25,7 @@ import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.ProductList;
+import net.starkus.stock.model.Purchase;
 import net.starkus.stock.util.SaveUtil;
 
 public class HomeController extends DialogController {
@@ -228,14 +228,14 @@ public class HomeController extends DialogController {
 	    	PurchaseDialogController controller = Dialog.purchaseDialog.init();
 	    	controller.showAndWait();
 	    	
-	    	ProductList purchase = controller.getPurchase();
+	    	Purchase purchase = controller.getPurchase();
 	    	
 	    	if (purchase != null) {
 	    		
 	    		mainApp.getHistory().add(purchase);
 	    		purchase.substractItemsFromStock(mainApp.getSortedProductData());
 	    		
-	    		CashBox.put(purchase.getTotal(true));
+	    		CashBox.put(purchase.getTotal());
 	        	
 	        	SaveUtil.saveToFile(mainApp.getSavefile());
 	    	}

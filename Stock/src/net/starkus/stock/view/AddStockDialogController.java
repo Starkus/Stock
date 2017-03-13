@@ -17,14 +17,15 @@ import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.ProductList;
+//import net.starkus.stock.model.ProductList;
 import net.starkus.stock.model.ProductListWithTotal;
+import net.starkus.stock.model.Purchase;
 import net.starkus.stock.util.DateUtil;
 
 public class AddStockDialogController extends DialogController {
 	
 	
-	private ProductList productList;
+	private Purchase productList;
 	
 	
 	@FXML
@@ -55,7 +56,7 @@ public class AddStockDialogController extends DialogController {
      */
     @FXML
     private void initialize() {
-    	productList = new ProductList();
+    	productList = new Purchase();
     	
     	productTable.setItems(new ProductListWithTotal(productList.getProductData()));
     	
@@ -211,7 +212,7 @@ public class AddStockDialogController extends DialogController {
 		
 	}
 	
-	public ProductList getProductList() {
+	public Purchase getProductList() {
 		return productList;
 	}
 

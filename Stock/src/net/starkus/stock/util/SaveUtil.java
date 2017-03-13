@@ -15,8 +15,8 @@ import net.starkus.stock.model.Client;
 import net.starkus.stock.model.ClientListWrapper;
 import net.starkus.stock.model.HistoryWrapper;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.ProductList;
 import net.starkus.stock.model.ProductListWrapper;
+import net.starkus.stock.model.Purchase;
 import net.starkus.stock.model.SavefileWrapper;
 
 public class SaveUtil {
@@ -54,7 +54,7 @@ public class SaveUtil {
 			}
 			
 			if (historyWrapper != null) {
-				ObservableList<ProductList> history = mainApp.getHistory();
+				ObservableList<Purchase> history = mainApp.getHistory();
 				history.clear();
 				history.addAll(historyWrapper.getHistory());
 			}
@@ -89,7 +89,7 @@ public class SaveUtil {
 			// Get the stuff from mainApp.
 			ObservableList<Product> productList = mainApp.getProductData();
 			ObservableList<Client> clientList = mainApp.getClients();
-			ObservableList<ProductList> history = mainApp.getHistory();
+			ObservableList<Purchase> history = mainApp.getHistory();
 			
 			// Make the sub-wrappers
 			ProductListWrapper productsWrapper = new ProductListWrapper();

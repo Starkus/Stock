@@ -28,12 +28,12 @@ import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.ProductList;
 import net.starkus.stock.model.ProductListWithTotal;
+import net.starkus.stock.model.Purchase;
 
 public class PurchaseDialogController extends DialogController {
 	
-	private ProductList purchase;
+	private Purchase purchase;
 	
 	
 	private FloatProperty total;
@@ -86,7 +86,7 @@ public class PurchaseDialogController extends DialogController {
      */
     @FXML
     private void initialize() {
-    	purchase = new ProductList();
+    	purchase = new Purchase();
     	
     	ObservableList<Product> items = purchase.getProductData();
     	productTable.setItems(new ProductListWithTotal(items));
@@ -176,7 +176,7 @@ public class PurchaseDialogController extends DialogController {
     	}
     }
 	
-	public ProductList getPurchase() {
+	public Purchase getPurchase() {
 		return purchase;
 	}
 	
@@ -355,7 +355,7 @@ public class PurchaseDialogController extends DialogController {
 				return;
 			
 			debtor.add(debt.get());
-			purchase.setClient(debtor);
+			purchase.setClient(debtor.getName());
 			
 		}
 		else if (debt.get() < 0) {
@@ -376,6 +376,7 @@ public class PurchaseDialogController extends DialogController {
 		}	
 		
 		purchase.setCreationDate(LocalDateTime.now());
+		purchase.setPaid(paying.get());
 		
 		dialogStage.close();
 	}

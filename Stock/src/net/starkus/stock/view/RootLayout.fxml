@@ -26,6 +26,11 @@
           	  <MenuItem fx:id="deleteCmd" mnemonicParsing="false" text="Borrar producto" />
           	</items>
           </Menu>
+          <Menu mnemonicParsing="false" text="Ver">
+          	<items>
+          	  <MenuItem onAction="#handleOpenHistory" mnemonicParsing="false" text="Ver historial..." />
+          	</items>
+          </Menu>
           <Menu mnemonicParsing="false" text="Admin">
             <items>
               <MenuItem onAction="#handleSetCash" mnemonicParsing="false" text="Caja" />

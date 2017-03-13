@@ -7,14 +7,14 @@ import javax.xml.bind.annotation.XmlElement;
 //@XmlRootElement(name = "history")
 public class HistoryWrapper {
 	
-	private List<ProductList> history;
+	private List<Purchase> history;
 	
 	@XmlElement(name = "purchase")
-	public List<ProductList> getHistory() {
+	public List<Purchase> getHistory() {
 		return history;
 	}
 	
-	public void setHistory(List<ProductList> history) {
+	public void setHistory(List<Purchase> history) {
 		this.history = history;
 	}
 

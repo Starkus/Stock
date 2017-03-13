@@ -16,7 +16,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.Dialog;
-import net.starkus.stock.model.ProductList;
+import net.starkus.stock.model.Purchase;
 import net.starkus.stock.util.SaveUtil;
 
 public class RootLayoutController {
@@ -174,7 +174,7 @@ public class RootLayoutController {
 			AddStockDialogController controller = Dialog.addStockDialog.init();
 			controller.showAndWait();
 			
-			ProductList purchase = controller.getProductList();
+			Purchase purchase = controller.getProductList();
 	    	
 	    	if (purchase != null) {
 	    		purchase.addToStock(mainApp.getSortedProductData());
@@ -186,6 +186,11 @@ public class RootLayoutController {
 			
 			e.printStackTrace();
 		}
+	}
+	
+	@FXML
+	private void handleOpenHistory() {
+		
 	}
 	
 	
