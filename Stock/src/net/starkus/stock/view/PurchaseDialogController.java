@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
@@ -18,6 +19,8 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Labeled;
@@ -72,6 +75,8 @@ public class PurchaseDialogController extends DialogController {
 	
 	private Product productToAdd;
 	
+	private ProductListWithTotal productList;
+	
 	
 
 	public PurchaseDialogController() {
@@ -89,7 +94,9 @@ public class PurchaseDialogController extends DialogController {
     	purchase = new Purchase();
     	
     	ObservableList<Product> items = purchase.getProductData();
-    	productTable.setItems(new ProductListWithTotal(items));
+    	
+    	productList = new ProductListWithTotal(items);
+    	productTable.setItems(productList);
     	
     	codeColumn.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
@@ -135,6 +142,19 @@ public class PurchaseDialogController extends DialogController {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (subtField.isFocused())
 					handleSubtotalEntered();
+			}
+		});
+    	
+    	
+    	productTable.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
+					
+					Product sel = productTable.getSelectionModel().getSelectedItem();
+					productList.remove(sel);
+				}
 			}
 		});
     }
@@ -238,6 +258,9 @@ public class PurchaseDialogController extends DialogController {
 				}
 			}
 		}
+		
+		if (product == null)
+			return;
 		
 		productToAdd = product.copy();
 		productToAdd.setQuantity(0);

@@ -87,6 +87,15 @@ public class HomeController extends DialogController {
     	filterField.setAutoProc(true);
     	
     	setUpContextMenu();
+    	
+    	stockTable.setOnMouseClicked(event -> {
+    		if (!event.getButton().equals(MouseButton.PRIMARY))
+    			return;
+    		
+    		if (event.getClickCount() == 2 && (stockTable.getSelectionModel().getSelectedIndex() != -1)) {
+    			handleEditProduct();
+    		}
+    	});
     }
     
     /**

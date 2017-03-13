@@ -167,6 +167,7 @@ public class MainApp extends Application {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
 			BorderPane page = (BorderPane) loader.load();
+			page.getStylesheets().add(MainApp.class.getResource("DarkMetro.css").toExternalForm());
 			
 			Scene scene = new Scene(page);
 			primaryStage.setScene(scene);

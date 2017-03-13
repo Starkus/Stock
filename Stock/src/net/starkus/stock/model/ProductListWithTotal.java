@@ -43,5 +43,10 @@ public class ProductListWithTotal extends TransformationList<Product, Product>{
 		//	return 0;
 		return getSource().size() + 1;
 	}
+	
+	@Override
+	public boolean remove(Object o) {
+		return getSource().remove(o);
+	}
 
 }

@@ -16,7 +16,6 @@ import net.starkus.stock.view.DialogController;
 import net.starkus.stock.view.HistoryViewerController;
 import net.starkus.stock.view.PasswordDialogController;
 import net.starkus.stock.view.ProductEditDialogController;
-import net.starkus.stock.view.ProductOverviewController;
 import net.starkus.stock.view.PurchaseDialogController;
 import net.starkus.stock.view.SetCashDialogController;
 
@@ -50,9 +49,6 @@ public class Dialog <T extends DialogController> {
 	
 	public static final Dialog<ProductEditDialogController> productEditDialog = 
 			new Dialog<ProductEditDialogController>		("view/ProductEditDialog.fxml").setTitle("Editar producto");
-	
-	public static final Dialog<ProductOverviewController> productOverviewDialog = 
-			new Dialog<ProductOverviewController>		("view/ProductOverview.fxml").setTitle("Productos");
 	
 	public static final Dialog<PurchaseDialogController> purchaseDialog = 
 			new Dialog<PurchaseDialogController>		("view/PurchaseDialog.fxml").setTitle("Nueva compra");
@@ -117,6 +113,7 @@ public class Dialog <T extends DialogController> {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource(location));
 		Pane page = (Pane) loader.load();
+		page.getStylesheets().add(MainApp.class.getResource("DarkMetro.css").toExternalForm());
 			
 		Stage dialogStage = new Stage();
 		dialogStage.setTitle(title);
