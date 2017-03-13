@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="550.0" minWidth="1100.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.HistoryViewerController">
+<AnchorPane minHeight="550.0" minWidth="1100.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.HistoryViewerController">
    <children>
       <SplitPane dividerPositions="0.5927272727272728" prefHeight="160.0" prefWidth="200.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -31,7 +31,7 @@
                         <HBox spacing="8.0">
                            <children>
                               <Label prefHeight="21.0" prefWidth="48.0" text="De:" HBox.hgrow="NEVER" />
-                              <ComboBox fx:id="clientFilterBox" maxWidth="1.7976931348623157E308" minWidth="200.0" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="clientFilterBox" editable="false" maxWidth="1.7976931348623157E308" minWidth="200.0" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                         <TableView fx:id="productTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
