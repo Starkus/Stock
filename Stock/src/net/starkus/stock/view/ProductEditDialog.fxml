@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="251.0" prefWidth="477.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.ProductEditDialogController">
+<AnchorPane prefHeight="200.0" prefWidth="477.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.ProductEditDialogController">
    <children>
-      <GridPane prefHeight="176.0" prefWidth="360.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="12.0">
+      <GridPane prefHeight="176.0" prefWidth="360.0" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="12.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="169.0" minWidth="10.0" prefWidth="141.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="312.0" />
@@ -17,34 +17,22 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Codigo" />
             <Label text="Nombre" GridPane.rowIndex="1" />
-            <Label text="Precio compra" GridPane.rowIndex="2" />
-            <Label text="Precio venta" GridPane.rowIndex="3" />
+            <Label text="Precio venta" GridPane.rowIndex="2" />
             <TextField fx:id="codeField" GridPane.columnIndex="1" />
-            <TextField fx:id="nameField" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="buyPriceField" maxWidth="1.7976931348623157E308" onAction="#handleChangeBuyPrice" onKeyTyped="#handleChangeBuyPrice" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <TextField fx:id="sellPriceFlatField" cacheHint="QUALITY" maxWidth="1.7976931348623157E308" onAction="#handleChangeFlatSellPrice" onKeyTyped="#handleChangeFlatSellPrice">
-                     <GridPane.margin>
-                        <Insets right="3.0" />
-                     </GridPane.margin>
-                  </TextField>
-                  <TextField fx:id="sellPriceMultField" maxWidth="1.7976931348623157E308" onAction="#handleChangeMultSellPrice" onKeyTyped="#handleChangeMultSellPrice" GridPane.columnIndex="1">
-                     <GridPane.margin>
-                        <Insets left="3.0" />
-                     </GridPane.margin>
+                  <TextField fx:id="sellPriceField" cacheHint="QUALITY" maxWidth="1.7976931348623157E308">
                   </TextField>
                </children>
             </GridPane>
@@ -52,7 +40,6 @@
       </GridPane>
       <GridPane layoutX="30.0" layoutY="125.0" prefHeight="37.0" prefWidth="245.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>

@@ -1,14 +1,29 @@
 package net.starkus.stock.view;
 
+import java.io.IOException;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.CashBox;
+import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.util.SaveUtil;
@@ -30,6 +45,14 @@ public class HomeController extends DialogController {
 	private Label cashField;
 	@FXML
 	private Label sesionBalanceField;
+	
+	@FXML
+	private AutoCompleteTextField filterField;
+	
+	
+	private FilteredList<Product> filteredProductList;
+	
+	private ContextMenu contextMenu;
 	
 	
 	/**
@@ -60,6 +83,10 @@ public class HomeController extends DialogController {
 				setBalanceFieldTextColor();
 			}
 		});
+    	
+    	filterField.setAutoProc(true);
+    	
+    	setUpContextMenu();
     }
     
     /**
@@ -71,8 +98,102 @@ public class HomeController extends DialogController {
     public void setMainApp(MainApp mainApp) {
     	super.setMainApp(mainApp);
     	
-    	stockTable.setItems(mainApp.getProductData());
+    	for (Product p : mainApp.getProductData()) {
+    		filterField.getEntries().add(p.getName());
+    	}
+    	
+    	// Initialize filter list and set table items
+    	handleFilter();
+    	
+    	RootLayoutController root = mainApp.getRootLayout();
+    	root.getNewCmd().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				handleNewProduct();
+			}
+		});
+    	
+    	root.getEditCmd().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				handleEditProduct();
+			}
+		});
+    	
+    	root.getDeleteCmd().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				handleDeleteProduct();
+			}
+		});
     }
+    
+    
+    
+    private void setUpContextMenu() {
+    	
+    	contextMenu = new ContextMenu();
+    	
+    	MenuItem mi1 = new MenuItem("Nuevo...");
+    	mi1.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				handleNewProduct();
+			}
+		});
+    	contextMenu.getItems().add(mi1);
+    	
+    	MenuItem mi2 = new MenuItem("Editar...");
+    	mi2.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				handleEditProduct();
+			}
+		});
+    	contextMenu.getItems().add(mi2);
+    	
+    	MenuItem mi3 = new MenuItem("Borrar");
+    	mi3.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				handleDeleteProduct();
+			}
+		});
+    	contextMenu.getItems().add(mi3);
+    	
+    	
+
+    	/*
+    	 * Make the contextMenu visible when right-clicking an item.
+    	 */
+    	stockTable.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				if (event.getButton() == MouseButton.SECONDARY) {
+					
+					contextMenu.show(stockTable, event.getScreenX(), event.getScreenY());
+				}
+				else {
+					
+					contextMenu.hide();
+				}
+			}
+		});
+    	
+    	/*
+    	 * Hide it!
+    	 */
+    	contextMenu.setAutoHide(true);
+    }
+    
+    
     
     private void setBalanceFieldTextColor() {
 
@@ -91,43 +212,137 @@ public class HomeController extends DialogController {
     }
     
     @FXML
+    private void handleFilter() {
+    	
+    	// Ignore case
+    	filteredProductList = mainApp.getProductData().filtered(p ->
+    		p.getName().toLowerCase().contains(filterField.getText().toLowerCase()));
+    	
+    	stockTable.setItems(filteredProductList);
+    }
+    
+    @FXML
     private void handleNewPurchase() {
-    	ProductList purchase = mainApp.showPurchaseDialog();
     	
-    	if (purchase != null) {
-    		purchase.substractItemsFromStock(mainApp.getSortedProductData());
-    		
-    		CashBox.put(purchase.getTotal(true));
-        	
-        	SaveUtil.saveToFile(mainApp.getSavefile());
+    	try {
+	    	PurchaseDialogController controller = Dialog.purchaseDialog.init();
+	    	controller.showAndWait();
+	    	
+	    	ProductList purchase = controller.getPurchase();
+	    	
+	    	if (purchase != null) {
+	    		
+	    		mainApp.getHistory().add(purchase);
+	    		purchase.substractItemsFromStock(mainApp.getSortedProductData());
+	    		
+	    		CashBox.put(purchase.getTotal(true));
+	        	
+	        	SaveUtil.saveToFile(mainApp.getSavefile());
+	    	}
     	}
-    }
-    /*
-    @FXML
-    private void handleAddStock() {
-    	ProductList purchase = mainApp.showAddStockDialog();
-    	
-    	if (purchase != null) {
-    		purchase.addToStock(mainApp.getSortedProductData());
-    		
-    		CashBox.substract(purchase.getTotal(false));
-        	
-        	SaveUtil.saveToFile(mainApp.getSavefile());
-    	}
-    }
-    */
-    @FXML
-    private void handleEditProducts() {
-    	mainApp.showProductOverview();
-    	
-    	SaveUtil.saveToFile(mainApp.getSavefile());
+	    catch (IOException e) {
+	    	
+	    	e.printStackTrace();
+	    }
     }
     
     @FXML
     private void handleEditClients() {
-    	mainApp.showClientOverview();
     	
-    	SaveUtil.saveToFile(mainApp.getSavefile());
+    	try {
+			Dialog.clientOverviewDialog.init().showAndWait();
+	    	
+	    	SaveUtil.saveToFile(mainApp.getSavefile());
+			
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+    }
+    
+    @FXML
+    private void handleNewProduct() {
+    	Product tempProduct = new Product();
+    	
+    	ProductEditDialogController controller;
+		try {
+			controller = Dialog.productEditDialog.init();
+		}
+		catch (IOException e) {
+
+			e.printStackTrace();
+			return;
+		}
+		
+		controller.setProduct(tempProduct);
+		
+		controller.showAndWait();
+    	
+    	if (controller.isOkClicked()) {
+    		mainApp.getProductData().add(tempProduct);
+    	}
+    }
+    
+    @FXML
+    private void handleEditProduct() {
+    	Product selectedProduct = stockTable.getSelectionModel().getSelectedItem();
+    	if (selectedProduct != null) {
+    		//boolean okClicked = mainApp.showProductEditDialog(selectedProduct);
+    		
+    		ProductEditDialogController controller;
+			try {
+				controller = Dialog.productEditDialog.init();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+    		
+			controller.setProduct(selectedProduct);
+			
+			controller.showAndWait();
+			
+    	} else {
+    		// Nothing selected
+    		Alert alert = new Alert(AlertType.WARNING);
+    		alert.setTitle("No hay seleccion");
+    		alert.setHeaderText("No hay un producto seleccionado.");
+    		alert.setContentText("Seleccione un producto para editar.");
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+    		
+    		alert.showAndWait();
+    	}
+    }
+    
+    @FXML
+    private void handleDeleteProduct() {
+    	int selectedIndex = stockTable.getSelectionModel().getSelectedIndex();
+    	
+    	if (selectedIndex >= 0) {
+    		
+    		Alert alert = new Alert(AlertType.CONFIRMATION);
+    		alert.setTitle("Confirmar");
+    		alert.setHeaderText("¿Seguro que desea eliminar el producto seleccionado?");
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+			
+			alert.showAndWait();
+    		
+			if (alert.getResult() == ButtonType.OK)
+				mainApp.getProductData().remove(selectedIndex);
+    	
+    	} else {
+    		// Nothing selected
+    		Alert alert = new Alert(AlertType.WARNING);
+    		alert.setTitle("No hay seleccion");
+    		alert.setHeaderText("No hay un producto seleccionado.");
+    		alert.setContentText("Seleccione un producto para eliminar.");
+			DialogPane pane = alert.getDialogPane();
+			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+    		
+    		alert.showAndWait();
+    	}
     }
 
 }

@@ -1,6 +1,7 @@
 package net.starkus.stock.view;
 
 import java.io.File;
+import java.io.IOException;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -9,15 +10,20 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.util.SaveUtil;
 
 public class RootLayoutController {
 	
 	private MainApp mainApp;
+	private Stage primaryStage;
+	private BorderPane rootPage;
 	
 
 	@FXML
@@ -26,6 +32,15 @@ public class RootLayoutController {
 	private MenuItem exportCmd;
 	@FXML
 	private MenuItem closeCmd;
+
+	@FXML
+	private MenuItem newCmd;
+	@FXML
+	private MenuItem editCmd;
+	@FXML
+	private MenuItem dupliCmd;
+	@FXML
+	private MenuItem deleteCmd;
 	
 	
 	
@@ -41,6 +56,22 @@ public class RootLayoutController {
 	
 	public void setMainApp(MainApp m) {
 		this.mainApp = m;
+	}
+	
+	public void setPrimaryStage(Stage stage) {
+		primaryStage = stage;
+	}
+	
+	public Stage getPrimaryStage() {
+		return primaryStage;
+	}
+	
+	public void setRootPage(BorderPane page) {
+		rootPage = page;
+	}
+	
+	public BorderPane getRootPage() {
+		return rootPage;
 	}
 	
 	private File saveLoadDirectory() {
@@ -111,26 +142,63 @@ public class RootLayoutController {
 	
 	@FXML
 	private void handleChangePassword() {
-		mainApp.showPasswordChangeDialog();
 		
-		SaveUtil.saveToFile(mainApp.getSavefile());
+		try {
+			Dialog.changePasswordDialog.init().showAndWait();
+			SaveUtil.saveToFile(mainApp.getSavefile());
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	@FXML
 	private void handleSetCash() {
-		mainApp.showSetCashDialog();
-		
+
+		try {
+			Dialog.setCashDialog.init().showAndWait();
+		}
+		catch (IOException e) {
+			
+			e.printStackTrace();
+			return;
+		}
 		SaveUtil.saveToFile(mainApp.getSavefile());
 	}
 	
 	@FXML
 	private void handleAddStock() {
-		ProductList purchase = mainApp.showAddStockDialog();
-    	
-    	if (purchase != null) {
-    		purchase.addToStock(mainApp.getSortedProductData());
-        	
-        	SaveUtil.saveToFile(mainApp.getSavefile());
-    	}
+		
+		try {
+			AddStockDialogController controller = Dialog.addStockDialog.init();
+			controller.showAndWait();
+			
+			ProductList purchase = controller.getProductList();
+	    	
+	    	if (purchase != null) {
+	    		purchase.addToStock(mainApp.getSortedProductData());
+	        	
+	        	SaveUtil.saveToFile(mainApp.getSavefile());
+	    	}
+		}
+		catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public MenuItem getNewCmd() {
+		return newCmd;
+	}
+	public MenuItem getEditCmd() {
+		return editCmd;
+	}
+	public MenuItem getDuplicateCmd() {
+		return dupliCmd;
+	}
+	public MenuItem getDeleteCmd() {
+		return deleteCmd;
 	}
 }

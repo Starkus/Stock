@@ -1,5 +1,6 @@
 package net.starkus.stock.view;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import javafx.application.Platform;
@@ -14,6 +15,7 @@ import javafx.scene.control.DialogPane;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
+import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.model.ProductListWithTotal;
@@ -139,9 +141,9 @@ public class AddStockDialogController extends DialogController {
 		
 		String q = quantField.getText();
 		
-		int quant = 1;
+		float quant = 1;
 		if (q.length() != 0 && q != null && !q.isEmpty())
-			quant = Integer.parseInt(q);
+			quant = Float.parseFloat(q);
 		
 		Product product = findProduct(codeNameField.getText());
 		
@@ -181,7 +183,19 @@ public class AddStockDialogController extends DialogController {
 	@FXML
 	private void handleOK() {
 		
-		if (!mainApp.showPasswordDialog()) {
+		PasswordDialogController controller;
+		try {
+			controller = Dialog.passwordDialog.init();
+		}
+		catch (IOException e) {
+
+			e.printStackTrace();
+			return;
+		}
+		
+		controller.showAndWait();
+		
+		if (!controller.wasPasswordCorrect()) {
 			return;
 		}
 		

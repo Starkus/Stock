@@ -1,5 +1,6 @@
 package net.starkus.stock.view;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Client;
+import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductList;
 import net.starkus.stock.model.ProductListWithTotal;
@@ -68,7 +70,7 @@ public class PurchaseDialogController extends DialogController {
 	private TextField debtField;
 
 	
-	private Product productBuffer;
+	private Product productToAdd;
 	
 	
 
@@ -179,6 +181,24 @@ public class PurchaseDialogController extends DialogController {
 	}
 	
 	
+	private Client pickClient() {
+		
+		DebtAssignDialogController controller;
+		
+		try {
+			controller = Dialog.debtAssignDialog.init();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		controller.showAndWait();
+		
+		return controller.getClient();
+	}
+	
+	
 	@FXML
 	private void handleCodeEntered() {
 		
@@ -219,8 +239,8 @@ public class PurchaseDialogController extends DialogController {
 			}
 		}
 		
-		productBuffer = product.copy();
-		productBuffer.setQuantity(0);
+		productToAdd = product.copy();
+		productToAdd.setQuantity(0);
 		
 		quantField.requestFocus();
 	}
@@ -241,9 +261,9 @@ public class PurchaseDialogController extends DialogController {
 			}
 		}
 		
-		productBuffer.setQuantity(quant);
+		productToAdd.setQuantity(quant);
 		
-		float subt = productBuffer.getSellSubtotal();
+		float subt = productToAdd.getSellSubtotal();
 		subtField.setText(String.format("%.2f", subt));
 		
 		//handleAddItem();
@@ -266,9 +286,9 @@ public class PurchaseDialogController extends DialogController {
 			}
 		}
 		
-		float quant = subt / productBuffer.getSellPrice();
+		float quant = subt / productToAdd.getSellPrice();
 		
-		productBuffer.setQuantity(Math.round(quant*100f) / 100f);
+		productToAdd.setQuantity(Math.round(quant*100f) / 100f);
 		
 		quantField.setText(String.format("%.2f", quant));
 		
@@ -278,8 +298,8 @@ public class PurchaseDialogController extends DialogController {
 	@FXML
 	private void handleAddItem() {
 		
-		if (productBuffer.getQuantity() == 0)
-			productBuffer.setQuantity(1);
+		if (productToAdd.getQuantity() == 0)
+			productToAdd.setQuantity(1);
 
 		String c = codeNameField.getText();
 		
@@ -291,7 +311,7 @@ public class PurchaseDialogController extends DialogController {
 		}
 		
 		// If the product is not found
-		if (productBuffer == null) {
+		if (productToAdd == null) {
 			
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("ERROR");
@@ -301,8 +321,6 @@ public class PurchaseDialogController extends DialogController {
 			alert.showAndWait();
 		
 		} else {
-		
-			Product productToAdd = productBuffer;
 			
 			purchase.add(productToAdd);
 		}
@@ -329,12 +347,16 @@ public class PurchaseDialogController extends DialogController {
 		
 		if (debt.get() > 0) {
 			
-			Client debtor = mainApp.showDebtDialog();
+			//Client debtor = mainApp.showDebtDialog();
+			
+			Client debtor = pickClient();
 			
 			if (debtor == null)
 				return;
 			
 			debtor.add(debt.get());
+			purchase.setClient(debtor);
+			
 		}
 		else if (debt.get() < 0) {
 			

@@ -14,11 +14,7 @@ public class ProductEditDialogController extends DialogController {
 	@FXML
 	private TextField nameField;
 	@FXML
-	private TextField buyPriceField;
-	@FXML
-	private TextField sellPriceFlatField;
-	@FXML
-	private TextField sellPriceMultField;
+	private TextField sellPriceField;
 	
 	
 	private Product product;
@@ -32,14 +28,11 @@ public class ProductEditDialogController extends DialogController {
 	public void setProduct(Product product) {
 		this.product = product;
 		
-		float buy = product.getBuyPrice();
 		float sell = product.getSellPrice();
 		
 		codeField.setText(Long.toString(product.getCode()));
 		nameField.setText(product.getName());
-		buyPriceField.setText(Float.toString(buy));
-		sellPriceFlatField.setText(Float.toString(sell));
-		sellPriceMultField.setText(Float.toString(sell / buy));
+		sellPriceField.setText(Float.toString(sell));
 	}
 	
 	public boolean isOkClicked() {
@@ -51,8 +44,7 @@ public class ProductEditDialogController extends DialogController {
 		if (isInputValid()) {
 			product.setCode(Long.parseLong(codeField.getText()));
 			product.setName(nameField.getText());
-			product.setBuyPrice(Float.parseFloat(buyPriceField.getText()));
-			product.setSellPriceFlat(Float.parseFloat(sellPriceFlatField.getText()));
+			product.setSellPrice(Float.parseFloat(sellPriceField.getText()));
 			
 			okClicked = true;
 			dialogStage.close();
@@ -64,66 +56,6 @@ public class ProductEditDialogController extends DialogController {
 		dialogStage.close();
 	}
 	
-	@FXML
-	private void handleChangeBuyPrice() {
-		
-		String buy = buyPriceField.getText();
-		
-		if (buy.length() != 0) {
-			
-			if (!buy.contains(".")) {
-				buy += ".0";
-			}
-			
-			try {
-				float sell = Float.parseFloat(buy) * Float.parseFloat(sellPriceMultField.getText());
-				sellPriceFlatField.setText(Float.toString(sell));
-			} catch (NumberFormatException e) {
-				sellPriceFlatField.setText("?");
-			}
-		}
-	}
-	
-	@FXML
-	private void handleChangeFlatSellPrice() {
-		
-		String flat = sellPriceFlatField.getText();
-		
-		if (flat.length() != 0) {
-			
-			if (!flat.contains(".")) {
-				flat += ".0";
-			}
-			
-			try {
-				float mult = Float.parseFloat(flat) / Float.parseFloat(buyPriceField.getText());
-				sellPriceMultField.setText(Float.toString(mult));
-			} catch (NumberFormatException e) {
-				sellPriceMultField.setText("?");
-			}
-		}
-	}
-	
-	@FXML
-	private void handleChangeMultSellPrice() {
-		
-		String mult = sellPriceMultField.getText();
-		
-		if (mult.length() != 0) {
-			
-			if (!mult.contains(".")) {
-				mult += ".0";
-			}
-			
-			try {
-				float flat = Float.parseFloat(mult) * Float.parseFloat(buyPriceField.getText());
-				sellPriceFlatField.setText(Float.toString(flat));
-			} catch (NumberFormatException e) {
-				sellPriceFlatField.setText("?");
-			}
-		}
-	}
-	
 	private boolean isInputValid() {
 		String errorMessage = "";
 
@@ -133,28 +65,12 @@ public class ProductEditDialogController extends DialogController {
 		if (nameField.getText() == null || nameField.getText().length() == 0) {
 			errorMessage += "Inserte un nombre valido!\n";
 		}
-		if (buyPriceField.getText() == null || buyPriceField.getText().length() == 0) {
-			errorMessage += "Inserte un precio de compra!\n";
-		}
-		if (sellPriceFlatField.getText() == null || sellPriceFlatField.getText().length() == 0) {
+		if (sellPriceField.getText() == null || sellPriceField.getText().length() == 0) {
 			errorMessage += "Inserte un precio de venta!\n";
 		}
 		
 		try {
-			String s = buyPriceField.getText();
-			
-			if (!s.contains(".")) {
-				s += ".0";
-			}
-			
-			Float.parseFloat(s);
-		
-		} catch (NumberFormatException e) {
-			errorMessage += "El precio de compra no es valido!\n";
-		}
-		
-		try {
-			String s = sellPriceFlatField.getText();
+			String s = sellPriceField.getText();
 			
 			if (!s.contains(".")) {
 				s += ".0";

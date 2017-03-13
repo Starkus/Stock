@@ -1,5 +1,7 @@
 package net.starkus.stock.view;
 
+import java.io.IOException;
+
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -11,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AutoCompleteTextField;
+import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
 
 public class ProductOverviewController extends DialogController {
@@ -142,8 +145,23 @@ public class ProductOverviewController extends DialogController {
     @FXML
     private void handleNewProduct() {
     	Product tempProduct = new Product();
-    	boolean okClicked = mainApp.showProductEditDialog(tempProduct);
-    	if (okClicked) {
+    	//boolean okClicked = mainApp.showProductEditDialog(tempProduct);
+    	
+    	ProductEditDialogController controller;
+		try {
+			controller = Dialog.productEditDialog.init();
+		}
+		catch (IOException e) {
+
+			e.printStackTrace();
+			return;
+		}
+		
+		controller.setProduct(tempProduct);
+		
+		controller.showAndWait();
+    	
+    	if (controller.isOkClicked()) {
     		mainApp.getProductData().add(tempProduct);
     	}
     }
@@ -152,8 +170,22 @@ public class ProductOverviewController extends DialogController {
     private void handleEditProduct() {
     	Product selectedProduct = productTable.getSelectionModel().getSelectedItem();
     	if (selectedProduct != null) {
-    		boolean okClicked = mainApp.showProductEditDialog(selectedProduct);
-    		if (okClicked) {
+    		//boolean okClicked = mainApp.showProductEditDialog(selectedProduct);
+    		
+    		ProductEditDialogController controller;
+			try {
+				controller = Dialog.productEditDialog.init();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+    		
+			controller.setProduct(selectedProduct);
+			
+			controller.showAndWait();
+			
+    		if (controller.isOkClicked()) {
     			showProductDetails(selectedProduct);
     		}
     	} else {

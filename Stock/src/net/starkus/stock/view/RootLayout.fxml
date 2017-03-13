@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
 
 <BorderPane prefHeight="650.0" prefWidth="1150.0" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.RootLayoutController">
    <top>
@@ -16,6 +18,13 @@
                   <MenuItem fx:id="exportCmd" mnemonicParsing="false" onAction="#handleExport" text="Exportar..." />
               <MenuItem fx:id="closeCmd" mnemonicParsing="false" onAction="#handleClose" text="Salir" />
             </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Editar">
+          	<items>
+          	  <MenuItem fx:id="newCmd" mnemonicParsing="false" text="Nuevo producto..." />
+          	  <MenuItem fx:id="editCmd" mnemonicParsing="false" text="Editar producto..." />
+          	  <MenuItem fx:id="deleteCmd" mnemonicParsing="false" text="Borrar producto" />
+          	</items>
           </Menu>
           <Menu mnemonicParsing="false" text="Admin">
             <items>

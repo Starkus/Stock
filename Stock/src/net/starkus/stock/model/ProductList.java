@@ -16,6 +16,7 @@ public class ProductList {
 	
 	private ObservableList<Product> productList = FXCollections.observableArrayList();
 	private ObjectProperty<LocalDateTime> creationDate;
+	private Client client = null; 
 
 	public ProductList() {
 		this.creationDate = new SimpleObjectProperty<>(LocalDateTime.now());
@@ -68,6 +69,14 @@ public class ProductList {
 	
 	public void setCreationDate(LocalDateTime date) {
 		creationDate.set(date);
+	}
+	
+	public Client getClient() {
+		return this.client;
+	}
+	
+	public void setClient(Client client) {
+		this.client = client;
 	}
 	
 	@XmlElement(name = "products")
