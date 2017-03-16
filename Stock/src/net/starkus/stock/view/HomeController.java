@@ -8,9 +8,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
@@ -21,6 +19,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Dialog;
@@ -313,12 +312,10 @@ public class HomeController extends DialogController {
 			
     	} else {
     		// Nothing selected
-    		Alert alert = new Alert(AlertType.WARNING);
-    		alert.setTitle("No hay seleccion");
-    		alert.setHeaderText("No hay un producto seleccionado.");
-    		alert.setContentText("Seleccione un producto para editar.");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+    		AlertWrapper alert = new AlertWrapper(AlertType.WARNING)
+    				.setTitle("No hay seleccion")
+    				.setHeaderText("No hay un producto seleccionado.")
+    				.setContentText("Seleccione un producto para editar.");
     		
     		alert.showAndWait();
     	}
@@ -330,11 +327,9 @@ public class HomeController extends DialogController {
     	
     	if (selectedIndex >= 0) {
     		
-    		Alert alert = new Alert(AlertType.CONFIRMATION);
-    		alert.setTitle("Confirmar");
-    		alert.setHeaderText("¿Seguro que desea eliminar el producto seleccionado?");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+    		AlertWrapper alert = new AlertWrapper(AlertType.CONFIRMATION)
+    				.setTitle("Confirmar")
+    				.setHeaderText("¿Seguro que desea eliminar el producto seleccionado?");
 			
 			alert.showAndWait();
     		
@@ -343,12 +338,10 @@ public class HomeController extends DialogController {
     	
     	} else {
     		// Nothing selected
-    		Alert alert = new Alert(AlertType.WARNING);
-    		alert.setTitle("No hay seleccion");
-    		alert.setHeaderText("No hay un producto seleccionado.");
-    		alert.setContentText("Seleccione un producto para eliminar.");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+    		AlertWrapper alert = new AlertWrapper(AlertType.WARNING)
+		    		.setTitle("No hay seleccion")
+		    		.setHeaderText("No hay un producto seleccionado.")
+		    		.setContentText("Seleccione un producto para eliminar.");
     		
     		alert.showAndWait();
     	}

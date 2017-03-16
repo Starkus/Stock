@@ -5,14 +5,13 @@ import java.time.LocalDateTime;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Dialog;
@@ -151,12 +150,10 @@ public class AddStockDialogController extends DialogController {
 		// If the product is not found
 		if (product == null) {
 			
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("ERROR");
-			alert.setHeaderText("Producto no encontrado!");
-			alert.setContentText("Agregue el producto para continuar.");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+			AlertWrapper alert = new AlertWrapper(AlertType.ERROR)
+					.setTitle("ERROR")
+					.setHeaderText("Producto no encontrado!")
+					.setContentText("Agregue el producto para continuar.");
 			
 			alert.showAndWait();
 		

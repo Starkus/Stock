@@ -1,7 +1,9 @@
 package net.starkus.stock.view;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javafx.application.Platform;
@@ -22,10 +24,10 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Labeled;
 import javafx.util.converter.NumberStringConverter;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Client;
@@ -114,7 +116,8 @@ public class PurchaseDialogController extends DialogController {
     			items.stream().collect(Collectors.summingDouble(Product::getSellSubtotal)), items));
     	totalField.textProperty().bind(Bindings.convert(total));
     	
-    	Bindings.bindBidirectional(payingField.textProperty(), paying, new NumberStringConverter());
+    	NumberFormat nf = NumberFormat.getInstance(Locale.US);
+    	Bindings.bindBidirectional(payingField.textProperty(), paying, new NumberStringConverter(nf));
     	
     	debt.bind(Bindings.subtract(total, paying));
     	debtField.textProperty().bind(Bindings.convert(debt));
@@ -383,11 +386,9 @@ public class PurchaseDialogController extends DialogController {
 		}
 		else if (debt.get() < 0) {
 			
-			Alert alert = new Alert(AlertType.CONFIRMATION);
+			AlertWrapper alert = new AlertWrapper(AlertType.CONFIRMATION);
 			alert.setTitle("Vuelto");
 			alert.setHeaderText("El excedente es de $" + Float.toString(debt.get()));
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
 			
 			alert.showAndWait();
 			

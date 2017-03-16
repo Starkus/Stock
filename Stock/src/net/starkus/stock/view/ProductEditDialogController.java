@@ -1,10 +1,9 @@
 package net.starkus.stock.view;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.Product;
 
 public class ProductEditDialogController extends DialogController {
@@ -86,12 +85,10 @@ public class ProductEditDialogController extends DialogController {
 		if (errorMessage.length() == 0) {
 			return true;
 		} else {
-			Alert alert = new Alert(AlertType.ERROR);
+			AlertWrapper alert = new AlertWrapper(AlertType.ERROR);
     		alert.setTitle("Error!");
     		alert.setHeaderText("No se ha podido modificar o crear el producto.");
     		alert.setContentText(errorMessage);
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
     		
     		alert.showAndWait();
     		

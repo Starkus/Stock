@@ -2,8 +2,6 @@ package net.starkus.stock.view;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
@@ -12,6 +10,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.Client;
 
 public class ClientOverviewController extends DialogController {
@@ -48,11 +47,9 @@ public class ClientOverviewController extends DialogController {
 			public void handle(KeyEvent event) {
 				if (event.getCode() == KeyCode.DELETE) {
 					
-					Alert alert = new Alert(AlertType.CONFIRMATION);
-					alert.setTitle("Eliminar cliente");
-					alert.setHeaderText("¿Seguro que desea eliminar el cliente seleccionado?");
-					DialogPane pane = alert.getDialogPane();
-					pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+					AlertWrapper alert = new AlertWrapper(AlertType.CONFIRMATION)
+							.setTitle("Eliminar cliente")
+							.setHeaderText("¿Seguro que desea eliminar el cliente seleccionado?");
 					
 					alert.showAndWait();
 					
@@ -85,12 +82,10 @@ public class ClientOverviewController extends DialogController {
 		String bstr = balanceField.getText();
 		
 		if (name.isEmpty() || bstr.isEmpty()) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("ERROR");
-			alert.setHeaderText("Campos vacíos");
-			alert.setContentText("Uno o mas campos estan vacíos. Por favor complete.");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+			AlertWrapper alert = new AlertWrapper(AlertType.ERROR)
+					.setTitle("ERROR")
+					.setHeaderText("Campos vacíos")
+					.setContentText("Uno o mas campos estan vacíos. Por favor complete.");
 			
 			alert.showAndWait();
 			return;
@@ -105,12 +100,10 @@ public class ClientOverviewController extends DialogController {
 		}
 		catch (NumberFormatException e) {
 			
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Numero invalido!");
-			alert.setHeaderText("Error de sintaxis");
-			alert.setContentText("No se ha podido interpretar el numero del balance. Por favor verifique.");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+			AlertWrapper alert = new AlertWrapper(AlertType.ERROR)
+					.setTitle("Numero invalido!")
+					.setHeaderText("Error de sintaxis")
+					.setContentText("No se ha podido interpretar el numero del balance. Por favor verifique.");
 			
 			alert.showAndWait();
 			return;

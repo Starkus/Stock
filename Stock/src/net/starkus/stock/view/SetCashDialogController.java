@@ -1,10 +1,9 @@
 package net.starkus.stock.view;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.util.PasswordUtils;
 
@@ -29,12 +28,10 @@ public class SetCashDialogController extends DialogController {
 		
 		if (!pass.equals(mainApp.getPassword())) {
 			
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error de autenticación");
-			alert.setHeaderText("Contraseña incorrecta");
-			alert.setContentText("Verifique la contraseña ingresada.");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+			AlertWrapper alert = new AlertWrapper(AlertType.ERROR)
+					.setTitle("Error de autenticación")
+					.setHeaderText("Contraseña incorrecta")
+					.setContentText("Verifique la contraseña ingresada.");
 			
 			alert.showAndWait();
 			return;
@@ -49,12 +46,10 @@ public class SetCashDialogController extends DialogController {
 			
 		} catch (NumberFormatException e) {
 
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Numero invalido!");
-			alert.setHeaderText("Error de sintaxis");
-			alert.setContentText("No se ha podido interpretar el numero del balance. Por favor verifique.");
-			DialogPane pane = alert.getDialogPane();
-			pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+			AlertWrapper alert = new AlertWrapper(AlertType.ERROR)
+					.setTitle("Numero invalido!")
+					.setHeaderText("Error de sintaxis")
+					.setContentText("No se ha podido interpretar el numero del balance. Por favor verifique.");
 			
 			alert.showAndWait();
 			

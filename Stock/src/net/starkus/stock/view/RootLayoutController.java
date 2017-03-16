@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -15,6 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.util.SaveUtil;
@@ -125,12 +124,10 @@ public class RootLayoutController {
 	
 	@FXML
 	private void handleAbout() {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Stock");
-		alert.setHeaderText("Stock v0.3.1");
-		alert.setContentText("Author: Starkus");
-		DialogPane pane = alert.getDialogPane();
-		pane.getStylesheets().add(getClass().getResource("DarkMetro.css").toExternalForm());
+		AlertWrapper alert = new AlertWrapper(AlertType.INFORMATION)
+				.setTitle("Stock")
+				.setHeaderText("Stock v0.3.1")
+				.setContentText("Author: Starkus");
 		
 		alert.showAndWait();
 	}

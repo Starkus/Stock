@@ -54,7 +54,7 @@ public class MainApp extends Application {
 		productList.add(new Product(8537023942L, "Xbox 360 Wireless Controller for Windows", 760, 1200));
 		productList.add(new Product(790520009944L, "Raid Casa y Jardin", 16, 24));
 		
-		clientList.add(new Client("Castor", 1337));
+		clientList.add(new Client("Castor", 1));
 		
 		sortedProducts = productList.sorted();
 		sortedClients = clientList.sorted();

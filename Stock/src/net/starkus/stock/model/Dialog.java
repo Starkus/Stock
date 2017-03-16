@@ -60,10 +60,6 @@ public class Dialog <T extends DialogController> {
 	
 	private String location;
 	
-	//private Stage dialogStage;
-	
-	//private Pane page;
-	
 	private T controller;
 	
 
