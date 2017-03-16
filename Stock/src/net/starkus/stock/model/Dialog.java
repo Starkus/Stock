@@ -33,19 +33,19 @@ public class Dialog <T extends DialogController> {
 			new Dialog<AddStockDialogController>		("view/AddStockDialog.fxml").setTitle("Añadir stock");
 	
 	public static final Dialog<ChangePasswordDialogController> changePasswordDialog =
-			new Dialog<ChangePasswordDialogController>	("view/ChangePasswordDialog.fxml").setTitle("Cambiar contraseña");
+			new Dialog<ChangePasswordDialogController>	("view/ChangePasswordDialog.fxml").setTitle("Cambiar contraseña").setResizable(false);
 	
 	public static final Dialog<ClientOverviewController> clientOverviewDialog =
 			new Dialog<ClientOverviewController>		("view/ClientOverview.fxml").setTitle("Clientes");
 	
 	public static final Dialog<DebtAssignDialogController> debtAssignDialog =
-			new Dialog<DebtAssignDialogController>		("view/DebtAssignDialog.fxml").setTitle("Pago insuficiente");
+			new Dialog<DebtAssignDialogController>		("view/DebtAssignDialog.fxml").setTitle("Pago insuficiente").setResizable(false);
 	
 	public static final Dialog<HistoryViewerController> historyViewerDialog = 
 			new Dialog<HistoryViewerController>			("view/HistoryViewer.fxml").setTitle("Historial");
 	
 	public static final Dialog<PasswordDialogController> passwordDialog =
-			new Dialog<PasswordDialogController>		("view/PasswordDialog.fxml").setTitle("Contraseña requerida");
+			new Dialog<PasswordDialogController>		("view/PasswordDialog.fxml").setTitle("Contraseña requerida").setResizable(false);
 	
 	public static final Dialog<ProductEditDialogController> productEditDialog = 
 			new Dialog<ProductEditDialogController>		("view/ProductEditDialog.fxml").setTitle("Editar producto");
@@ -54,7 +54,7 @@ public class Dialog <T extends DialogController> {
 			new Dialog<PurchaseDialogController>		("view/PurchaseDialog.fxml").setTitle("Nueva compra");
 	
 	public static final Dialog<SetCashDialogController> setCashDialog =
-			new Dialog<SetCashDialogController>			("view/SetCashDialog.fxml").setTitle("Caja");
+			new Dialog<SetCashDialogController>			("view/SetCashDialog.fxml").setTitle("Caja").setResizable(false);
 	
 	//-------------------------------------------------------------------------------
 	
