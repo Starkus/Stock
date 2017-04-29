@@ -18,6 +18,7 @@ import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Dialog;
+import net.starkus.stock.util.SaveUtil;
 
 public class ClientOverviewController extends DialogController {
 	
@@ -159,6 +160,14 @@ public class ClientOverviewController extends DialogController {
 			alert.showAndWait();
 			return;
 		}
+		
+		SaveUtil.saveToFile(mainApp.getSavefile());
+		
+		AlertWrapper alert = new AlertWrapper(AlertType.INFORMATION)
+				.setTitle("Listo!")
+				.setContentText("El cliente se ha modificado correctamente.");
+		
+		alert.showAndWait();
 	}
 	
 	@FXML
