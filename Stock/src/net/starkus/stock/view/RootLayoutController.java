@@ -126,7 +126,7 @@ public class RootLayoutController {
 	private void handleAbout() {
 		AlertWrapper alert = new AlertWrapper(AlertType.INFORMATION)
 				.setTitle("Stock")
-				.setHeaderText("Stock v0.3.1")
+				.setHeaderText("Stock v0.4.2")
 				.setContentText("Author: Starkus");
 		
 		alert.showAndWait();

@@ -1,17 +1,23 @@
 package net.starkus.stock.view;
 
+import java.io.IOException;
+
+import javafx.collections.transformation.FilteredList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AlertWrapper;
+import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.Client;
+import net.starkus.stock.model.Dialog;
 
 public class ClientOverviewController extends DialogController {
 	
@@ -23,11 +29,15 @@ public class ClientOverviewController extends DialogController {
 	private TableColumn<Client, Number> balanceColumn;
 
 	@FXML
+	private AutoCompleteTextField filterField;
+	@FXML
 	private TextField nameField;
 	@FXML
 	private TextField balanceField;
 	
 	private Client selectedClient;
+
+	private FilteredList<Client> filteredClientList;
 	
 	
 	public ClientOverviewController() {
@@ -58,6 +68,29 @@ public class ClientOverviewController extends DialogController {
 				}
 			}
 		});
+		
+		clientTable.setOnMouseClicked(event -> {
+			if (!event.getButton().equals(MouseButton.PRIMARY))
+				return;
+			
+			if (event.getClickCount() == 2 && clientTable.getSelectionModel().getSelectedIndex() != -1) {
+				
+				try {
+					HistoryViewerController controller = Dialog.historyViewerDialog.init();
+					
+					String client = clientTable.getSelectionModel().getSelectedItem().getName();
+					controller.setFilterClient(client);
+					
+					controller.showAndWait();
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		filterField.setAutoProc(true);
 	}
 	
 	@Override
@@ -65,6 +98,10 @@ public class ClientOverviewController extends DialogController {
 		super.setMainApp(mainApp);
 
 		clientTable.setItems(mainApp.getClients());
+		
+		for (Client c : mainApp.getClients()) {
+			filterField.getEntries().add(c.getName());
+		}
 	}
 	
 	void updateFields(Client newClient) {
@@ -73,6 +110,20 @@ public class ClientOverviewController extends DialogController {
 		
 		nameField.setText(newClient.getName());
 		balanceField.setText(Float.toString(newClient.getBalance()));
+	}
+	
+	@FXML
+	void filterByClient() {
+		
+		if (filterField.getText().isEmpty()) {
+			filteredClientList.clear();
+			filteredClientList.addAll(mainApp.getClients());
+		}
+		else {
+			filteredClientList = mainApp.getClients().filtered(c -> filterField.getResults().contains(c.getName()));
+		}		
+			
+		clientTable.setItems(filteredClientList);
 	}
 	
 	@FXML
@@ -119,6 +170,12 @@ public class ClientOverviewController extends DialogController {
 		clientTable.getSelectionModel().select(n);
 		
 		nameField.requestFocus();
+	}
+	
+	@FXML
+	void handleOK() {
+		
+		dialogStage.close();
 	}
 	
 }

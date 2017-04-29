@@ -6,10 +6,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Product;
@@ -17,6 +17,9 @@ import net.starkus.stock.model.Purchase;
 import net.starkus.stock.util.SaveUtil;
 
 public class HistoryViewerController extends DialogController {
+	
+	private final String ANY = "Cualquiera";
+	private final String NONE = "Ninguno";
 
 	@FXML
 	private TableView<Purchase> purchaseTable;
@@ -39,7 +42,7 @@ public class HistoryViewerController extends DialogController {
 	private TableColumn<Product, Number> productQuantColumn;
 	
 	@FXML
-	private ComboBox<String> clientFilterBox;
+	private AutoCompleteTextField clientFilterBox;
 	
 	
 	private FilteredList<Purchase> filteredPurchaseList;
@@ -68,16 +71,8 @@ public class HistoryViewerController extends DialogController {
 				"Cualquiera",
 				"Ninguno");
 		
-		clientFilterBox.setItems(clientOptions);
-		clientFilterBox.getSelectionModel().selectFirst();
-		
-		clientFilterBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				filterByClient();
-			}
-		});
+		clientFilterBox.getEntries().addAll(clientOptions);
+		clientFilterBox.setAutoProc(true);
 	}
 	
 	@Override
@@ -85,21 +80,25 @@ public class HistoryViewerController extends DialogController {
 		super.setMainApp(mainApp);
 		
 		for (Client c : mainApp.getClients()) {
-			clientFilterBox.getItems().add(c.getName());
+			clientFilterBox.getEntries().add(c.getName());
 		}
 		
 		filterByClient();
 	}
 	
 	
+	@FXML
 	void filterByClient() {
 		
-		String chosen = clientFilterBox.getSelectionModel().getSelectedItem();
+		String chosen = clientFilterBox.getText();
 		
-		if (chosen.equals("Cualquiera")) 
+		if (chosen.isEmpty())
 			filteredPurchaseList = mainApp.getHistory().filtered(p -> true);
+			
+		else if (chosen.equals(ANY)) 
+			filteredPurchaseList = mainApp.getHistory().filtered(p -> p.getClient() != null);
 		
-		else if (chosen.equals("Ninguno")) 
+		else if (chosen.equals(NONE)) 
 			filteredPurchaseList = mainApp.getHistory().filtered(p -> p.getClient() == null || p.getClient().isEmpty());
 		
 		else 
@@ -107,6 +106,13 @@ public class HistoryViewerController extends DialogController {
 		
 			
 		purchaseTable.setItems(filteredPurchaseList);
+	}
+	
+	
+	@FXML
+	private void handleClientEntered() {
+		
+		
 	}
 	
 	
@@ -141,4 +147,9 @@ public class HistoryViewerController extends DialogController {
 		SaveUtil.saveToFile(mainApp.getSavefile());
 	}
 	
+	public void setFilterClient(String client) {
+		
+		clientFilterBox.setText(client);
+		filterByClient();
+	}
 }

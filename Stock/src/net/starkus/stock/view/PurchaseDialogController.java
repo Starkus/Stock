@@ -348,7 +348,7 @@ public class PurchaseDialogController extends DialogController {
 		
 		} else {
 			
-			purchase.add(productToAdd);
+			purchase.add(productToAdd.copy());
 		}
 		
 		// Update paying field to be equal to the new total.

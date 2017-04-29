@@ -36,10 +36,33 @@ public class AutoCompleteTextField extends TextField
 	private boolean autoProc = false;
 	private boolean keyPressedOnThisField = false;
 	
+	
+	
+	private String cleanString(String s) {
+		/*
+		 * Remove accent notations and turn to lower case.
+		 */
+		s = s.toLowerCase();
+
+		s = s.replace("-", "");
+		s = s.replace("_", "");
+		s = s.replace(",", ".");
+
+		s = s.replace('á', 'a');
+		s = s.replace('é', 'e');
+		s = s.replace('í', 'i');
+		s = s.replace('ó', 'o');
+		s = s.replace('ú', 'u');
+		
+		return s;
+	}
+	
 
 	/** Construct a new AutoCompleteTextField. */
 	public AutoCompleteTextField() {
+		
 		super();
+		
 		entries = new TreeSet<>();
 		searchResult = new LinkedList<>();
 		entriesPopup = new ContextMenu();
@@ -58,9 +81,21 @@ public class AutoCompleteTextField extends TextField
 				{
 					// Can't add them right away, cause non-cap-sensitive checking.
 					//searchResult.addAll(entries.subSet(getText(), getText() + Character.MAX_VALUE));
+					String cText = cleanString(getText());
 					
 					for (String e : entries) {
-						if (e.toLowerCase().contains(getText().toLowerCase()))
+						
+						String cEntry = cleanString(e);
+						
+						if (cEntry.startsWith(cText) || cEntry.contains(" " + cText))
+							searchResult.add(e);
+					}
+					
+					for (String e : entries) {
+						
+						String cEntry = cleanString(e);
+						
+						if (cEntry.contains(cText.replace(" ", "")) && !searchResult.contains(e))
 							searchResult.add(e);
 					}
 					

@@ -80,6 +80,11 @@ public class SaveUtil {
 	}
 	
 	public static void saveToFile(File file) {
+		
+		if (file.getParentFile().exists() == false) {
+			file.getParentFile().mkdirs();
+		}
+		
 		try {
 			JAXBContext context = JAXBContext
 					.newInstance(SavefileWrapper.class);
