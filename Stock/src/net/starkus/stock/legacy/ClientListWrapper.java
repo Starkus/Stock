@@ -1,4 +1,4 @@
-package net.starkus.stock.model;
+package net.starkus.stock.legacy;
 
 import java.util.List;
 
@@ -12,14 +12,14 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class ClientListWrapper {
 
-	private List<Client> clients;
+	private List<LegacyClient> clients;
 	
 	@XmlElement(name = "client")
-	public List<Client> getClients() {
+	public List<LegacyClient> getClients() {
 		return clients;
 	}
 	
-	public void setClients(List<Client> clients) {
+	public void setClients(List<LegacyClient> clients) {
 		this.clients = clients;
 	}
 }

@@ -1,4 +1,4 @@
-package net.starkus.stock.model;
+package net.starkus.stock.save;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -7,9 +7,9 @@ public class SavefileWrapper {
 	
 	private float cashBox;
 	private ProductListWrapper productList;
-	private ClientListWrapper clientList;
 	private HistoryWrapper history;
 	private String password;
+	private String version;
 	
 	public ProductListWrapper getProducts() {
 		return productList;
@@ -17,15 +17,6 @@ public class SavefileWrapper {
 	
 	public void setProducts(ProductListWrapper products) {
 		this.productList = products;
-	}
-	
-	
-	public ClientListWrapper getClients() {
-		return clientList;
-	}
-	
-	public void setClients(ClientListWrapper clients) {
-		this.clientList = clients;
 	}
 	
 	
@@ -53,6 +44,13 @@ public class SavefileWrapper {
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void setVersion(String s) {
+		version = s;
+	}
+	public String getVersion() {
+		return version;
 	}
 
 }

@@ -1,9 +1,13 @@
 package net.starkus.stock.model;
 
-import javafx.beans.property.FloatProperty;
-import javafx.beans.property.SimpleFloatProperty;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import net.starkus.stock.MainApp;
 
 public class Client {
 	
@@ -13,7 +17,6 @@ public class Client {
 	 */
 
 	private final StringProperty name;
-	private final FloatProperty balance;
 	
 	/*
 	 * Default constructor
@@ -35,7 +38,6 @@ public class Client {
 	public Client(String name, float balance) {
 		
 		this.name = new SimpleStringProperty(name);
-		this.balance = new SimpleFloatProperty(balance);
 	}
 	
 	
@@ -51,23 +53,36 @@ public class Client {
 		return this.name;
 	}
 	
-	public void add(float n) {
-		this.balance.set(this.balance.get() + n);
+	
+	public float calculateBalance(MainApp mainApp) {
+		
+		float bal = 0;
+		
+		FilteredList<Transaction> filteredTransactionList = new FilteredList<>(mainApp.getHistory());
+		filteredTransactionList = mainApp.getHistory().filtered(t -> t.getClient() != null && t.getClient().equals(getName()));
+		
+		for (int i=0; i < filteredTransactionList.size(); i++) {
+			
+			Transaction t = filteredTransactionList.get(i);
+			
+			System.out.println(t.getClient());
+			bal += t.getBalance();
+		}
+		
+		return bal;
 	}
 	
-	public void substract(float n) {
-		this.balance.set(this.balance.get() - n);
-	}
 	
-	public void setBalance(float n) {
-		this.balance.set(n);
-	}
-	
-	public float getBalance() {
-		return this.balance.get();
-	}
-	
-	public FloatProperty balanceProperty() {
-		return this.balance;
+	public static List<String> getClientsFromHistory(ObservableList<Transaction> history) {
+		
+		ArrayList<String> clients = new ArrayList<>();
+		
+		for (Transaction t : history) {
+			if (t.getClient() != null && !clients.contains(t.getClient())) {
+				clients.add(t.getClient());
+			}
+		}
+		
+		return clients;
 	}
 }

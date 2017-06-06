@@ -1,6 +1,5 @@
 package net.starkus.stock;
 
-import java.io.File;
 import java.io.IOException;
 
 import javafx.application.Application;
@@ -13,12 +12,12 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import net.starkus.stock.model.Client;
+import net.starkus.stock.legacy.UpdateSavefile;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.util.PasswordUtils;
-import net.starkus.stock.util.SaveUtil;
-import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.Transaction;
+import net.starkus.stock.save.SaveUtil;
 import net.starkus.stock.view.DialogController;
 import net.starkus.stock.view.HomeController;
 import net.starkus.stock.view.RootLayoutController;
@@ -30,14 +29,12 @@ public class MainApp extends Application {
 	private ObservableList<Product> productList = FXCollections.observableArrayList();
 	private SortedList<Product> sortedProducts;
 	
-	private ObservableList<Client> clientList = FXCollections.observableArrayList();
-	private SortedList<Client> sortedClients;
+	//private ObservableList<Client> clientList = FXCollections.observableArrayList();
+	//private ObservableMap<String, Client> clientMap = FXCollections.observableHashMap();
 	
-	private ObservableList<Purchase> history = FXCollections.observableArrayList();
+	private ObservableList<Transaction> history = FXCollections.observableArrayList();
 	
 	private String password;
-	
-	private File savefile;
 	
 	private HomeController homeController;
 	private DialogController currentDialogController;
@@ -54,10 +51,9 @@ public class MainApp extends Application {
 		productList.add(new Product(8537023942L, "Xbox 360 Wireless Controller for Windows", 760, 1200));
 		productList.add(new Product(790520009944L, "Raid Casa y Jardin", 16, 24));
 		
-		clientList.add(new Client("Castor", 1));
+		//clientMap.put("Castor", new Client("Castor", 1));
 		
 		sortedProducts = productList.sorted();
-		sortedClients = clientList.sorted();
 		
 		Dialog.setMainApp(this);
 	}
@@ -77,16 +73,7 @@ public class MainApp extends Application {
 	}
 	
 	
-	public ObservableList<Client> getClients() {
-		return clientList;
-	}
-	
-	public SortedList<Client> getSortedClients() {
-		return sortedClients;
-	}
-	
-	
-	public ObservableList<Purchase> getHistory() {
+	public ObservableList<Transaction> getHistory() {
 		return history;
 	}
 	
@@ -106,10 +93,6 @@ public class MainApp extends Application {
 	
 	public DialogController getCurrentDialogController() {
 		return currentDialogController;
-	}
-	
-	public File getSavefile() {
-		return savefile;
 	}
 	
 	
@@ -142,20 +125,8 @@ public class MainApp extends Application {
 	public void start(Stage primaryStage) {
 		
 		initRootLayout(primaryStage);
-
-		// I'm not sure how much this property can vary, so I try not to be
-		// very specific here. It doesn't take long and is done just once so...
-		if (System.getProperty("os.name").toLowerCase().contains("win"))
-			savefile = new File(System.getenv("APPDATA") + "/Stock/save.xml");
-		else
-			savefile = new File(System.getProperty("user.home") + "/Stock/save.xml");
 		
-		// SaveUtil needs a reference to this instance.
 		SaveUtil.setMainApp(this);
-		
-		if (savefile.exists()) {
-			SaveUtil.loadFromFile(savefile);
-		}
 		
 		showHome();
 		
@@ -198,6 +169,28 @@ public class MainApp extends Application {
 	}
 
 	public static void main(String[] args) {
+		
+		for (int i=0; i < args.length; i++) {
+			
+			String s = args[i];
+			
+			if (s.equals("-updatefile")) {
+				
+				System.out.println("Updating savefile...");
+				
+				UpdateSavefile.run(args[i+1], args[i+2]);
+				
+				System.out.println("Success.");
+				return;
+			}
+		}
+		
+		System.out.println("Launching app...");
+		
 		launch(args);
+	}
+	
+	public static String getVersion() {
+		return "0.5";
 	}
 }

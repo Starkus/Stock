@@ -1,9 +1,13 @@
 package net.starkus.stock.model;
 
+import java.util.Collection;
+
 import javax.xml.bind.annotation.XmlElement;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import net.starkus.stock.save.ProductListWrapper;
 
 public class ProductList {
 	
@@ -17,6 +21,9 @@ public class ProductList {
 	
 	public void add(Product product) {
 		productList.add(product);
+	}
+	public void addAll(Collection<? extends Product> c) {
+		productList.addAll(c);
 	}
 	
 	public float getTotal() {
@@ -42,6 +49,10 @@ public class ProductList {
 			return;
 		
 		productList.addAll(wrapper.getProducts());
+	}
+	
+	public void addListener(ListChangeListener<Product> listener) {
+		this.productList.addListener(listener);
 	}
 
 }

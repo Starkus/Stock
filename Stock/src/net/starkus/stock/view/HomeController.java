@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseButton;
@@ -20,12 +21,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AlertWrapper;
-import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Dialog;
+import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.Purchase;
-import net.starkus.stock.util.SaveUtil;
+import net.starkus.stock.save.SaveUtil;
 
 public class HomeController extends DialogController {
 	
@@ -46,7 +47,7 @@ public class HomeController extends DialogController {
 	private Label sesionBalanceField;
 	
 	@FXML
-	private AutoCompleteTextField filterField;
+	private TextField filterField;
 	
 	
 	private FilteredList<Product> filteredProductList;
@@ -83,8 +84,6 @@ public class HomeController extends DialogController {
 			}
 		});
     	
-    	filterField.setAutoProc(true);
-    	
     	setUpContextMenu();
     	
     	stockTable.setOnMouseClicked(event -> {
@@ -95,6 +94,15 @@ public class HomeController extends DialogController {
     			handleEditProduct();
     		}
     	});
+    	
+    	filterField.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				
+				filter(newValue);
+			}
+		});
     }
     
     /**
@@ -106,9 +114,9 @@ public class HomeController extends DialogController {
     public void setMainApp(MainApp mainApp) {
     	super.setMainApp(mainApp);
     	
-    	for (Product p : mainApp.getProductData()) {
+    	/*for (Product p : mainApp.getProductData()) {
     		filterField.getEntries().add(p.getName());
-    	}
+    	}*/
     	
     	// Initialize filter list and set table items
     	handleFilter();
@@ -219,14 +227,19 @@ public class HomeController extends DialogController {
     	
     }
     
-    @FXML
-    private void handleFilter() {
+    private void filter(String s) {
     	
     	// Ignore case
     	filteredProductList = mainApp.getProductData().filtered(p ->
-    		p.getName().toLowerCase().contains(filterField.getText().toLowerCase()));
+    		p.getName().toLowerCase().contains(s.toLowerCase()));
     	
     	stockTable.setItems(filteredProductList);
+    	
+    }
+    
+    @FXML
+    private void handleFilter() {
+    	filter(filterField.getText());
     }
     
     @FXML
@@ -245,7 +258,31 @@ public class HomeController extends DialogController {
 	    		
 	    		CashBox.put(purchase.getPaid());
 	        	
-	        	SaveUtil.saveToFile(mainApp.getSavefile());
+	        	SaveUtil.saveToFile();
+	    	}
+    	}
+	    catch (IOException e) {
+	    	
+	    	e.printStackTrace();
+	    }
+    }
+    
+    @FXML
+    private void handleNewPayment() {
+    	
+    	try {
+	    	PaymentDialogController controller = Dialog.paymentDialogController.init();
+	    	controller.showAndWait();
+	    	
+	    	Payment payment = controller.getPayment();
+	    	
+	    	if (payment != null) {
+	    		
+	    		mainApp.getHistory().add(payment);
+	    		
+	    		CashBox.put(payment.getBalance());
+	        	
+	        	SaveUtil.saveToFile();
 	    	}
     	}
 	    catch (IOException e) {
@@ -260,7 +297,7 @@ public class HomeController extends DialogController {
     	try {
 			Dialog.clientOverviewDialog.init().showAndWait();
 	    	
-	    	SaveUtil.saveToFile(mainApp.getSavefile());
+	    	SaveUtil.saveToFile();
 			
 		} catch (IOException e) {
 

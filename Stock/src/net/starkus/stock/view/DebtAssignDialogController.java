@@ -1,5 +1,6 @@
 package net.starkus.stock.view;
 
+import java.util.List;
 import java.util.Optional;
 
 import javafx.application.Platform;
@@ -17,7 +18,8 @@ public class DebtAssignDialogController extends DialogController {
 	private AutoCompleteTextField clientField;
 	
 	
-	private Client client;
+	private List<String> clientList;
+	String client;
 	
 	
 	public DebtAssignDialogController() {
@@ -37,9 +39,8 @@ public class DebtAssignDialogController extends DialogController {
 	
 	void populateEntries() {
 		
-		for (Client c : mainApp.getClients()) {
-			clientField.getEntries().add(c.getName());
-		}
+		clientList = Client.getClientsFromHistory(mainApp.getHistory());
+		clientField.getEntries().addAll(clientList);
 	}
 	
 	@Override
@@ -50,21 +51,8 @@ public class DebtAssignDialogController extends DialogController {
 	}
 	
 	
-	public Client getClient() {
+	public String getClient() {
 		return client;
-	}
-	
-	
-	void findSpecifiedClient() {
-		
-		String name = clientField.getText();
-		
-		for (Client c : mainApp.getSortedClients()) {
-			if (c.getName().equals(name)) {
-				client = c;
-				break;
-			}
-		}
 	}
 	
 	
@@ -84,23 +72,21 @@ public class DebtAssignDialogController extends DialogController {
 	}
 	
 	
-	void confirmCreatingNewClient() {
+	void confirmClient() {
 	
 		AlertWrapper alert = new AlertWrapper(AlertType.CONFIRMATION)
 				.setTitle("No encontrado")
-				.setHeaderText("Cliente no encontrado!")
-				.setContentText("Desea crearlo ahora?");
+				.setHeaderText("El cliente no coincide con ningun otro!")
+				.setContentText("Desea continuar?");
 		
 		Optional<ButtonType> result = alert.showAndWait();
 		// If OK is clicked
 		if (result.isPresent() && result.get() == ButtonType.OK) {
 			// Create client with entered name
-			Client n = new Client(clientField.getText());
-			mainApp.getClients().add(n);
 			// Reference it in "client" variable
-			client = n;
+			client = clientField.getText();
 			
-			System.out.println("Client \"" + n.getName() + "\" created.");
+			System.out.println("Client \"" + client + "\" created.");
 		}
 	}
 	
@@ -108,15 +94,14 @@ public class DebtAssignDialogController extends DialogController {
 	@FXML
 	private void handleOK() {
 		
-		findSpecifiedClient();
+		client = clientField.getText();
 		
 		// If given client isn't found
-		if (client == null) {
+		if (!clientList.contains(client)) {
 			// Ask user if he wants to create it
-			confirmCreatingNewClient();
+			confirmClient();
 		}
 		
-		// By now if user created it, the new client is referenced in "client" var
 		
 		dialogStage.close();
 	}

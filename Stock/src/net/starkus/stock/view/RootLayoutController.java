@@ -16,7 +16,7 @@ import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Purchase;
-import net.starkus.stock.util.SaveUtil;
+import net.starkus.stock.save.SaveUtil;
 
 public class RootLayoutController {
 	
@@ -126,7 +126,7 @@ public class RootLayoutController {
 	private void handleAbout() {
 		AlertWrapper alert = new AlertWrapper(AlertType.INFORMATION)
 				.setTitle("Stock")
-				.setHeaderText("Stock v0.4.2")
+				.setHeaderText("Stock v" + MainApp.getVersion())
 				.setContentText("Author: Starkus");
 		
 		alert.showAndWait();
@@ -142,7 +142,7 @@ public class RootLayoutController {
 		
 		try {
 			Dialog.changePasswordDialog.init().showAndWait();
-			SaveUtil.saveToFile(mainApp.getSavefile());
+			SaveUtil.saveToFile();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -161,7 +161,7 @@ public class RootLayoutController {
 			e.printStackTrace();
 			return;
 		}
-		SaveUtil.saveToFile(mainApp.getSavefile());
+		SaveUtil.saveToFile();
 	}
 	
 	@FXML
@@ -176,7 +176,7 @@ public class RootLayoutController {
 	    	if (purchase != null) {
 	    		purchase.addToStock(mainApp.getSortedProductData());
 	        	
-	        	SaveUtil.saveToFile(mainApp.getSavefile());
+	        	SaveUtil.saveToFile();
 	    	}
 		}
 		catch (IOException e) {

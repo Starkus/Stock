@@ -2,36 +2,39 @@ package net.starkus.stock.view;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import net.starkus.stock.MainApp;
-import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.CashBox;
-import net.starkus.stock.model.Client;
+import net.starkus.stock.model.LegacyDebt;
+import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
+import net.starkus.stock.model.ProductListWithTotal;
 import net.starkus.stock.model.Purchase;
-import net.starkus.stock.util.SaveUtil;
+import net.starkus.stock.model.Transaction;
+import net.starkus.stock.save.SaveUtil;
 
 public class HistoryViewerController extends DialogController {
 	
 	private final String ANY = "Cualquiera";
-	private final String NONE = "Ninguno";
+	private final String NONE = "Nadie";
 
 	@FXML
-	private TableView<Purchase> purchaseTable;
+	private TableView<Transaction> transactionTable;
 
 	@FXML
-	private TableColumn<Purchase, String> clientColumn;
+	private TableColumn<Transaction, String> typeColumn;
 	@FXML
-	private TableColumn<Purchase, String> dateColumn;
+	private TableColumn<Transaction, String> clientColumn;
 	@FXML
-	private TableColumn<Purchase, Number> totalColumn;
+	private TableColumn<Transaction, String> dateColumn;
 	@FXML
-	private TableColumn<Purchase, Number> paidColumn;
+	private TableColumn<Transaction, Number> balanceColumn;
 	
 	@FXML
 	private TableView<Product> productTable;
@@ -40,48 +43,185 @@ public class HistoryViewerController extends DialogController {
 	private TableColumn<Product, String> productNameColumn;
 	@FXML
 	private TableColumn<Product, Number> productQuantColumn;
+	@FXML
+	private TableColumn<Product, Number> productPriceColumn;
+
+	@FXML
+	private Label paidLabel;
+	@FXML
+	private Label balanceLabel;
 	
 	@FXML
-	private AutoCompleteTextField clientFilterBox;
+	private TextField clientFilterBox;
 	
 	
-	private FilteredList<Purchase> filteredPurchaseList;
+	private FilteredList<Transaction> filteredTransactionList;
+
 	
+	private String transactionClassToStyle(Transaction t) {
+		
+		if (t.getCancelled()) {
+			return "-fx-text-fill:#4d4d4d";
+		}
+		
+		if (t.getClass().equals(Purchase.class)) {
+			return "-fx-text-fill:#e88d8d";
+		}
+		else if (t.getClass().equals(Payment.class)) {
+			return "-fx-text-fill:#9ed36b";
+		}
+		else if (t.getClass().equals(LegacyDebt.class)) {
+			return "-fx-text-fill:#c1c1c1";
+		}
+		else
+			return "";
+	}
+	
+	private String transactionClassToString(Transaction t) {
+		if (t.getClass().equals(Purchase.class)) {
+			return "Compra";
+		}
+		else if (t.getClass().equals(Payment.class)) {
+			return "Pago";
+		}
+		else if (t.getClass().equals(LegacyDebt.class)) {
+			return "Deuda legado";
+		}
+		else
+			return "";
+	}
 	
 	@FXML
 	void initialize() {
+		
+		typeColumn.setCellFactory(column -> {
+			return new TableCell<Transaction, String>() {
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					
+					Transaction t = (Transaction) getTableRow().getItem();
+					
+					if (empty) {
+						setText("");
+						setStyle("");
+					}
+					else {
+						setText(transactionClassToString(t));
+						setStyle(transactionClassToStyle(t));
+					}
+					
+					setGraphic(null);
+				}
+			};
+		});
+		
+		clientColumn.setCellFactory(column -> {
+			return new TableCell<Transaction, String>() {
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					
+					Transaction t = (Transaction) getTableRow().getItem();
+					
+					if (empty) {
+						setText("");
+						setStyle("");
+					} 
+					else {
+						setText(t.getClient() == null ? "" : t.getClient());
+						setStyle(transactionClassToStyle(t));
+					}
+					
+					setGraphic(null);
+				}
+			};
+		});
+		
+		dateColumn.setCellFactory(column -> {
+			return new TableCell<Transaction, String>() {
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					
+					Transaction t = (Transaction) getTableRow().getItem();
+					
+					if (empty) {
+						setText("");
+						setStyle("");
+					} 
+					else {
+						setText(t.formattedDateProperty().get());
+						setStyle(transactionClassToStyle(t));
+					}
+					
+					setGraphic(null);
+				}
+			};
+		});
+		
+		balanceColumn.setCellFactory(column -> {
+			return new TableCell<Transaction, Number>() {
+				@Override
+				protected void updateItem(Number item, boolean empty) {
+					super.updateItem(item, empty);
+					
+					Transaction t = (Transaction) getTableRow().getItem();
+					
+					if (empty) {
+						setText("");
+						setStyle("");
+					} 
+					else {
+						setText(Float.toString(t.getBalance()));
+						setStyle(transactionClassToStyle(t));
+					}
+					
+					setGraphic(null);
+				}
+			};
+		});
+		
+		/*
 		clientColumn.setCellValueFactory(cellData -> cellData.getValue().clientProperty());
 		dateColumn.setCellValueFactory(cellData -> cellData.getValue().formattedDateProperty());
 		totalColumn.setCellValueFactory(cellData -> cellData.getValue().totalProperty());
-		paidColumn.setCellValueFactory(cellData -> cellData.getValue().paidProperty());
+		paidColumn.setCellValueFactory(cellData -> cellData.getValue().paidProperty());*/
+		
 		
 		productNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 		productQuantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
+		productPriceColumn.setCellValueFactory(cellData -> cellData.getValue().sellSubtotalProperty());
 		
-		purchaseTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Purchase>() {
+		transactionTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Transaction>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Purchase> observable, Purchase oldValue, Purchase newValue) {
-				productTable.getItems().clear();
-				productTable.getItems().addAll(newValue.getProductData());
+			public void changed(ObservableValue<? extends Transaction> observable, Transaction oldValue, Transaction newValue) {
+				
+				if (newValue.getClass().equals(Purchase.class)) {
+					productTable.setItems(new ProductListWithTotal(((Purchase) newValue).getProductData()));
+					paidLabel.setText(Float.toString(((Purchase) newValue).getPaid()));
+					balanceLabel.setText(Float.toString(((Purchase) newValue).getBalance()));
+				}
+				else {
+					productTable.setItems(null);
+					paidLabel.setText("");
+				}
 			}
 		});
 		
-		ObservableList<String> clientOptions = FXCollections.observableArrayList(
-				"Cualquiera",
-				"Ninguno");
-		
-		clientFilterBox.getEntries().addAll(clientOptions);
-		clientFilterBox.setAutoProc(true);
+		clientFilterBox.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				filterByClient();
+			}
+		});
 	}
 	
 	@Override
 	public void setMainApp(MainApp mainApp) {
 		super.setMainApp(mainApp);
-		
-		for (Client c : mainApp.getClients()) {
-			clientFilterBox.getEntries().add(c.getName());
-		}
 		
 		filterByClient();
 	}
@@ -93,19 +233,19 @@ public class HistoryViewerController extends DialogController {
 		String chosen = clientFilterBox.getText();
 		
 		if (chosen.isEmpty())
-			filteredPurchaseList = mainApp.getHistory().filtered(p -> true);
+			filteredTransactionList = mainApp.getHistory().filtered(t -> true);
 			
 		else if (chosen.equals(ANY)) 
-			filteredPurchaseList = mainApp.getHistory().filtered(p -> p.getClient() != null);
+			filteredTransactionList = mainApp.getHistory().filtered(t -> t.getClient() != null);
 		
 		else if (chosen.equals(NONE)) 
-			filteredPurchaseList = mainApp.getHistory().filtered(p -> p.getClient() == null || p.getClient().isEmpty());
+			filteredTransactionList = mainApp.getHistory().filtered(t -> t.getClient() == null || t.getClient().isEmpty());
 		
 		else 
-			filteredPurchaseList = mainApp.getHistory().filtered(p -> p.getClient() != null && p.getClient().equals(chosen));
+			filteredTransactionList = mainApp.getHistory().filtered(t -> t.getClient() != null && t.getClient().equals(chosen));
 		
 			
-		purchaseTable.setItems(filteredPurchaseList);
+		transactionTable.setItems(filteredTransactionList);
 	}
 	
 	
@@ -117,34 +257,31 @@ public class HistoryViewerController extends DialogController {
 	
 	
 	@FXML
-	private void undoPurchase() {
+	private void nullifyTransaction() {
 		
-		// Get selected purchase
-		Purchase purchase = purchaseTable.getSelectionModel().getSelectedItem();
+		// Get selected transaction
+		Transaction transaction = transactionTable.getSelectionModel().getSelectedItem();
 		
-		// Put items back in the shelf
-		purchase.addToStock(mainApp.getSortedProductData());
+		// If already cancelled, return
+		if (transaction.getCancelled() == true)
+			return;
 		
-		// Get money out da bank
-		CashBox.substract(purchase.getPaid());
-		
-		// Look for client and cancel purchase debt
-		if (purchase.getClient() != null && !purchase.getClient().isEmpty()) {
+		// If it's a purchase, do purchase specific stuff
+		if (transaction.getClass().equals(Purchase.class)) {
 			
-			for (Client c : mainApp.getClients()) {
-				if (c.getName().equals(purchase.getClient())) {
-					
-					float clientDebt = purchase.getTotal() - purchase.getPaid();
-					
-					c.substract(clientDebt);
-				}
-			}
+			Purchase purchase = (Purchase) transaction;
+		
+			// Put items back in the shelf
+			purchase.addToStock(mainApp.getSortedProductData());
 		}
+			
+		// Get money out da bank
+		CashBox.substract(transaction.getBalance());
 		
-		// Delete the purchase
-		mainApp.getHistory().remove(purchase);
+		// Flag purchase as canceled
+		transaction.cancel();
 		
-		SaveUtil.saveToFile(mainApp.getSavefile());
+		SaveUtil.saveToFile();
 	}
 	
 	public void setFilterClient(String client) {

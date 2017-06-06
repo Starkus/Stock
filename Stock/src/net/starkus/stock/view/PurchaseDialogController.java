@@ -16,21 +16,20 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Labeled;
 import javafx.util.converter.NumberStringConverter;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
-import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductListWithTotal;
@@ -204,7 +203,7 @@ public class PurchaseDialogController extends DialogController {
 	}
 	
 	
-	private Client pickClient() {
+	private String pickClient() {
 		
 		DebtAssignDialogController controller;
 		
@@ -373,15 +372,12 @@ public class PurchaseDialogController extends DialogController {
 		
 		if (debt.get() > 0) {
 			
-			//Client debtor = mainApp.showDebtDialog();
-			
-			Client debtor = pickClient();
+			String debtor = pickClient();
 			
 			if (debtor == null)
 				return;
 			
-			debtor.add(debt.get());
-			purchase.setClient(debtor.getName());
+			purchase.setClient(debtor);
 			
 		}
 		else if (debt.get() < 0) {

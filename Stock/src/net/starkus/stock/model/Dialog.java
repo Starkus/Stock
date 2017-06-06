@@ -14,6 +14,7 @@ import net.starkus.stock.view.ClientOverviewController;
 import net.starkus.stock.view.DebtAssignDialogController;
 import net.starkus.stock.view.DialogController;
 import net.starkus.stock.view.HistoryViewerController;
+import net.starkus.stock.view.PaymentDialogController;
 import net.starkus.stock.view.PasswordDialogController;
 import net.starkus.stock.view.ProductEditDialogController;
 import net.starkus.stock.view.PurchaseDialogController;
@@ -52,6 +53,9 @@ public class Dialog <T extends DialogController> {
 	
 	public static final Dialog<PurchaseDialogController> purchaseDialog = 
 			new Dialog<PurchaseDialogController>		("view/PurchaseDialog.fxml").setTitle("Nueva compra");
+	
+	public static final Dialog<PaymentDialogController> paymentDialogController =
+			new Dialog<PaymentDialogController>		("view/PaymentDialog.fxml").setTitle("Nuevo pago");
 	
 	public static final Dialog<SetCashDialogController> setCashDialog =
 			new Dialog<SetCashDialogController>			("view/SetCashDialog.fxml").setTitle("Caja").setResizable(false);

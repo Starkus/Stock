@@ -1,8 +1,10 @@
-package net.starkus.stock.model;
+package net.starkus.stock.save;
 
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+
+import net.starkus.stock.model.Product;
 
 /**
  * Wrapper to save product database.

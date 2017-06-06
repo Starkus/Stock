@@ -1,20 +1,20 @@
-package net.starkus.stock.model;
+package net.starkus.stock.legacy;
 
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
 //@XmlRootElement(name = "history")
-public class HistoryWrapper {
+public class LegacyHistoryWrapper {
 	
-	private List<Purchase> history;
+	private List<LegacyPurchase> history;
 	
 	@XmlElement(name = "purchase")
-	public List<Purchase> getHistory() {
+	public List<LegacyPurchase> getHistory() {
 		return history;
 	}
 	
-	public void setHistory(List<Purchase> history) {
+	public void setHistory(List<LegacyPurchase> history) {
 		this.history = history;
 	}
 

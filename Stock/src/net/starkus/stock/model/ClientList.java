@@ -1,7 +1,5 @@
 package net.starkus.stock.model;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -20,17 +18,7 @@ public class ClientList {
 	public void add(Client client) {
 		clientList.add(client);
 	}
-	
-	public float getTotalDebt() {
-		float t = 0;
-		
-		for (Client c : clientList) {
-			t += c.getBalance();
-		}
-		
-		return t;
-	}
-	
+	/*
 	@XmlElement(name = "clients")
 	public ClientListWrapper getClientsWrapper() {
 		ClientListWrapper wrapper = new ClientListWrapper();
@@ -44,5 +32,5 @@ public class ClientList {
 			return;
 		
 		clientList.addAll(wrapper.getClients());
-	}
+	}*/
 }

@@ -7,7 +7,7 @@ import javafx.collections.transformation.TransformationList;
 public class ProductListWithTotal extends TransformationList<Product, Product>{
 	
 	private Product total;
-
+	
 	public ProductListWithTotal(ObservableList<? extends Product> source) {
 		super(source);
 		
@@ -49,4 +49,8 @@ public class ProductListWithTotal extends TransformationList<Product, Product>{
 		return getSource().remove(o);
 	}
 
+	@Override
+	public void clear() {
+		getSource().clear();
+	}
 }
