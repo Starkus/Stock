@@ -1,15 +1,23 @@
 package net.starkus.stock.view;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
+import net.starkus.stock.MainApp;
+import net.starkus.stock.model.AlertWrapper;
+import net.starkus.stock.model.AutoCompleteTextField;
+import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Payment;
 
 public class PaymentDialogController extends DialogController {
 
 	@FXML
-	private TextField clientField;
+	private AutoCompleteTextField clientField;
 
 	@FXML
 	private TextField ammountField;
@@ -17,10 +25,52 @@ public class PaymentDialogController extends DialogController {
 	private Payment payment;
 	
 	
+	private List<String> clientList;
+	
+	
+	void populateEntries() {
+		
+		clientList = Client.getClientsFromHistory(mainApp.getHistory());
+		clientField.getEntries().addAll(clientList);
+	}
+	
+	@Override
+	public void setMainApp(MainApp mainApp) {
+		super.setMainApp(mainApp);
+		
+		populateEntries();
+	}
+	
+	
 	public Payment getPayment() {
 		return payment;
 	}
 	
+	
+	boolean confirmClient() {
+		
+		AlertWrapper alert = new AlertWrapper(AlertType.CONFIRMATION)
+				.setTitle("No encontrado")
+				.setHeaderText("El cliente no coincide con ningun otro!")
+				.setContentText("Desea continuar?");
+		
+		Optional<ButtonType> result = alert.showAndWait();
+		// If OK is clicked
+		if (result.isPresent() && result.get() == ButtonType.OK) {
+			
+			payment.setClient(clientField.getText());
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	@FXML
+	private void handleClientEntered() {
+		
+		ammountField.requestFocus();
+	}
 	
 	@FXML
 	private void handleOK() {
@@ -28,7 +78,13 @@ public class PaymentDialogController extends DialogController {
 		payment = new Payment();
 		
 		String clientEntered = clientField.getText();
-		payment.setClient(clientEntered);
+		
+		if (!clientList.contains(clientEntered)) {
+			
+			if (!confirmClient()) {
+				return;
+			}
+		}
 		
 		
 		String ammountStr = ammountField.getText();
