@@ -56,6 +56,7 @@ public class HistoryViewerController extends DialogController {
 	
 	
 	private FilteredList<Transaction> filteredTransactionList;
+	//private SortedList<Transaction> sortedTransactionList;
 
 	
 	private String transactionClassToStyle(Transaction t) {
@@ -223,6 +224,12 @@ public class HistoryViewerController extends DialogController {
 	public void setMainApp(MainApp mainApp) {
 		super.setMainApp(mainApp);
 		
+		filteredTransactionList = mainApp.getHistory().filtered(t -> true);
+		//sortedTransactionList = new SortedList<>(filteredTransactionList);
+		//sortedTransactionList.comparatorProperty().bind(transactionTable.comparatorProperty());
+		
+		transactionTable.setItems(filteredTransactionList);
+		
 		filterByClient();
 	}
 	
@@ -233,19 +240,18 @@ public class HistoryViewerController extends DialogController {
 		String chosen = clientFilterBox.getText();
 		
 		if (chosen.isEmpty())
-			filteredTransactionList = mainApp.getHistory().filtered(t -> true);
+			filteredTransactionList.setPredicate(t -> true);
 			
 		else if (chosen.equals(ANY)) 
-			filteredTransactionList = mainApp.getHistory().filtered(t -> t.getClient() != null);
+			filteredTransactionList.setPredicate(t -> t.getClient() != null);
 		
 		else if (chosen.equals(NONE)) 
-			filteredTransactionList = mainApp.getHistory().filtered(t -> t.getClient() == null || t.getClient().isEmpty());
+			filteredTransactionList.setPredicate(t -> t.getClient() == null || t.getClient().isEmpty());
 		
 		else 
-			filteredTransactionList = mainApp.getHistory().filtered(t -> t.getClient() != null && t.getClient().equals(chosen));
+			filteredTransactionList.setPredicate(t -> t.getClient() != null && t.getClient().equals(chosen));
 		
-			
-		transactionTable.setItems(filteredTransactionList);
+		
 	}
 	
 	

@@ -103,6 +103,6 @@ public class Purchase extends Transaction {
 	
 	@Override
 	public void setBalance(float f) {
-		paid.set(total.get() - f);
+		paid.set(total.get() + f);
 	}
 }

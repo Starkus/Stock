@@ -13,7 +13,7 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public abstract class Transaction {
+public abstract class Transaction implements Comparable<Transaction> {
 	
 	private final StringProperty client;
 	private final FloatProperty balance;
@@ -46,6 +46,12 @@ public abstract class Transaction {
 				formattedDate.set(value);
 			}
 		});
+	}
+	
+	
+	@Override
+	public int compareTo(Transaction o) {
+		return getCreationDate().compareTo(o.getCreationDate());
 	}
 	
 	
