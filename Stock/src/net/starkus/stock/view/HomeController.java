@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.transformation.FilteredList;
@@ -18,12 +19,16 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.Admin;
 import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Dialog;
@@ -48,6 +53,9 @@ public class HomeController extends DialogController {
 	private TableColumn<Product, Number> priceColumn;
 	@FXML
 	private TableColumn<Product, Number> quanColumn;
+	
+	@FXML
+	private ToggleButton adminToggle;
 
 	@FXML
 	private Label cashField;
@@ -77,6 +85,38 @@ public class HomeController extends DialogController {
      */
     @FXML
     void initialize() {
+
+    	/* Set up admin button. */
+    	final Image noAdmin = new Image(MainApp.class.getResource("key_no.png").toExternalForm());
+    	final Image admin = new Image(MainApp.class.getResource("key_yes.png").toExternalForm());
+    	
+    	ImageView toggleButtonImageView = new ImageView();
+    	toggleButtonImageView.imageProperty().bind(Bindings.when(adminToggle.selectedProperty())
+    			.then(admin).otherwise(noAdmin));
+    	Admin.adminProperty().bind(adminToggle.selectedProperty());
+    	
+    	adminToggle.setGraphic(toggleButtonImageView);
+    	
+    	adminToggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (newValue == true) {
+					try {
+						PasswordDialogController cont = Dialog.passwordDialog.init();
+						cont.showAndWait();
+						
+						if (!cont.wasPasswordCorrect()) {
+							adminToggle.setSelected(false);
+						}
+						
+					} catch (IOException e) {
+						adminToggle.setSelected(false); // Extra security?
+						ExceptionUtil.printStackTrace(e);
+					}
+				}
+			}
+		});;
+    	
     	
     	stockTable.setPlaceholder(new Label("Nada por aquí"));
     	
@@ -113,7 +153,7 @@ public class HomeController extends DialogController {
     		return cell;
     	});
     	
-    	priceColumn.setCellValueFactory(cellData -> cellData.getValue().sellPriceProperty());
+    	priceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
     	priceColumn.setCellFactory(column -> {
     		TableCell<Product, Number> cell = new TableCell<Product, Number>() {
     			@Override

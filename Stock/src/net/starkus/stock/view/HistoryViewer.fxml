@@ -55,7 +55,7 @@
                         </HBox>
                         <HBox alignment="CENTER">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#nullifyTransaction" prefWidth="130.0" text="Anular" />
+                              <Button fx:id="nullifyButton" mnemonicParsing="false" onAction="#nullifyTransaction" prefWidth="130.0" text="Anular" />
                            </children>
                         </HBox>
                      </children>

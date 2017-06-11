@@ -37,6 +37,8 @@ public class AddStockDialogController extends DialogController {
 	private TableColumn<Product, String> nameColumn;
 	@FXML
 	private TableColumn<Product, Number> quantColumn;
+	@FXML
+	private TableColumn<Product, Number> subtotalColumn;
 	
 	@FXML
 	private Button OKButton;
@@ -45,6 +47,10 @@ public class AddStockDialogController extends DialogController {
 	private AutoCompleteTextField codeNameField;
 	@FXML
 	private TextField quantField;
+	@FXML
+	private TextField priceField;
+	@FXML
+	private TextField subtotalField;
 	
 
 	
@@ -64,6 +70,7 @@ public class AddStockDialogController extends DialogController {
     	codeColumn.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
     	quantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
+    	subtotalColumn.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty());
     	
     	codeNameField.setAutoProc(true);
     	

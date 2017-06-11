@@ -30,7 +30,7 @@ public class ProductList {
 		float total = 0;
 		
 		for (Product p : productList) {
-			total += p.getSellPrice() * p.getQuantity();
+			total += p.getPrice() * p.getQuantity();
 		}
 		
 		return total;

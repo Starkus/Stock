@@ -178,6 +178,6 @@ public class MainApp extends Application {
 	}
 	
 	public static String getVersion() {
-		return "0.5";
+		return "0.5.1";
 	}
 }

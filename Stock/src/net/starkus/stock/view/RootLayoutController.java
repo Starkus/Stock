@@ -3,6 +3,8 @@ package net.starkus.stock.view;
 import java.io.File;
 import java.io.IOException;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
@@ -13,6 +15,7 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.model.Admin;
 import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.ProductBox;
@@ -42,6 +45,11 @@ public class RootLayoutController {
 	private MenuItem dupliCmd;
 	@FXML
 	private MenuItem deleteCmd;
+
+	@FXML
+	private MenuItem setCashCmd;
+	@FXML
+	private MenuItem addStockCmd;
 	
 	
 	
@@ -53,6 +61,15 @@ public class RootLayoutController {
     private void initialize() {
 
     	closeCmd.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
+    	
+    	
+    	Admin.adminProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				setCashCmd.setDisable(!newValue);
+				addStockCmd.setDisable(!newValue);
+			}
+		});
     }
 	
 	public void setMainApp(MainApp m) {
@@ -183,6 +200,18 @@ public class RootLayoutController {
 		}
 		catch (IOException e) {
 			
+			ExceptionUtil.printStackTrace(e);
+		}
+	}
+	
+	@FXML
+	private void handleOpenClients() {
+		
+		try {
+			Dialog.clientOverviewDialog.init().showAndWait();
+		} 
+		catch (IOException e) {
+
 			ExceptionUtil.printStackTrace(e);
 		}
 	}

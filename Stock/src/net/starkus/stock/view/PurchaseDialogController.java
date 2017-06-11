@@ -103,9 +103,9 @@ public class PurchaseDialogController extends DialogController {
     	
     	codeColumn.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-    	priceColumn.setCellValueFactory(cellData -> cellData.getValue().sellPriceProperty());
+    	priceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
     	quantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
-    	subtColumn.setCellValueFactory(cellData -> cellData.getValue().sellSubtotalProperty());
+    	subtColumn.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty());
     	
     	formatLastRow();
     	
@@ -114,7 +114,7 @@ public class PurchaseDialogController extends DialogController {
     	
     	
     	total.bind(Bindings.createObjectBinding(() -> 
-    			items.stream().collect(Collectors.summingDouble(Product::getSellSubtotal)), items));
+    			items.stream().collect(Collectors.summingDouble(Product::getSubtotal)), items));
     	totalField.textProperty().bind(Bindings.convert(total));
     	
     	NumberFormat nf = NumberFormat.getInstance(Locale.US);
@@ -290,7 +290,7 @@ public class PurchaseDialogController extends DialogController {
 		
 		productToAdd.setQuantity(quant);
 		
-		float subt = productToAdd.getSellSubtotal();
+		float subt = productToAdd.getSubtotal();
 		subtField.setText(String.format("%.2f", subt));
 		
 		//handleAddItem();
@@ -313,7 +313,7 @@ public class PurchaseDialogController extends DialogController {
 			}
 		}
 		
-		float quant = subt / productToAdd.getSellPrice();
+		float quant = subt / productToAdd.getPrice();
 		
 		productToAdd.setQuantity(Math.round(quant*100f) / 100f);
 		

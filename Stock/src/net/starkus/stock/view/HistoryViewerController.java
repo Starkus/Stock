@@ -13,12 +13,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import net.starkus.stock.model.Admin;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.History;
 import net.starkus.stock.model.LegacyDebt;
@@ -68,6 +70,9 @@ public class HistoryViewerController extends DialogController {
 	@FXML
 	private ChoiceBox<DateFilter> dateFilterBox;
 	
+	@FXML
+	private Button nullifyButton;
+	
 	
 	private FilteredList<Transaction> filteredTransactionList;
 	private SortedList<Transaction> sortedTransactionList;
@@ -95,6 +100,9 @@ public class HistoryViewerController extends DialogController {
 	
 	@FXML
 	void initialize() {		
+		
+		nullifyButton.setDisable(!Admin.getAdmin());
+		
 		
 		typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
 		typeColumn.setCellFactory(column -> new TableCell<Transaction, TransactionType>() {
@@ -183,7 +191,7 @@ public class HistoryViewerController extends DialogController {
 		
 		productNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 		productQuantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
-		productPriceColumn.setCellValueFactory(cellData -> cellData.getValue().sellSubtotalProperty());
+		productPriceColumn.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty());
 		
 		transactionTable.getSortOrder().setAll(Collections.singletonList(dateColumn));
 		

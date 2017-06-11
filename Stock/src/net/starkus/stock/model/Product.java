@@ -12,16 +12,15 @@ public class Product implements Comparable<Product> {
 
 	private final LongProperty code;
 	private final StringProperty name;
-	private final FloatProperty buyPrice; // LEGACY: left for retro-compatibility
-	private final FloatProperty sellPrice;
+	private final FloatProperty price;
 	private final FloatProperty quantity;
-	private final FloatProperty sellSubtotal;
+	private final FloatProperty subtotal;
 
 	/**
 	 * Default constructor
 	 */
 	public Product() {
-		this(0, null, 8f);
+		this(0, null, -1f);
 	}
 	
 	/*
@@ -40,13 +39,12 @@ public class Product implements Comparable<Product> {
 		this.code = new SimpleLongProperty(code);
 		this.name = new SimpleStringProperty(name);
 
-		this.buyPrice = new SimpleFloatProperty(1);
-		this.sellPrice = new SimpleFloatProperty(sellPrice);
+		this.price = new SimpleFloatProperty(sellPrice);
 		
 		this.quantity = new SimpleFloatProperty(quantity);
 		
-		this.sellSubtotal = new SimpleFloatProperty();
-		this.sellSubtotal.bind(Bindings.multiply(this.quantity, this.sellPrice));
+		this.subtotal = new SimpleFloatProperty();
+		this.subtotal.bind(Bindings.multiply(this.quantity, this.price));
 	}
 	
 	
@@ -76,33 +74,16 @@ public class Product implements Comparable<Product> {
 	}
 	
 	
-	public void setBuyPrice(float newPrice) {
-		this.buyPrice.set(newPrice);
+	public void setPrice(float newPrice) {
+		this.price.set(newPrice);
 	}
 	
-	public float getBuyPrice() {
-		return this.buyPrice.get();
+	public float getPrice() {
+		return this.price.get();
 	}
 	
-	public FloatProperty buyPriceProperty() {
-		return this.buyPrice;
-	}
-	
-	
-	public void setSellPrice(float newPrice) {
-		this.sellPrice.set(newPrice);
-	}
-	
-	public void setSellPriceMult(float mult) {
-		this.sellPrice.set(getBuyPrice() * mult);
-	}
-	
-	public float getSellPrice() {
-		return this.sellPrice.get();
-	}
-	
-	public FloatProperty sellPriceProperty() {
-		return this.sellPrice;
+	public FloatProperty priceProperty() {
+		return this.price;
 	}
 	
 	
@@ -119,13 +100,13 @@ public class Product implements Comparable<Product> {
 	}
 	
 	
-	public float getSellSubtotal() {
-		float s = this.sellSubtotal.get();
+	public float getSubtotal() {
+		float s = this.subtotal.get();
 		return Math.round(s * 10f) / 10f;
 	}
 	
-	public FloatProperty sellSubtotalProperty() {
-		return this.sellSubtotal;
+	public FloatProperty subtotalProperty() {
+		return this.subtotal;
 	}
 
 	@Override
@@ -140,7 +121,7 @@ public class Product implements Comparable<Product> {
 	}
 	
 	public Product copy() {
-		return new Product(code.get(), name.get(), sellPrice.get(), quantity.get());
+		return new Product(code.get(), name.get(), price.get(), quantity.get());
 	}
 
 }

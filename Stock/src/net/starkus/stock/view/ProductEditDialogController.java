@@ -27,7 +27,7 @@ public class ProductEditDialogController extends DialogController {
 	public void setProduct(Product product) {
 		this.product = product;
 		
-		float sell = product.getSellPrice();
+		float sell = product.getPrice();
 		
 		codeField.setText(Long.toString(product.getCode()));
 		nameField.setText(product.getName());
@@ -43,7 +43,7 @@ public class ProductEditDialogController extends DialogController {
 		if (isInputValid()) {
 			product.setCode(Long.parseLong(codeField.getText()));
 			product.setName(nameField.getText());
-			product.setSellPrice(Float.parseFloat(sellPriceField.getText()));
+			product.setPrice(Float.parseFloat(sellPriceField.getText()));
 			
 			okClicked = true;
 			dialogStage.close();

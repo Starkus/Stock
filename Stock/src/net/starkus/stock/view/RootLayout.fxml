@@ -28,15 +28,16 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Ver">
           	<items>
+          	  <MenuItem onAction="#handleOpenClients" mnemonicParsing="false" text="Ver clientes..." />
           	  <MenuItem onAction="#handleOpenHistory" mnemonicParsing="false" text="Ver historial..." />
           	</items>
           </Menu>
           <Menu mnemonicParsing="false" text="Admin">
             <items>
-              <MenuItem onAction="#handleSetCash" mnemonicParsing="false" text="Caja" />
-              <MenuItem onAction="#handleAddStock" mnemonicParsing="false" text="Agregar stock" />
+              <MenuItem fx:id="setCashCmd" onAction="#handleSetCash" mnemonicParsing="false" text="Caja..." disable="true" />
+              <MenuItem fx:id="addStockCmd" onAction="#handleAddStock" mnemonicParsing="false" text="Agregar stock..." disable="true" />
               <SeparatorMenuItem />
-              <MenuItem onAction="#handleChangePassword" mnemonicParsing="false" text="Cambiar contraseña" />
+              <MenuItem onAction="#handleChangePassword" mnemonicParsing="false" text="Cambiar contraseña..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Ayuda">
