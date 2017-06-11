@@ -12,6 +12,7 @@ import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.Client;
+import net.starkus.stock.model.History;
 import net.starkus.stock.model.Payment;
 
 public class PaymentDialogController extends DialogController {
@@ -30,7 +31,7 @@ public class PaymentDialogController extends DialogController {
 	
 	void populateEntries() {
 		
-		clientList = Client.getClientsFromHistory(mainApp.getHistory());
+		clientList = Client.getClientsFromHistory(History.getHistory());
 		clientField.getEntries().addAll(clientList);
 	}
 	

@@ -22,7 +22,16 @@ public class TransactionTypeAdapter extends XmlAdapter<String, TransactionType> 
 
 	@Override
 	public String marshal(TransactionType v) throws Exception {
-		return v.toString();
+		switch (v) {
+		case LEGACYDEBT:
+			return "LEGACYDEBT";
+		case PAYMENT:
+			return "PAYMENT";
+		case PURCHASE:
+			return "PURCHASE";
+		}
+		
+		return "Unknown";
 	}
 
 }

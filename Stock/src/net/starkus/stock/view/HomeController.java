@@ -1,16 +1,20 @@
 package net.starkus.stock.view;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -23,10 +27,14 @@ import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Dialog;
+import net.starkus.stock.model.History;
 import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
+import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.save.SaveUtil;
+import net.starkus.stock.util.ExceptionUtil;
+import net.starkus.stock.util.SearchEngine;
 
 public class HomeController extends DialogController {
 	
@@ -51,6 +59,7 @@ public class HomeController extends DialogController {
 	
 	
 	private FilteredList<Product> filteredProductList;
+	private SortedList<Product> sortedProductList;
 	
 	private ContextMenu contextMenu;
 	
@@ -68,10 +77,66 @@ public class HomeController extends DialogController {
      */
     @FXML
     void initialize() {
+    	
+    	stockTable.setPlaceholder(new Label("Nada por aquí"));
+    	
+    	EventHandler<MouseEvent> mouseEvent = event -> {
+    		if (!event.getButton().equals(MouseButton.PRIMARY))
+    			return;
+    		
+    		if (event.getClickCount() == 2 && (stockTable.getSelectionModel().getSelectedIndex() != -1)) {
+    			handleEditProduct();
+    		}
+    	};
+    	
     	codeColumn.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
+    	codeColumn.setCellFactory(column -> {
+    		TableCell<Product, Number> cell = new TableCell<Product, Number>() {
+    			@Override
+    			protected void updateItem(Number item, boolean empty) {
+    				setText((empty || item==null) ? "" : item.toString()); 
+    			}
+    		};
+    		cell.setOnMouseClicked(mouseEvent);
+    		return cell;
+    	});
+    	
     	nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+    	nameColumn.setCellFactory(column -> {
+    		TableCell<Product, String> cell = new TableCell<Product, String>() {
+    			@Override
+    			protected void updateItem(String item, boolean empty) {
+    				setText((empty || item==null) ? "" : item); 
+    			}
+    		};
+    		cell.setOnMouseClicked(mouseEvent);
+    		return cell;
+    	});
+    	
     	priceColumn.setCellValueFactory(cellData -> cellData.getValue().sellPriceProperty());
+    	priceColumn.setCellFactory(column -> {
+    		TableCell<Product, Number> cell = new TableCell<Product, Number>() {
+    			@Override
+    			protected void updateItem(Number item, boolean empty) {
+    				setText((empty || item==null) ? "" : item.toString()); 
+    			}
+    		};
+    		cell.setOnMouseClicked(mouseEvent);
+    		return cell;
+    	});
+    	
     	quanColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
+    	quanColumn.setCellFactory(column -> {
+    		TableCell<Product, Number> cell = new TableCell<Product, Number>() {
+    			@Override
+    			protected void updateItem(Number item, boolean empty) {
+    				setText((empty || item==null) ? "" : item.toString()); 
+    			}
+    		};
+    		cell.setOnMouseClicked(mouseEvent);
+    		return cell;
+    	});
+    	
 
     	cashField.textProperty().bind(CashBox.cashProperty());
     	sesionBalanceField.textProperty().bind(CashBox.sessionBalanceProperty());
@@ -86,15 +151,6 @@ public class HomeController extends DialogController {
     	
     	setUpContextMenu();
     	
-    	stockTable.setOnMouseClicked(event -> {
-    		if (!event.getButton().equals(MouseButton.PRIMARY))
-    			return;
-    		
-    		if (event.getClickCount() == 2 && (stockTable.getSelectionModel().getSelectedIndex() != -1)) {
-    			handleEditProduct();
-    		}
-    	});
-    	
     	filterField.textProperty().addListener(new ChangeListener<String>() {
 
 			@Override
@@ -103,6 +159,13 @@ public class HomeController extends DialogController {
 				filter(newValue);
 			}
 		});
+    	
+    	filteredProductList = ProductBox.getProducts().filtered(p -> true);
+    	sortedProductList = filteredProductList.sorted();
+    	sortedProductList.comparatorProperty().bind(stockTable.comparatorProperty());
+    	
+    	stockTable.setItems(sortedProductList);
+    	stockTable.getSortOrder().setAll(Collections.singletonList(nameColumn));
     }
     
     /**
@@ -113,13 +176,6 @@ public class HomeController extends DialogController {
     @Override
     public void setMainApp(MainApp mainApp) {
     	super.setMainApp(mainApp);
-    	
-    	/*for (Product p : mainApp.getProductData()) {
-    		filterField.getEntries().add(p.getName());
-    	}*/
-    	
-    	// Initialize filter list and set table items
-    	handleFilter();
     	
     	RootLayoutController root = mainApp.getRootLayout();
     	root.getNewCmd().setOnAction(new EventHandler<ActionEvent>() {
@@ -228,13 +284,11 @@ public class HomeController extends DialogController {
     }
     
     private void filter(String s) {
+
+    	List<String> results = SearchEngine.filterObjects(s, ProductBox.getProducts().listIterator(), p -> ((Product) p).getName());
     	
     	// Ignore case
-    	filteredProductList = mainApp.getProductData().filtered(p ->
-    		p.getName().toLowerCase().contains(s.toLowerCase()));
-    	
-    	stockTable.setItems(filteredProductList);
-    	
+    	filteredProductList.setPredicate(p -> results.contains(p.getName()));
     }
     
     @FXML
@@ -253,8 +307,8 @@ public class HomeController extends DialogController {
 	    	
 	    	if (purchase != null) {
 	    		
-	    		mainApp.getHistory().add(purchase);
-	    		purchase.substractItemsFromStock(mainApp.getSortedProductData());
+	    		History.getHistory().add(purchase);
+	    		purchase.substractItemsFromStock(sortedProductList);
 	    		
 	    		CashBox.put(purchase.getPaid());
 	        	
@@ -263,7 +317,7 @@ public class HomeController extends DialogController {
     	}
 	    catch (IOException e) {
 	    	
-	    	e.printStackTrace();
+	    	ExceptionUtil.printStackTrace(e);
 	    }
     }
     
@@ -278,7 +332,7 @@ public class HomeController extends DialogController {
 	    	
 	    	if (payment != null) {
 	    		
-	    		mainApp.getHistory().add(payment);
+	    		History.getHistory().add(payment);
 	    		
 	    		CashBox.put(payment.getBalance());
 	        	
@@ -287,7 +341,7 @@ public class HomeController extends DialogController {
     	}
 	    catch (IOException e) {
 	    	
-	    	e.printStackTrace();
+	    	ExceptionUtil.printStackTrace(e);
 	    }
     }
     
@@ -296,13 +350,23 @@ public class HomeController extends DialogController {
     	
     	try {
 			Dialog.clientOverviewDialog.init().showAndWait();
-	    	
-	    	SaveUtil.saveToFile();
 			
 		} catch (IOException e) {
 
-			e.printStackTrace();
+			ExceptionUtil.printStackTrace(e);
 		}
+    }
+    
+    @FXML
+    private void handleOpenHistory() {
+    	
+    	try {
+    		Dialog.historyViewerDialog.init().showAndWait();
+    		
+    	} catch (IOException e) {
+    		
+    		ExceptionUtil.printStackTrace(e);
+    	}
     }
     
     @FXML
@@ -315,7 +379,7 @@ public class HomeController extends DialogController {
 		}
 		catch (IOException e) {
 
-			e.printStackTrace();
+			ExceptionUtil.printStackTrace(e);
 			return;
 		}
 		
@@ -324,7 +388,9 @@ public class HomeController extends DialogController {
 		controller.showAndWait();
     	
     	if (controller.isOkClicked()) {
-    		mainApp.getProductData().add(tempProduct);
+    		ProductBox.getProducts().add(tempProduct);
+    		
+    		SaveUtil.saveToFile();
     	}
     }
     
@@ -339,13 +405,15 @@ public class HomeController extends DialogController {
 				controller = Dialog.productEditDialog.init();
 			}
 			catch (IOException e) {
-				e.printStackTrace();
+				ExceptionUtil.printStackTrace(e);
 				return;
 			}
     		
 			controller.setProduct(selectedProduct);
 			
 			controller.showAndWait();
+			
+			SaveUtil.saveToFile();
 			
     	} else {
     		// Nothing selected
@@ -360,18 +428,21 @@ public class HomeController extends DialogController {
     
     @FXML
     private void handleDeleteProduct() {
-    	int selectedIndex = stockTable.getSelectionModel().getSelectedIndex();
+    	Product selected = stockTable.getSelectionModel().getSelectedItem();
     	
-    	if (selectedIndex >= 0) {
+    	if (selected != null) {
     		
     		AlertWrapper alert = new AlertWrapper(AlertType.CONFIRMATION)
     				.setTitle("Confirmar")
-    				.setHeaderText("¿Seguro que desea eliminar el producto seleccionado?");
+    				.setHeaderText("¿Seguro que desea eliminar \"" + selected.getName() + "\" ?");
 			
 			alert.showAndWait();
     		
-			if (alert.getResult() == ButtonType.OK)
-				mainApp.getProductData().remove(selectedIndex);
+			if (alert.getResult() == ButtonType.OK) {
+				ProductBox.getProducts().remove(selected);
+				
+				SaveUtil.saveToFile();
+			}
     	
     	} else {
     		// Nothing selected

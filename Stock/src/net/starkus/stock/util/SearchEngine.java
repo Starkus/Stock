@@ -1,8 +1,12 @@
 package net.starkus.stock.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.function.Function;
 
 public class SearchEngine {
 	
@@ -12,8 +16,8 @@ public class SearchEngine {
 		 */
 		s = s.toLowerCase();
 
-		s = s.replace("-", "");
-		s = s.replace("_", "");
+		s = s.replace("-", " ");
+		s = s.replace("_", " ");
 		s = s.replace(",", ".");
 
 		s = s.replace('á', 'a');
@@ -25,27 +29,45 @@ public class SearchEngine {
 		return s;
 	}
 	
-	public static List<String> filterList(String filter, Collection<String> entries) {
+	public static <T> List<String> filterObjects(String filter, ListIterator<T> iterator, Function<T, String> function) {
 		
 		List<String> searchResults = new ArrayList<>();
+		Map<String, Integer> weightedResults = new HashMap<>();
 		
-		String cText = cleanString(filter);
+		String[] tags = cleanString(filter).split(" ");
 		
-		for (String e : entries) {
+		// Forward
+		while (iterator.hasNext()) {
 			
-			String cEntry = cleanString(e);
+			int score = 0;
 			
-			if (cEntry.startsWith(cText) || cEntry.contains(" " + cText))
-				searchResults.add(e);
+			String entry = function.apply(iterator.next());
+			String cleanEntry = cleanString(entry);
+			
+			for (String tag : tags) {
+				
+				if (cleanEntry.startsWith(tag) || cleanEntry.contains(" " + tag))
+					score += 50;
+				
+				else if (cleanEntry.contains(tag))
+					score += 25;
+				
+				else
+					score -= 500;
+			}
+
+			if (score > 0) 
+				searchResults.add(entry);
+			weightedResults.put(entry, score);
 		}
 		
-		for (String e : entries) {
-			
-			String cEntry = cleanString(e);
-			
-			if (cEntry.contains(cText.replace(" ", "")) && !searchResults.contains(e))
-				searchResults.add(e);
-		}
+		searchResults.sort(new Comparator<String>() {
+
+			@Override
+			public int compare(String o1, String o2) {
+				return Integer.compare(weightedResults.get(o1), weightedResults.get(o2));
+			}
+		});
 		
 		return searchResults;
 	}

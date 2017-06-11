@@ -3,9 +3,7 @@ package net.starkus.stock;
 import java.io.IOException;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -16,9 +14,10 @@ import net.starkus.stock.legacy.UpdateSavefile;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.History;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.util.PasswordUtils;
+import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.Transaction;
 import net.starkus.stock.save.SaveUtil;
+import net.starkus.stock.util.PasswordUtils;
 import net.starkus.stock.view.DialogController;
 import net.starkus.stock.view.HomeController;
 import net.starkus.stock.view.RootLayoutController;
@@ -26,11 +25,6 @@ import net.starkus.stock.view.RootLayoutController;
 public class MainApp extends Application {
 	
 	private RootLayoutController rootLayoutController;
-	
-	private ObservableList<Product> productList = FXCollections.observableArrayList();
-	private SortedList<Product> sortedProducts;
-	
-	//private ObservableList<Transaction> history = FXCollections.observableArrayList();
 	
 	private String password;
 	
@@ -44,14 +38,11 @@ public class MainApp extends Application {
 		// Sample data
 		password = PasswordUtils.encodePassword("tigre");
 		
-		productList.add(new Product(78600010L, "TicTac Menta", 8, 13));
-		productList.add(new Product(78605831L, "TicTac Dupla Frutilla", 8, 13));
-		productList.add(new Product(8537023942L, "Xbox 360 Wireless Controller for Windows", 760, 1200));
-		productList.add(new Product(790520009944L, "Raid Casa y Jardin", 16, 24));
+		ProductBox.getProducts().add(new Product(12345679L, "Samsung Galaxy S6", 13000, 20000));
 		
 		//clientMap.put("Castor", new Client("Castor", 1));
 		
-		sortedProducts = productList.sorted();
+		//sortedProducts = productList.sorted();
 		
 		Dialog.setMainApp(this);
 	}
@@ -62,12 +53,9 @@ public class MainApp extends Application {
 	 * 
 	 * @return ObservableList<Product>
 	 */
+	@Deprecated
 	public ObservableList<Product> getProductData() {
-		return productList;
-	}
-	
-	public SortedList<Product> getSortedProductData() {
-		return sortedProducts;
+		return ProductBox.getProducts();
 	}
 	
 	

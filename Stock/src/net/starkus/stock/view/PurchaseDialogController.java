@@ -32,8 +32,10 @@ import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.BinarySearch;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
+import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.ProductListWithTotal;
 import net.starkus.stock.model.Purchase;
+import net.starkus.stock.util.ExceptionUtil;
 
 public class PurchaseDialogController extends DialogController {
 	
@@ -193,7 +195,7 @@ public class PurchaseDialogController extends DialogController {
     public void setMainApp(MainApp mainApp) {
     	this.mainApp = mainApp;
 
-    	for (Product p : mainApp.getProductData()) {
+    	for (Product p : ProductBox.getProducts()) {
     		codeNameField.getEntries().add(p.getName());
     	}
     }
@@ -211,7 +213,7 @@ public class PurchaseDialogController extends DialogController {
 			controller = Dialog.debtAssignDialog.init();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			ExceptionUtil.printStackTrace(e);
 			return null;
 		}
 		
@@ -227,7 +229,7 @@ public class PurchaseDialogController extends DialogController {
 		
 		// If entry, use entry
 		if (codeNameField.getResults().size() > 0) {
-			codeNameField.setText(codeNameField.getResults().getFirst());
+			codeNameField.setText(codeNameField.getResults().get(0));
 		}
 		
 		String text = codeNameField.getText();
@@ -246,11 +248,11 @@ public class PurchaseDialogController extends DialogController {
 		try {
 			code = Long.parseLong(text);
 			
-			product = BinarySearch.findProductByCode(code, mainApp.getSortedProductData());
+			product = BinarySearch.findProductByCode(code, ProductBox.getProducts().sorted());
 		}
 		catch (NumberFormatException e) {
 			
-			for (Product p : mainApp.getProductData()) {
+			for (Product p : ProductBox.getProducts()) {
 				if (text.equals(p.getName())) {
 					
 					product = p;

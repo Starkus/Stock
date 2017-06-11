@@ -18,6 +18,7 @@ import net.starkus.stock.model.History;
 import net.starkus.stock.model.LegacyDebt;
 import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
+import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.model.Transaction;
 import net.starkus.stock.model.TransactionType;
@@ -58,6 +59,8 @@ public class SaveUtil {
 			
 			if (wrapper.getVersion() == null) // Old savefile
 			{
+				System.out.println("Attempting to update old save file...");
+				
 				// Back up old file
 				Files.deleteIfExists(new File(file.getParentFile() + "/save.backup").toPath());
 				Files.copy(file.toPath(), new File(file.getParentFile() + "/save.backup").toPath());
@@ -76,7 +79,7 @@ public class SaveUtil {
 			HistoryWrapper historyWrapper = wrapper.getHistory();
 			
 			if (productsWrapper != null) {
-				ObservableList<Product> productList = mainApp.getProductData();
+				ObservableList<Product> productList = ProductBox.getProducts();
 				productList.clear();
 				productList.addAll(productsWrapper.getProducts());
 			}			
@@ -86,8 +89,6 @@ public class SaveUtil {
 				history.clear();
 				//history.addAll(historyWrapper.getHistory());
 				for (TransactionWrapper tw : historyWrapper.getHistory()) {
-					
-					System.out.println(tw.getType());
 					
 					Transaction t = null;
 					switch (tw.getType()) {
@@ -157,7 +158,7 @@ public class SaveUtil {
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
 			// Get the stuff from mainApp.
-			ObservableList<Product> productList = mainApp.getProductData();
+			ObservableList<Product> productList = ProductBox.getProducts();
 			ObservableList<Transaction> history = History.getHistory();
 			
 			// Make the sub-wrappers

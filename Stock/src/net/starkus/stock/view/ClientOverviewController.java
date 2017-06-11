@@ -15,13 +15,16 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import net.starkus.stock.model.Client;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.History;
+import net.starkus.stock.util.ExceptionUtil;
 import net.starkus.stock.util.SearchEngine;
 
 public class ClientOverviewController extends DialogController {
@@ -47,28 +50,70 @@ public class ClientOverviewController extends DialogController {
 	@FXML
 	private void initialize() {
 		
-		nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-		balanceColumn.setCellValueFactory(cellData -> cellData.getValue().getObservableBalance());
-		
-		clientTable.setOnMouseClicked(event -> {
-			if (!event.getButton().equals(MouseButton.PRIMARY))
-				return;
-			
-			if (event.getClickCount() == 2 && clientTable.getSelectionModel().getSelectedIndex() != -1) {
+		EventHandler<MouseEvent> ev = new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				if (!event.getButton().equals(MouseButton.PRIMARY))
+					return;
 				
-				try {
-					HistoryViewerController controller = Dialog.historyViewerDialog.init();
+				if (event.getClickCount() == 2 && clientTable.getSelectionModel().getSelectedIndex() != -1) {
 					
-					String client = clientTable.getSelectionModel().getSelectedItem().getName();
-					controller.setFilterClient(client);
-					
-					controller.showAndWait();
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					try {
+						HistoryViewerController controller = Dialog.historyViewerDialog.init();
+						
+						controller.setFilterClient(clientTable.getSelectionModel().getSelectedItem().getName());
+						
+						controller.showAndWait();
+						
+					} catch (IOException e) {
+						
+						ExceptionUtil.printStackTrace(e);
+					}
 				}
 			}
+		};
+		
+		nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+		nameColumn.setCellFactory(column -> {
+			TableCell<Client, String> cell = new TableCell<Client, String>() {
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					
+					if (empty || item == null) {
+						setText("");
+					}
+					else {
+						setText(item);
+					}
+					setGraphic(null);
+				}
+			};
+			cell.setOnMouseClicked(ev);
+			
+			return cell;
+		});
+		
+		balanceColumn.setCellValueFactory(cellData -> cellData.getValue().getObservableBalance());
+		balanceColumn.setCellFactory(column -> {
+			TableCell<Client, Number> cell = new TableCell<Client, Number>() {
+				@Override
+				protected void updateItem(Number item, boolean empty) {
+					super.updateItem(item, empty);
+					
+					if (empty || item == null) {
+						setText("");
+					}
+					else {
+						setText(item.toString());
+					}
+					setGraphic(null);
+				}
+			};
+			cell.setOnMouseClicked(ev);
+			
+			return cell;
 		});
 		
 		clientList = FXCollections.observableArrayList(c -> new Observable[] { c.getTransactions() } );
@@ -94,8 +139,8 @@ public class ClientOverviewController extends DialogController {
 					controller.showAndWait();
 					
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
+					ExceptionUtil.printStackTrace(e);
 				}
 			}
 		});
@@ -127,7 +172,8 @@ public class ClientOverviewController extends DialogController {
 		
 		List<String> nameList = new ArrayList<>();
 		for (Client c : clientList) nameList.add(c.getName());
-		List<String> filteredNameList = SearchEngine.filterList(filterField.getText(), nameList);
+		List<String> filteredNameList = SearchEngine.filterObjects(filterField.getText(), clientList.listIterator(),
+				c -> c.getName());
 		
 		if (filterField.getText().isEmpty()) {
 			filteredClientList.setPredicate(c -> true);

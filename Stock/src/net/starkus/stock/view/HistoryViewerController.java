@@ -24,6 +24,7 @@ import net.starkus.stock.model.History;
 import net.starkus.stock.model.LegacyDebt;
 import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
+import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.ProductListWithTotal;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.model.Transaction;
@@ -218,12 +219,12 @@ public class HistoryViewerController extends DialogController {
 		
 		
 		List<DateFilter> dateFilters = Arrays.asList(
+				new DateFilter("Todo", Period.ofYears(99)),
 				new DateFilter("Este mes", Period.ofMonths(1)),
 				new DateFilter("Esta semana", Period.ofWeeks(1)),
 				new DateFilter("Hoy", Period.ofDays(1))
 				);
 		dateFilterBox.setItems(FXCollections.observableArrayList(dateFilters));
-		dateFilterBox.getSelectionModel().selectFirst();
 		dateFilterBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<DateFilter>() {
 
 			@Override
@@ -231,8 +232,10 @@ public class HistoryViewerController extends DialogController {
 					DateFilter newValue) {
 				
 				filterByClient();
+				transactionTable.scrollTo(transactionTable.getItems().size() - 1);
 			}
 		});
+		dateFilterBox.getSelectionModel().select(1);
 		
 		transactionTable.setItems(sortedTransactionList);
 		filterByClient();
@@ -284,7 +287,7 @@ public class HistoryViewerController extends DialogController {
 			Purchase purchase = (Purchase) transaction;
 		
 			// Put items back in the shelf
-			purchase.addToStock(mainApp.getSortedProductData());
+			purchase.addToStock(ProductBox.getProducts().sorted());
 		}
 			
 		// Get money out da bank

@@ -15,8 +15,10 @@ import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.Dialog;
+import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.save.SaveUtil;
+import net.starkus.stock.util.ExceptionUtil;
 
 public class RootLayoutController {
 	
@@ -145,7 +147,7 @@ public class RootLayoutController {
 			SaveUtil.saveToFile();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			ExceptionUtil.printStackTrace(e);
 		}
 		
 	}
@@ -158,7 +160,7 @@ public class RootLayoutController {
 		}
 		catch (IOException e) {
 			
-			e.printStackTrace();
+			ExceptionUtil.printStackTrace(e);
 			return;
 		}
 		SaveUtil.saveToFile();
@@ -174,14 +176,14 @@ public class RootLayoutController {
 			Purchase purchase = controller.getProductList();
 	    	
 	    	if (purchase != null) {
-	    		purchase.addToStock(mainApp.getSortedProductData());
+	    		purchase.addToStock(ProductBox.getProducts().sorted());
 	        	
 	        	SaveUtil.saveToFile();
 	    	}
 		}
 		catch (IOException e) {
 			
-			e.printStackTrace();
+			ExceptionUtil.printStackTrace(e);
 		}
 	}
 	
@@ -193,7 +195,7 @@ public class RootLayoutController {
 		} 
 		catch (IOException e) {
 
-			e.printStackTrace();
+			ExceptionUtil.printStackTrace(e);
 		}
 	}
 	

@@ -1,6 +1,12 @@
 package net.starkus.stock.model;
 
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.sun.javafx.event.EventUtil;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -12,13 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import com.sun.javafx.event.EventUtil;
+import net.starkus.stock.util.SearchEngine;
 
 /**
  * This class is a TextField which implements an "autocomplete" functionality, based on a supplied list of entries.
@@ -27,9 +27,9 @@ import com.sun.javafx.event.EventUtil;
 public class AutoCompleteTextField extends TextField
 {
 	/** The existing autocomplete entries. */
-	private final SortedSet<String> entries;
-	/** Sorry I need this externally.      */
-	private final LinkedList<String> searchResult;
+	private final List<String> entries;
+	
+	private final List<String> searchResult;
 	/** The popup used to select an entry. */
 	private ContextMenu entriesPopup;
 	
@@ -38,66 +38,28 @@ public class AutoCompleteTextField extends TextField
 	
 	
 	
-	private String cleanString(String s) {
-		/*
-		 * Remove accent notations and turn to lower case.
-		 */
-		s = s.toLowerCase();
-
-		s = s.replace("-", "");
-		s = s.replace("_", "");
-		s = s.replace(",", ".");
-
-		s = s.replace('á', 'a');
-		s = s.replace('é', 'e');
-		s = s.replace('í', 'i');
-		s = s.replace('ó', 'o');
-		s = s.replace('ú', 'u');
-		
-		return s;
-	}
-	
-
 	/** Construct a new AutoCompleteTextField. */
 	public AutoCompleteTextField() {
 		
 		super();
 		
-		entries = new TreeSet<>();
+		entries = new ArrayList<>();
 		searchResult = new LinkedList<>();
 		entriesPopup = new ContextMenu();
 		
 		textProperty().addListener(new ChangeListener<String>()
 		{
 			@Override
-			public void changed(ObservableValue<? extends String> observableValue, String s, String s2) {
+			public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
 				
-				searchResult.clear();
-				
-				if (getText().length() == 0)
-				{
+				if (getText().length() == 0) {
+					
 					entriesPopup.hide();
-				} else
-				{
-					// Can't add them right away, cause non-cap-sensitive checking.
-					//searchResult.addAll(entries.subSet(getText(), getText() + Character.MAX_VALUE));
-					String cText = cleanString(getText());
+				}
+				else {
 					
-					for (String e : entries) {
-						
-						String cEntry = cleanString(e);
-						
-						if (cEntry.startsWith(cText) || cEntry.contains(" " + cText))
-							searchResult.add(e);
-					}
-					
-					for (String e : entries) {
-						
-						String cEntry = cleanString(e);
-						
-						if (cEntry.contains(cText.replace(" ", "")) && !searchResult.contains(e))
-							searchResult.add(e);
-					}
+					searchResult.clear();
+					searchResult.addAll(SearchEngine.filterObjects(newValue, entries.listIterator(), s -> s));
 					
 					if (entries.size() > 0)
 					{
@@ -157,13 +119,13 @@ public class AutoCompleteTextField extends TextField
 	 * Get the existing set of autocomplete entries.
 	 * @return The existing autocomplete entries.
 	 */
-	public SortedSet<String> getEntries() { return entries; }
+	public List<String> getEntries() { return entries; }
 	
 	public ContextMenu getPopup() {
 		return entriesPopup;
 	}
 	
-	public LinkedList<String> getResults() {
+	public List<String> getResults() {
 		return searchResult;
 	}
 	
