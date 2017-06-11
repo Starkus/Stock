@@ -23,7 +23,7 @@ public class Purchase extends Transaction {
 	
 	
 	public Purchase() {
-		super();
+		super(TransactionType.PURCHASE);
 
 		paid = new SimpleFloatProperty();
 		total = new ReadOnlyFloatWrapper();

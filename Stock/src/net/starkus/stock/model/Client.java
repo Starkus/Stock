@@ -2,9 +2,12 @@ package net.starkus.stock.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import net.starkus.stock.MainApp;
@@ -17,6 +20,8 @@ public class Client {
 	 */
 
 	private final StringProperty name;
+	private final FilteredList<Transaction> transactions;
+	private final FilteredList<Transaction> validTransactions;
 	
 	/*
 	 * Default constructor
@@ -38,6 +43,9 @@ public class Client {
 	public Client(String name, float balance) {
 		
 		this.name = new SimpleStringProperty(name);
+
+		this.transactions = History.getHistory().filtered(t -> t.getClient() != null && t.getClient().equals(getName()));
+		this.validTransactions = transactions.filtered(t -> t.getCancelled() == false);
 	}
 	
 	
@@ -49,17 +57,27 @@ public class Client {
 		return this.name.get();
 	}
 	
+	public FilteredList<Transaction> getTransactions() {
+		return transactions;
+	}
+	
+	public ObservableValue<Number> getObservableBalance() {
+		return Bindings.createObjectBinding(() -> 
+				this.validTransactions.stream().collect(Collectors.summingDouble(Transaction::getBalance)), validTransactions);
+	}
+	
 	public StringProperty nameProperty() {
 		return this.name;
 	}
 	
 	
+	@Deprecated
 	public float calculateBalance(MainApp mainApp) {
 		
 		float bal = 0;
 		
 		FilteredList<Transaction> filteredTransactionList = new FilteredList<>(mainApp.getHistory());
-		filteredTransactionList = mainApp.getHistory().filtered(t -> t.getClient() != null && t.getClient().equals(getName()));
+		filteredTransactionList = validTransactions;
 		
 		for (int i=0; i < filteredTransactionList.size(); i++) {
 			

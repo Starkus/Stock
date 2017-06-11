@@ -6,18 +6,13 @@ import java.util.List;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.starkus.stock.model.Product;
+import net.starkus.stock.model.TransactionType;
 import net.starkus.stock.util.LocalDateTimeAdapter;
 import net.starkus.stock.util.TransactionTypeAdapter;;
 
 
 
-public class TransactionWrapper {
-	
-	
-	public enum TransactionType {
-		PURCHASE, PAYMENT, LEGACYDEBT;  
-	}
-	
+public class TransactionWrapper {	
 	
 	private TransactionType type;
 	private String client;

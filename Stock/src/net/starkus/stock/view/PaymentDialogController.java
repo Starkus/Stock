@@ -77,9 +77,9 @@ public class PaymentDialogController extends DialogController {
 		
 		payment = new Payment();
 		
-		String clientEntered = clientField.getText();
+		payment.setClient(clientField.getText());
 		
-		if (!clientList.contains(clientEntered)) {
+		if (!clientList.contains(payment.getClient())) {
 			
 			if (!confirmClient()) {
 				return;

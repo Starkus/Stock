@@ -191,6 +191,49 @@
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
+.choice-box .list-cell 
+{
+    -fx-background-color: transparent;
+    -fx-cell-size: 1.66667em; 
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+    -fx-text-fill: #d8d8d8;
+    -fx-padding: 3 0 2 7;
+    -fx-cell-size: 2em; 
+}
+
+.choice-box .context-menu .list-view 
+{
+    -fx-background-color: white, derive(#1d1d1d,50%);
+    -fx-background-insets: 0, 1;
+}
+
+.choice-box .context-menu .list-view .list-cell:filled:hover 
+{
+    -fx-background-color: -fx-focus-color;
+}
+
+.choice-box {
+    -fx-padding: 2 2 2 2;   
+    -fx-border-color: #e2e2e2;
+    -fx-border-width: 2;
+    -fx-background-radius: 0;
+    -fx-background-color: #1d1d1d;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
+
+.choice-box:hover
+{
+    -fx-background-color: #3a3a3a;
+}
+
+.choice-box:focused {
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-radius: 0;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
+
 .total-row {
 	-fx-font-family: "Segoe UI Semibold";
     -fx-font-size: 32pt;

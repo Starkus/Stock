@@ -2,7 +2,7 @@ package net.starkus.stock.util;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import net.starkus.stock.save.TransactionWrapper.TransactionType;
+import net.starkus.stock.model.TransactionType;
 
 public class TransactionTypeAdapter extends XmlAdapter<String, TransactionType> {
 

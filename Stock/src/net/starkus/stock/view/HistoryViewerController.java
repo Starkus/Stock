@@ -1,9 +1,20 @@
 package net.starkus.stock.view;
 
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.chrono.ChronoLocalDateTime;
+import java.time.temporal.TemporalAmount;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -11,12 +22,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.CashBox;
+import net.starkus.stock.model.History;
 import net.starkus.stock.model.LegacyDebt;
 import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductListWithTotal;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.model.Transaction;
+import net.starkus.stock.model.TransactionType;
 import net.starkus.stock.save.SaveUtil;
 
 public class HistoryViewerController extends DialogController {
@@ -28,11 +41,11 @@ public class HistoryViewerController extends DialogController {
 	private TableView<Transaction> transactionTable;
 
 	@FXML
-	private TableColumn<Transaction, String> typeColumn;
+	private TableColumn<Transaction, TransactionType> typeColumn;
 	@FXML
 	private TableColumn<Transaction, String> clientColumn;
 	@FXML
-	private TableColumn<Transaction, String> dateColumn;
+	private TableColumn<Transaction, LocalDateTime> dateColumn;
 	@FXML
 	private TableColumn<Transaction, Number> balanceColumn;
 	
@@ -53,10 +66,12 @@ public class HistoryViewerController extends DialogController {
 	
 	@FXML
 	private TextField clientFilterBox;
+	@FXML
+	private ChoiceBox<DateFilter> dateFilterBox;
 	
 	
 	private FilteredList<Transaction> filteredTransactionList;
-	//private SortedList<Transaction> sortedTransactionList;
+	private SortedList<Transaction> sortedTransactionList;
 
 	
 	private String transactionClassToStyle(Transaction t) {
@@ -78,117 +93,94 @@ public class HistoryViewerController extends DialogController {
 			return "";
 	}
 	
-	private String transactionClassToString(Transaction t) {
-		if (t.getClass().equals(Purchase.class)) {
-			return "Compra";
-		}
-		else if (t.getClass().equals(Payment.class)) {
-			return "Pago";
-		}
-		else if (t.getClass().equals(LegacyDebt.class)) {
-			return "Deuda legado";
-		}
-		else
-			return "";
-	}
 	
 	@FXML
-	void initialize() {
+	void initialize() {		
 		
-		typeColumn.setCellFactory(column -> {
-			return new TableCell<Transaction, String>() {
-				@Override
-				protected void updateItem(String item, boolean empty) {
-					super.updateItem(item, empty);
-					
-					Transaction t = (Transaction) getTableRow().getItem();
-					
-					if (empty) {
-						setText("");
-						setStyle("");
-					}
-					else {
-						setText(transactionClassToString(t));
-						setStyle(transactionClassToStyle(t));
-					}
-					
-					setGraphic(null);
+		typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
+		typeColumn.setCellFactory(column -> new TableCell<Transaction, TransactionType>() {
+			@Override
+			protected void updateItem(TransactionType item, boolean empty) {
+				super.updateItem(item, empty);
+				
+				Transaction t = (Transaction) getTableRow().getItem();
+				if (empty || t == null) {
+					setText("");
+					setStyle("");
 				}
-			};
+				else {
+					setText(item.toString());
+					setStyle(transactionClassToStyle(t));
+				}
+				setGraphic(null);
+			}
 		});
 		
-		clientColumn.setCellFactory(column -> {
-			return new TableCell<Transaction, String>() {
-				@Override
-				protected void updateItem(String item, boolean empty) {
-					super.updateItem(item, empty);
-					
-					Transaction t = (Transaction) getTableRow().getItem();
-					
-					if (empty) {
-						setText("");
-						setStyle("");
-					} 
-					else {
-						setText(t.getClient() == null ? "" : t.getClient());
-						setStyle(transactionClassToStyle(t));
-					}
-					
-					setGraphic(null);
-				}
-			};
-		});
-		
-		dateColumn.setCellFactory(column -> {
-			return new TableCell<Transaction, String>() {
-				@Override
-				protected void updateItem(String item, boolean empty) {
-					super.updateItem(item, empty);
-					
-					Transaction t = (Transaction) getTableRow().getItem();
-					
-					if (empty) {
-						setText("");
-						setStyle("");
-					} 
-					else {
-						setText(t.formattedDateProperty().get());
-						setStyle(transactionClassToStyle(t));
-					}
-					
-					setGraphic(null);
-				}
-			};
-		});
-		
-		balanceColumn.setCellFactory(column -> {
-			return new TableCell<Transaction, Number>() {
-				@Override
-				protected void updateItem(Number item, boolean empty) {
-					super.updateItem(item, empty);
-					
-					Transaction t = (Transaction) getTableRow().getItem();
-					
-					if (empty) {
-						setText("");
-						setStyle("");
-					} 
-					else {
-						setText(Float.toString(t.getBalance()));
-						setStyle(transactionClassToStyle(t));
-					}
-					
-					setGraphic(null);
-				}
-			};
-		});
-		
-		/*
 		clientColumn.setCellValueFactory(cellData -> cellData.getValue().clientProperty());
-		dateColumn.setCellValueFactory(cellData -> cellData.getValue().formattedDateProperty());
-		totalColumn.setCellValueFactory(cellData -> cellData.getValue().totalProperty());
-		paidColumn.setCellValueFactory(cellData -> cellData.getValue().paidProperty());*/
+		clientColumn.setCellFactory(column -> new TableCell<Transaction, String>() {
+			@Override
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				
+				Transaction t = (Transaction) getTableRow().getItem();
+				
+				if (empty || t == null) {
+					setText("");
+					setStyle("");
+				} 
+				else {
+					setText(item);
+					setStyle(transactionClassToStyle(t));
+				}
+				
+				setGraphic(null);
+			}
+		});
 		
+		dateColumn.setCellValueFactory(cellData -> cellData.getValue().creationDateProperty());
+		dateColumn.setCellFactory(column -> new TableCell<Transaction, LocalDateTime>() {
+			@Override
+			protected void updateItem(LocalDateTime item, boolean empty) {
+				super.updateItem(item, empty);
+				
+				Transaction t = (Transaction) getTableRow().getItem();
+				
+				if (empty || t == null) {
+					setText("");
+					setStyle("");
+				} 
+				else {
+					String formatted = String.format("%d/%d/%d - %d:%d:%d", item.getDayOfMonth(), item.getMonthValue(),
+							item.getYear(), item.getHour(), item.getMinute(), item.getSecond());
+					
+					setText(formatted);
+					setStyle(transactionClassToStyle(t));
+				}
+				
+				setGraphic(null);
+			}
+		});
+		
+		balanceColumn.setCellValueFactory(cellData -> cellData.getValue().balanceProperty());
+		balanceColumn.setCellFactory(column -> new TableCell<Transaction, Number>() {
+			@Override
+			protected void updateItem(Number item, boolean empty) {
+				super.updateItem(item, empty);
+				
+				Transaction t = (Transaction) getTableRow().getItem();
+				
+				if (empty || t == null) {
+					setText("");
+					setStyle("");
+				} 
+				else {
+					setText(item.toString());
+					setStyle(transactionClassToStyle(t));
+				}
+				
+				setGraphic(null);
+			}
+		});
 		
 		productNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 		productQuantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
@@ -218,18 +210,31 @@ public class HistoryViewerController extends DialogController {
 				filterByClient();
 			}
 		});
-	}
-	
-	@Override
-	public void setMainApp(MainApp mainApp) {
-		super.setMainApp(mainApp);
+
 		
-		filteredTransactionList = mainApp.getHistory().filtered(t -> true);
-		//sortedTransactionList = new SortedList<>(filteredTransactionList);
-		//sortedTransactionList.comparatorProperty().bind(transactionTable.comparatorProperty());
+		filteredTransactionList = History.getHistory().filtered(t -> true);
+		sortedTransactionList = new SortedList<>(filteredTransactionList);
+		sortedTransactionList.comparatorProperty().bind(transactionTable.comparatorProperty());
 		
-		transactionTable.setItems(filteredTransactionList);
 		
+		List<DateFilter> dateFilters = Arrays.asList(
+				new DateFilter("Este mes", Period.ofMonths(1)),
+				new DateFilter("Esta semana", Period.ofWeeks(1)),
+				new DateFilter("Hoy", Period.ofDays(1))
+				);
+		dateFilterBox.setItems(FXCollections.observableArrayList(dateFilters));
+		dateFilterBox.getSelectionModel().selectFirst();
+		dateFilterBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<DateFilter>() {
+
+			@Override
+			public void changed(ObservableValue<? extends DateFilter> observable, DateFilter oldValue,
+					DateFilter newValue) {
+				
+				filterByClient();
+			}
+		});
+		
+		transactionTable.setItems(sortedTransactionList);
 		filterByClient();
 	}
 	
@@ -251,7 +256,8 @@ public class HistoryViewerController extends DialogController {
 		else 
 			filteredTransactionList.setPredicate(t -> t.getClient() != null && t.getClient().equals(chosen));
 		
-		
+		filteredTransactionList.setPredicate(filteredTransactionList.getPredicate().and(t -> 
+		((Transaction) t).getCreationDate().compareTo(dateFilterBox.getSelectionModel().getSelectedItem().from()) > 0));
 	}
 	
 	
@@ -288,11 +294,34 @@ public class HistoryViewerController extends DialogController {
 		transaction.cancel();
 		
 		SaveUtil.saveToFile();
+		
+		// Update table
+		transactionTable.setItems(sortedTransactionList);
 	}
 	
 	public void setFilterClient(String client) {
 		
 		clientFilterBox.setText(client);
 		filterByClient();
+	}
+	
+	private class DateFilter {
+		
+		private final TemporalAmount timeAgo;
+		private final String displayName;
+		
+		public DateFilter(String name, TemporalAmount time) {
+			this.displayName = name;
+			this.timeAgo = time;
+		}
+		
+		public LocalDateTime from() {
+			return LocalDateTime.now().minus(timeAgo);
+		}
+		
+		@Override
+		public String toString() {
+			return displayName;
+		}
 	}
 }

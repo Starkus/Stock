@@ -32,6 +32,7 @@
                            <children>
                               <Label prefHeight="21.0" prefWidth="48.0" text="De:" HBox.hgrow="NEVER" />
                               <TextField fx:id="clientFilterBox" maxWidth="1.7976931348623157E308" minWidth="200.0" onAction="#filterByClient" HBox.hgrow="ALWAYS" />
+                              <ChoiceBox fx:id="dateFilterBox" prefWidth="150.0" />
                            </children>
                         </HBox>
                         <TableView fx:id="productTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">

@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.starkus.stock.legacy.UpdateSavefile;
 import net.starkus.stock.model.Dialog;
+import net.starkus.stock.model.History;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.util.PasswordUtils;
 import net.starkus.stock.model.Transaction;
@@ -29,10 +30,7 @@ public class MainApp extends Application {
 	private ObservableList<Product> productList = FXCollections.observableArrayList();
 	private SortedList<Product> sortedProducts;
 	
-	//private ObservableList<Client> clientList = FXCollections.observableArrayList();
-	//private ObservableMap<String, Client> clientMap = FXCollections.observableHashMap();
-	
-	private ObservableList<Transaction> history = FXCollections.observableArrayList();
+	//private ObservableList<Transaction> history = FXCollections.observableArrayList();
 	
 	private String password;
 	
@@ -73,8 +71,9 @@ public class MainApp extends Application {
 	}
 	
 	
+	@Deprecated
 	public ObservableList<Transaction> getHistory() {
-		return history;
+		return History.getHistory();
 	}
 	
 	

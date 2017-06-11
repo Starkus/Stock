@@ -19,11 +19,11 @@ import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.model.Transaction;
+import net.starkus.stock.model.TransactionType;
 import net.starkus.stock.save.HistoryWrapper;
 import net.starkus.stock.save.ProductListWrapper;
 import net.starkus.stock.save.SavefileWrapper;
 import net.starkus.stock.save.TransactionWrapper;
-import net.starkus.stock.save.TransactionWrapper.TransactionType;
 
 public class UpdateSavefile {
 	

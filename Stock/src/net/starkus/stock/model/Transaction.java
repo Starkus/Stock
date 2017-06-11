@@ -15,6 +15,8 @@ import javafx.beans.value.ObservableValue;
 
 public abstract class Transaction implements Comparable<Transaction> {
 	
+	protected final ObjectProperty<TransactionType> type;
+	
 	private final StringProperty client;
 	private final FloatProperty balance;
 	
@@ -24,7 +26,9 @@ public abstract class Transaction implements Comparable<Transaction> {
 	private final StringProperty formattedDate;
 	
 	
-	public Transaction() {
+	public Transaction(TransactionType transactionType) {
+		
+		type = new SimpleObjectProperty<TransactionType>(transactionType);
 
 		creationDate = new SimpleObjectProperty<>(null);
 		client = new SimpleStringProperty();
@@ -51,9 +55,19 @@ public abstract class Transaction implements Comparable<Transaction> {
 	
 	@Override
 	public int compareTo(Transaction o) {
-		return getCreationDate().compareTo(o.getCreationDate());
+		return getClient().compareTo(o.getClient());
 	}
+
 	
+	public TransactionType getType() {
+		return type.get();
+	}
+	public void setType(TransactionType t) {
+		type.set(t);
+	}
+	public ObjectProperty<TransactionType> typeProperty() {
+		return type;
+	}
 	
 	public String getClient() {
 		return client.get();

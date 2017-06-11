@@ -14,12 +14,13 @@ import javafx.scene.control.Alert.AlertType;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.legacy.UpdateSavefile;
 import net.starkus.stock.model.CashBox;
+import net.starkus.stock.model.History;
 import net.starkus.stock.model.LegacyDebt;
 import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.model.Transaction;
-import net.starkus.stock.save.TransactionWrapper.TransactionType;
+import net.starkus.stock.model.TransactionType;
 
 public class SaveUtil {
 	
@@ -81,7 +82,7 @@ public class SaveUtil {
 			}			
 			
 			if (historyWrapper != null) {
-				ObservableList<Transaction> history = mainApp.getHistory();
+				ObservableList<Transaction> history = History.getHistory();
 				history.clear();
 				//history.addAll(historyWrapper.getHistory());
 				for (TransactionWrapper tw : historyWrapper.getHistory()) {
@@ -157,7 +158,7 @@ public class SaveUtil {
 
 			// Get the stuff from mainApp.
 			ObservableList<Product> productList = mainApp.getProductData();
-			ObservableList<Transaction> history = mainApp.getHistory();
+			ObservableList<Transaction> history = History.getHistory();
 			
 			// Make the sub-wrappers
 			ProductListWrapper productsWrapper = new ProductListWrapper();
