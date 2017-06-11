@@ -2,10 +2,9 @@ package net.starkus.stock.view;
 
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.temporal.TemporalAmount;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -20,7 +19,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import net.starkus.stock.MainApp;
 import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.History;
 import net.starkus.stock.model.LegacyDebt;
@@ -185,6 +183,8 @@ public class HistoryViewerController extends DialogController {
 		productNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 		productQuantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
 		productPriceColumn.setCellValueFactory(cellData -> cellData.getValue().sellSubtotalProperty());
+		
+		transactionTable.getSortOrder().setAll(Collections.singletonList(dateColumn));
 		
 		transactionTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Transaction>() {
 
