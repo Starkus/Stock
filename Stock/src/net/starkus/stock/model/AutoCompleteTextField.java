@@ -53,7 +53,8 @@ public class AutoCompleteTextField extends TextField
 			public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
 				
 				if (getText().length() == 0) {
-					
+
+					searchResult.clear();
 					entriesPopup.hide();
 				}
 				else {

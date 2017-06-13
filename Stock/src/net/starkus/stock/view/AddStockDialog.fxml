@@ -7,21 +7,23 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="450.0" prefWidth="800.0" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.AddStockDialogController">
+<?import net.starkus.stock.model.AutoCompleteTextField?>
+
+<AnchorPane prefHeight="450.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.AddStockDialogController">
    <children>
-      <SplitPane dividerPositions="0.43333333333333335" prefHeight="160.0" prefWidth="200.0" styleClass="background" stylesheets="@DarkMetro.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.43333333333333335" prefHeight="160.0" prefWidth="200.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="349.0" prefWidth="322.0">
                <children>
-                  <VBox prefHeight="397.0" prefWidth="343.0" AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="12.0">
+                  <VBox prefHeight="397.0" prefWidth="343.0" AnchorPane.bottomAnchor="51.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
                      <children>
                         <Label text="Producto" />
-						<TextField fx:id="codeNameField" onAction="#handleCodeEntered">
+						<AutoCompleteTextField fx:id="codeNameField" onAction="#handleCodeEntered">
                            <VBox.margin>
                               <Insets bottom="8.0" />
-                           </VBox.margin></TextField>
+                           </VBox.margin></AutoCompleteTextField>
                         <Label text="Cantidad" />
-                        <TextField fx:id="quantField" onAction="#handleAddItem">
+                        <TextField fx:id="quantField" onAction="#handleQuantityEntered">
                            <VBox.margin>
                               <Insets bottom="8.0" />
                            </VBox.margin></TextField>
@@ -30,13 +32,13 @@
                               <VBox HBox.hgrow="ALWAYS">
                                  <children>
                                     <Label text="Precio unidad" />
-                                    <TextField fx:id="priceField" />
+                                    <TextField fx:id="priceField" onAction="#handlePriceEntered" />
                                  </children>
                               </VBox>
                               <VBox HBox.hgrow="ALWAYS">
                                  <children>
                                     <Label text="Subtotal" />
-                                    <TextField fx:id="subtotalField" />
+                                    <TextField fx:id="subtotalField" onAction="#handleSubtotalEntered" />
                                  </children>
                               </VBox>
                            </children>
@@ -69,6 +71,7 @@
                       <TableColumn fx:id="codeColumn" minWidth="60.0" prefWidth="60.0" text="Codigo" />
                       <TableColumn fx:id="nameColumn" minWidth="220.0" prefWidth="500.0" text="Nombre" />
                         <TableColumn fx:id="quantColumn" minWidth="50.0" prefWidth="60.0" text="Cantidad" />
+                        <TableColumn fx:id="subtotalColumn" minWidth="50.0" prefWidth="60.0" text="Subtotal" />
                     </columns>
 	                <columnResizePolicy>
 	                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

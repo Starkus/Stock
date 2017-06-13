@@ -179,7 +179,7 @@
 }
 
 .toggle-button:selected {
-	-fx-background-color: derive(-fx-focus-color,50%);
+	-fx-border-color: derive(-fx-focus-color,50%);
 }
 
 

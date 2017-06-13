@@ -10,7 +10,7 @@
 <?import net.starkus.stock.model.AutoCompleteTextField?>
 
 
-<AnchorPane prefHeight="430.0" prefWidth="540.0" styleClass="background" stylesheets="@DarkMetro.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.PurchaseDialogController">
+<AnchorPane prefHeight="430.0" prefWidth="540.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.PurchaseDialogController">
    <children>
       <SplitPane dividerPositions="0.6153846153846154" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="350.0" prefWidth="450.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>

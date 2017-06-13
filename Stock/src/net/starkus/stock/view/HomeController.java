@@ -2,6 +2,7 @@ package net.starkus.stock.view;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javafx.beans.binding.Bindings;
@@ -348,7 +349,13 @@ public class HomeController extends DialogController {
 	    	if (purchase != null) {
 	    		
 	    		History.getHistory().add(purchase);
-	    		purchase.substractItemsFromStock(sortedProductList);
+	    		
+	    		purchase.substractItemsFromStock(ProductBox.getProducts().sorted(new Comparator<Product>() {
+					@Override
+					public int compare(Product o1, Product o2) {
+						return Long.compare(o1.getCode(), o2.getCode());
+					}
+				}));
 	    		
 	    		CashBox.put(purchase.getPaid());
 	        	
