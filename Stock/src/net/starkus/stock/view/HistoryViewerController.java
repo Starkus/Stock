@@ -244,6 +244,7 @@ public class HistoryViewerController extends DialogController {
 			}
 		});
 		dateFilterBox.getSelectionModel().select(1);
+		transactionTable.scrollTo(transactionTable.getItems().size() - 1);
 		
 		transactionTable.setItems(sortedTransactionList);
 		filterByClient();
