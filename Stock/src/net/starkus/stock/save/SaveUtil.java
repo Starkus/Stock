@@ -57,8 +57,13 @@ public class SaveUtil {
 			
 			SavefileWrapper wrapper = (SavefileWrapper) um.unmarshal(file);
 			
-			if (wrapper.getVersion() == null) // Old savefile
-			{
+			String version = wrapper.getVersion();
+			String[] digits = version.split("\\.");
+			
+			if (version == null ||
+					(Integer.parseInt(digits[0]) <= 5 && Integer.parseInt(digits[1]) <= 1)) { // Old savefile
+			
+				
 				System.out.println("Attempting to update old save file...");
 				
 				// Back up old file

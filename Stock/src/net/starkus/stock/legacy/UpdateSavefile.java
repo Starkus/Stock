@@ -1,7 +1,6 @@
 package net.starkus.stock.legacy;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import javax.xml.bind.JAXBContext;
@@ -13,7 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import net.starkus.stock.MainApp;
-import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.LegacyDebt;
 import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
@@ -33,6 +31,7 @@ public class UpdateSavefile {
 	private static ObservableList<Product> productList = FXCollections.observableArrayList();
 	private static ObservableList<Transaction> history = FXCollections.observableArrayList();
 	private static String password;
+	private static float cash;
 	
 	
 	
@@ -53,32 +52,56 @@ public class UpdateSavefile {
 	public static void loadFromFile(File file) {
 		try  {
 			JAXBContext context = JAXBContext
-					.newInstance(LegacySavefileWrapper.class);
+					.newInstance(SavefileWrapper.class);
 			Unmarshaller um = context.createUnmarshaller();
 			
-			LegacySavefileWrapper wrapper = (LegacySavefileWrapper) um.unmarshal(file);
+			SavefileWrapper wrapper = (SavefileWrapper) um.unmarshal(file);
+			
 			
 			ProductListWrapper productsWrapper = wrapper.getProducts();
-			ClientListWrapper clientsWrapper = wrapper.getClients();
+			HistoryWrapper historyWrapper = wrapper.getHistory();
 			
 			if (productsWrapper != null) {
 				productList.clear();
 				productList.addAll(productsWrapper.getProducts());
-			}
+			}			
 			
-			if (clientsWrapper != null) {
-				
-				for (LegacyClient c : clientsWrapper.getClients()) {
-					LegacyDebt ld = new LegacyDebt();
-					ld.setClient(c.getName());
-					ld.setBalance(-c.getBalance());
-					ld.setCreationDate(LocalDateTime.now());
+			if (historyWrapper != null) {
+				history.clear();
+
+				for (TransactionWrapper tw : historyWrapper.getHistory()) {
 					
-					history.add(ld);
+					Transaction t = null;
+					switch (tw.getType()) {
+					case LEGACYDEBT:
+						t = new LegacyDebt();
+						break;
+						
+					case PAYMENT:
+						t = new Payment();
+						break;
+						
+					case PURCHASE: case SALE:
+						t = new Sale();
+						
+						if (tw.getProducts() != null)
+							((Sale) t).addAll(tw.getProducts());
+						else
+							continue;
+						
+						break;
+					}
+					
+					t.setClient(tw.getClient());
+					t.setBalance(tw.getBalance());
+					t.setCreationDate(tw.getCreationDate());
+					t.setCancelled(tw.getCancelled());
+					
+					history.add(t);
 				}
 			}
 			
-			CashBox.setCash(wrapper.getCashBox());
+			cash = wrapper.getCashBox();
 			
 			password = wrapper.getPassword();
 			
@@ -126,17 +149,10 @@ public class UpdateSavefile {
 			for (Transaction t : history) {
 				TransactionWrapper tw = new TransactionWrapper();
 				
-				if (t.getClass().equals(LegacyDebt.class)) {
-					tw.setType(TransactionType.LEGACYDEBT);
-				}
-				else if (t.getClass().equals(Payment.class)) {
-					tw.setType(TransactionType.PAYMENT);
-				}
-				else if (t.getClass().equals(Sale.class)) {
-					tw.setType(TransactionType.SALE);
+				tw.setType(t.getType());
 					
+				if (t.getType() == TransactionType.SALE || t.getType() == TransactionType.PURCHASE)
 					tw.setProducts(((Sale) t).getProductData());
-				}
 				
 				tw.setClient(t.getClient());
 				tw.setCreationDate(t.getCreationDate());
@@ -148,7 +164,7 @@ public class UpdateSavefile {
 			
 			wrapper.setProducts(productsWrapper);
 			wrapper.setHistory(historyWrapper);
-			wrapper.setCashBox(CashBox.getCash());
+			wrapper.setCashBox(cash);
 			wrapper.setPassword(password);
 			
 			wrapper.setVersion(MainApp.getVersion());
