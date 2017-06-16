@@ -20,8 +20,8 @@ import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.Sale;
 import net.starkus.stock.model.Transaction;
-import net.starkus.stock.model.TransactionType;
 
 public class SaveUtil {
 	
@@ -101,11 +101,20 @@ public class SaveUtil {
 						break;
 						
 					case PURCHASE:
-						
 						t = new Purchase();
 						
 						if (tw.getProducts() != null)
 							((Purchase) t).addAll(tw.getProducts());
+						else
+							continue;
+						
+						break;
+						
+					case SALE:
+						t = new Sale();
+						
+						if (tw.getProducts() != null)
+							((Sale) t).addAll(tw.getProducts());
 						else
 							continue;
 						
@@ -174,16 +183,15 @@ public class SaveUtil {
 			for (Transaction t : history) {
 				TransactionWrapper tw = new TransactionWrapper();
 				
-				if (t.getClass().equals(LegacyDebt.class)) {
-					tw.setType(TransactionType.LEGACYDEBT);
-				}
-				else if (t.getClass().equals(Payment.class)) {
-					tw.setType(TransactionType.PAYMENT);
-				}
-				else if (t.getClass().equals(Purchase.class)) {
-					tw.setType(TransactionType.PURCHASE);
+				
+				switch (t.getType()) {
+				case SALE: case PURCHASE:
+					tw.setProducts(((Sale) t).getProductData());
 					
-					tw.setProducts(((Purchase) t).getProductData());
+				default:
+					tw.setType(t.getType());
+					
+					break;
 				}
 				
 				tw.setClient(t.getClient());

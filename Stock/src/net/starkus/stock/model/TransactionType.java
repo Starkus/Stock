@@ -1,17 +1,16 @@
 package net.starkus.stock.model;
 
 public enum TransactionType {
-	PURCHASE("Compra"), PAYMENT("Pago"), LEGACYDEBT("Deuda legado");
+	SALE("Venta"), PURCHASE("Compra"), PAYMENT("Pago"), LEGACYDEBT("Deuda legado");
 	
 	
-	private final String name;
+	private final String prettyName;
 	
 	TransactionType(String name) {
-		this.name = name;
+		this.prettyName = name;
 	}
 	
-	@Override
-	public String toString() {
-		return name;
+	public String prettyName() {
+		return prettyName;
 	}
 }

@@ -2,7 +2,6 @@ package net.starkus.stock.view;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javafx.beans.binding.Bindings;
@@ -13,6 +12,8 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -23,8 +24,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -37,7 +36,7 @@ import net.starkus.stock.model.History;
 import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductBox;
-import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.Sale;
 import net.starkus.stock.save.SaveUtil;
 import net.starkus.stock.util.ExceptionUtil;
 import net.starkus.stock.util.SearchEngine;
@@ -338,26 +337,19 @@ public class HomeController extends DialogController {
     }
     
     @FXML
-    private void handleNewPurchase() {
+    private void handleNewSale() {
     	
     	try {
-	    	PurchaseDialogController controller = Dialog.purchaseDialog.init();
+	    	SaleDialogController controller = Dialog.saleDialog.init();
 	    	controller.showAndWait();
 	    	
-	    	Purchase purchase = controller.getPurchase();
+	    	Sale sale = controller.getSale();
 	    	
-	    	if (purchase != null) {
+	    	if (sale != null) {
 	    		
-	    		History.getHistory().add(purchase);
+	    		History.getHistory().add(sale);
 	    		
-	    		purchase.substractItemsFromStock(ProductBox.getProducts().sorted(new Comparator<Product>() {
-					@Override
-					public int compare(Product o1, Product o2) {
-						return Long.compare(o1.getCode(), o2.getCode());
-					}
-				}));
-	    		
-	    		CashBox.put(purchase.getPaid());
+	    		sale._do();
 	        	
 	        	SaveUtil.saveToFile();
 	    	}

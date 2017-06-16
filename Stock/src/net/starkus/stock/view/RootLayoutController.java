@@ -7,18 +7,18 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
 import net.starkus.stock.model.Admin;
 import net.starkus.stock.model.AlertWrapper;
 import net.starkus.stock.model.Dialog;
-import net.starkus.stock.model.ProductBox;
+import net.starkus.stock.model.History;
 import net.starkus.stock.model.Purchase;
 import net.starkus.stock.save.SaveUtil;
 import net.starkus.stock.util.ExceptionUtil;
@@ -190,10 +190,12 @@ public class RootLayoutController {
 			AddStockDialogController controller = Dialog.addStockDialog.init();
 			controller.showAndWait();
 			
-			Purchase purchase = controller.getProductList();
+			Purchase purchase = controller.getPurchase();
 	    	
 	    	if (purchase != null) {
-	    		purchase.addToStock(ProductBox.getProducts().sorted());
+	    		purchase._do();
+	    		
+	    		History.getHistory().add(purchase);
 	        	
 	        	SaveUtil.saveToFile();
 	    	}

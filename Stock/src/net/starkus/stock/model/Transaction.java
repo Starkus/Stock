@@ -52,6 +52,10 @@ public abstract class Transaction implements Comparable<Transaction> {
 		});
 	}
 	
+
+	public abstract void _do();
+	public abstract void undo();
+	
 	
 	@Override
 	public int compareTo(Transaction o) {

@@ -17,7 +17,7 @@ import net.starkus.stock.view.HistoryViewerController;
 import net.starkus.stock.view.PaymentDialogController;
 import net.starkus.stock.view.PasswordDialogController;
 import net.starkus.stock.view.ProductEditDialogController;
-import net.starkus.stock.view.PurchaseDialogController;
+import net.starkus.stock.view.SaleDialogController;
 import net.starkus.stock.view.SetCashDialogController;
 
 /*
@@ -48,14 +48,14 @@ public class Dialog <T extends DialogController> {
 	public static final Dialog<PasswordDialogController> passwordDialog =
 			new Dialog<PasswordDialogController>		("view/PasswordDialog.fxml").setTitle("Contraseña requerida").setResizable(false);
 	
+	public static final Dialog<PaymentDialogController> paymentDialogController =
+			new Dialog<PaymentDialogController>			("view/PaymentDialog.fxml").setTitle("Nuevo pago");
+	
 	public static final Dialog<ProductEditDialogController> productEditDialog = 
 			new Dialog<ProductEditDialogController>		("view/ProductEditDialog.fxml").setTitle("Editar producto");
 	
-	public static final Dialog<PurchaseDialogController> purchaseDialog = 
-			new Dialog<PurchaseDialogController>		("view/PurchaseDialog.fxml").setTitle("Nueva compra");
-	
-	public static final Dialog<PaymentDialogController> paymentDialogController =
-			new Dialog<PaymentDialogController>		("view/PaymentDialog.fxml").setTitle("Nuevo pago");
+	public static final Dialog<SaleDialogController> saleDialog = 
+			new Dialog<SaleDialogController>			("view/SaleDialog.fxml").setTitle("Nueva venta");
 	
 	public static final Dialog<SetCashDialogController> setCashDialog =
 			new Dialog<SetCashDialogController>			("view/SetCashDialog.fxml").setTitle("Caja").setResizable(false);

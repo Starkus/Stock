@@ -20,7 +20,7 @@ import net.starkus.stock.model.Purchase;
 public class AddStockDialogController extends DialogController {
 	
 	
-	private Purchase productList;
+	private Purchase purchase;
 	
 	private Product currentProduct;
 	
@@ -59,9 +59,9 @@ public class AddStockDialogController extends DialogController {
      */
     @FXML
     private void initialize() {
-    	productList = new Purchase();
+    	purchase = new Purchase();
     	
-    	productTable.setItems(new ProductListWithTotal(productList.getProductData()));
+    	productTable.setItems(new ProductListWithTotal(purchase.getProductData()));
     	
     	ProductBox.getProducts().forEach(p -> codeNameField.getEntries().add(p.getName()));
     	
@@ -273,7 +273,7 @@ public class AddStockDialogController extends DialogController {
 	@FXML
 	private void handleAddItem() {
 		
-		productList.add(currentProduct);
+		purchase.add(currentProduct);
 		currentProduct = new Product();
 		
 		codeNameField.setText("");
@@ -286,14 +286,14 @@ public class AddStockDialogController extends DialogController {
 	
 	@FXML
 	private void handleCancel() {
-		productList = null;
+		purchase = null;
 		dialogStage.close();
 	}
 	
 	@FXML
 	private void handleOK() {
 		
-		productList.setCreationDate(LocalDateTime.now());
+		purchase.setCreationDate(LocalDateTime.now());
 		
 		dialogStage.close();
 	}
@@ -303,8 +303,8 @@ public class AddStockDialogController extends DialogController {
 		
 	}
 	
-	public Purchase getProductList() {
-		return productList;
+	public Purchase getPurchase() {
+		return purchase;
 	}
 
 }

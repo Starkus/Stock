@@ -1,6 +1,7 @@
 package net.starkus.stock.model;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -24,6 +25,10 @@ public class ProductList {
 	}
 	public void addAll(Collection<? extends Product> c) {
 		productList.addAll(c);
+	}
+	
+	public void forEach(Consumer<? super Product> action) {
+		productList.forEach(action);
 	}
 	
 	public float getTotal() {

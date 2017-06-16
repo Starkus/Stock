@@ -17,7 +17,7 @@ import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.LegacyDebt;
 import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.Sale;
 import net.starkus.stock.model.Transaction;
 import net.starkus.stock.model.TransactionType;
 import net.starkus.stock.save.HistoryWrapper;
@@ -132,10 +132,10 @@ public class UpdateSavefile {
 				else if (t.getClass().equals(Payment.class)) {
 					tw.setType(TransactionType.PAYMENT);
 				}
-				else if (t.getClass().equals(Purchase.class)) {
-					tw.setType(TransactionType.PURCHASE);
+				else if (t.getClass().equals(Sale.class)) {
+					tw.setType(TransactionType.SALE);
 					
-					tw.setProducts(((Purchase) t).getProductData());
+					tw.setProducts(((Sale) t).getProductData());
 				}
 				
 				tw.setClient(t.getClient());

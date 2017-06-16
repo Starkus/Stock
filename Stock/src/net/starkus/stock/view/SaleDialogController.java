@@ -34,12 +34,14 @@ import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.ProductListWithTotal;
-import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.Sale;
 import net.starkus.stock.util.ExceptionUtil;
 
-public class PurchaseDialogController extends DialogController {
+public class SaleDialogController extends DialogController {
 	
-	private Purchase purchase;
+	private Sale purchase;
+	
+	private boolean success = false;
 	
 	
 	private FloatProperty total;
@@ -82,7 +84,7 @@ public class PurchaseDialogController extends DialogController {
 	
 	
 
-	public PurchaseDialogController() {
+	public SaleDialogController() {
 		total = new SimpleFloatProperty();
 		paying = new SimpleFloatProperty();
 		debt = new SimpleFloatProperty();
@@ -94,7 +96,7 @@ public class PurchaseDialogController extends DialogController {
      */
     @FXML
     private void initialize() {
-    	purchase = new Purchase();
+    	purchase = new Sale();
     	
     	ObservableList<Product> items = purchase.getProductData();
     	
@@ -200,8 +202,8 @@ public class PurchaseDialogController extends DialogController {
     	}
     }
 	
-	public Purchase getPurchase() {
-		return purchase;
+	public Sale getSale() {
+		return success ? purchase : null;
 	}
 	
 	
@@ -399,6 +401,8 @@ public class PurchaseDialogController extends DialogController {
 		
 		purchase.setCreationDate(LocalDateTime.now());
 		purchase.setPaid(paying.get());
+		
+		success = true;
 		
 		dialogStage.close();
 	}

@@ -21,14 +21,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import net.starkus.stock.model.Admin;
-import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.History;
-import net.starkus.stock.model.LegacyDebt;
-import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
-import net.starkus.stock.model.ProductBox;
 import net.starkus.stock.model.ProductListWithTotal;
-import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.Sale;
 import net.starkus.stock.model.Transaction;
 import net.starkus.stock.model.TransactionType;
 import net.starkus.stock.save.SaveUtil;
@@ -84,17 +80,21 @@ public class HistoryViewerController extends DialogController {
 			return "-fx-text-fill:#4d4d4d";
 		}
 		
-		if (t.getClass().equals(Purchase.class)) {
+		switch (t.getType()) {
+		case SALE:
 			return "-fx-text-fill:#e88d8d";
-		}
-		else if (t.getClass().equals(Payment.class)) {
+		
+		case PURCHASE:
+			return "-fx-text-fill:#3872d1";
+		
+		case PAYMENT:
 			return "-fx-text-fill:#9ed36b";
-		}
-		else if (t.getClass().equals(LegacyDebt.class)) {
+		
+		case LEGACYDEBT:
 			return "-fx-text-fill:#c1c1c1";
 		}
-		else
-			return "";
+		
+		return "";
 	}
 	
 	
@@ -200,10 +200,10 @@ public class HistoryViewerController extends DialogController {
 			@Override
 			public void changed(ObservableValue<? extends Transaction> observable, Transaction oldValue, Transaction newValue) {
 				
-				if (newValue.getClass().equals(Purchase.class)) {
-					productTable.setItems(new ProductListWithTotal(((Purchase) newValue).getProductData()));
-					paidLabel.setText(Float.toString(((Purchase) newValue).getPaid()));
-					balanceLabel.setText(Float.toString(((Purchase) newValue).getBalance()));
+				if (newValue.getType() == TransactionType.SALE || newValue.getType() == TransactionType.PURCHASE) {
+					productTable.setItems(new ProductListWithTotal(((Sale) newValue).getProductData()));
+					paidLabel.setText(Float.toString(((Sale) newValue).getPaid()));
+					balanceLabel.setText(Float.toString(((Sale) newValue).getBalance()));
 				}
 				else {
 					productTable.setItems(null);
@@ -289,17 +289,9 @@ public class HistoryViewerController extends DialogController {
 		if (transaction.getCancelled() == true)
 			return;
 		
-		// If it's a purchase, do purchase specific stuff
-		if (transaction.getClass().equals(Purchase.class)) {
-			
-			Purchase purchase = (Purchase) transaction;
 		
-			// Put items back in the shelf
-			purchase.addToStock(ProductBox.getProducts().sorted());
-		}
-			
-		// Get money out da bank
-		CashBox.substract(transaction.getBalance());
+		transaction.undo();
+		
 		
 		// Flag purchase as canceled
 		transaction.cancel();

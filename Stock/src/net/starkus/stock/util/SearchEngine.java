@@ -47,13 +47,13 @@ public class SearchEngine {
 			for (String tag : tags) {
 				
 				if (cleanEntry.startsWith(tag) || cleanEntry.contains(" " + tag))
-					score += 50;
+					score += 30;
 				
 				else if (cleanEntry.contains(tag))
-					score += 25;
+					score += 2;
 				
 				else
-					score -= 500;
+					score -= 60;
 			}
 
 			if (score > 0) 
@@ -65,7 +65,9 @@ public class SearchEngine {
 
 			@Override
 			public int compare(String o1, String o2) {
-				return Integer.compare(weightedResults.get(o1), weightedResults.get(o2));
+				int weight1 = weightedResults.get(o1);
+				int weight2 = weightedResults.get(o2);
+				return Integer.compare(weight2, weight1);
 			}
 		});
 		

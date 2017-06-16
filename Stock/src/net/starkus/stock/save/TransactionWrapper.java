@@ -7,8 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.TransactionType;
-import net.starkus.stock.util.LocalDateTimeAdapter;
-import net.starkus.stock.util.TransactionTypeAdapter;;
+import net.starkus.stock.util.LocalDateTimeAdapter;;
 
 
 
