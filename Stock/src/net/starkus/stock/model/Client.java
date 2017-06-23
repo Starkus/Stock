@@ -1,16 +1,12 @@
 package net.starkus.stock.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import net.starkus.stock.MainApp;
 
 public class Client {
 	
@@ -71,36 +67,20 @@ public class Client {
 	}
 	
 	
-	@Deprecated
-	public float calculateBalance(MainApp mainApp) {
+	public float calculateBalance() {
 		
 		float bal = 0;
 		
-		FilteredList<Transaction> filteredTransactionList = new FilteredList<>(mainApp.getHistory());
+		FilteredList<Transaction> filteredTransactionList = new FilteredList<>(History.getHistory());
 		filteredTransactionList = validTransactions;
 		
 		for (int i=0; i < filteredTransactionList.size(); i++) {
 			
 			Transaction t = filteredTransactionList.get(i);
 			
-			System.out.println(t.getClient());
 			bal += t.getBalance();
 		}
 		
 		return bal;
-	}
-	
-	
-	public static List<String> getClientsFromHistory(ObservableList<Transaction> history) {
-		
-		ArrayList<String> clients = new ArrayList<>();
-		
-		for (Transaction t : history) {
-			if (t.getClient() != null && !clients.contains(t.getClient())) {
-				clients.add(t.getClient());
-			}
-		}
-		
-		return clients;
 	}
 }

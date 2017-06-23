@@ -1,4 +1,4 @@
-package net.starkus.stock.model;
+package net.starkus.stock.control;
 
 
 import java.util.ArrayList;

@@ -10,20 +10,17 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 public abstract class Transaction implements Comparable<Transaction> {
 	
 	protected final ObjectProperty<TransactionType> type;
 	
-	private final StringProperty client;
-	private final FloatProperty balance;
+	protected final StringProperty client;
+	protected FloatProperty balance;
 	
-	private final BooleanProperty cancelled;
+	protected final BooleanProperty cancelled;
 	
-	private final ObjectProperty<LocalDateTime> creationDate; 
-	private final StringProperty formattedDate;
+	protected final ObjectProperty<LocalDateTime> creationDate;
 	
 	
 	public Transaction(TransactionType transactionType) {
@@ -34,22 +31,7 @@ public abstract class Transaction implements Comparable<Transaction> {
 		client = new SimpleStringProperty();
 		balance = new SimpleFloatProperty();
 		
-		formattedDate = new SimpleStringProperty();
-		
 		cancelled = new SimpleBooleanProperty(false);
-		
-		creationDate.addListener(new ChangeListener<LocalDateTime>() {
-
-			@Override
-			public void changed(ObservableValue<? extends LocalDateTime> observable, LocalDateTime oldValue,
-					LocalDateTime n) {
-				
-				String value = String.format("%d/%d/%d - %d:%d:%d", n.getDayOfMonth(), n.getMonthValue(), n.getYear(),
-						n.getHour(), n.getMinute(), n.getSecond());
-				
-				formattedDate.set(value);
-			}
-		});
 	}
 	
 
@@ -104,9 +86,6 @@ public abstract class Transaction implements Comparable<Transaction> {
 	}
 	public ObjectProperty<LocalDateTime> creationDateProperty() {
 		return creationDate;
-	}
-	public StringProperty formattedDateProperty() {
-		return formattedDate;
 	}
 	
 	public float getBalance() {

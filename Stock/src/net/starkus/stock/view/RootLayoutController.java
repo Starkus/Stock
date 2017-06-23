@@ -2,24 +2,28 @@ package net.starkus.stock.view;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
-import net.starkus.stock.model.Admin;
 import net.starkus.stock.model.AlertWrapper;
+import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.History;
+import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Purchase;
+import net.starkus.stock.model.Sale;
 import net.starkus.stock.save.SaveUtil;
 import net.starkus.stock.util.ExceptionUtil;
 
@@ -30,6 +34,13 @@ public class RootLayoutController {
 	private BorderPane rootPage;
 	
 
+	@FXML
+	private Tab productsTab;
+	@FXML
+	private Tab historyTab;
+	@FXML
+	private Tab clientsTab;
+	
 	@FXML
 	private MenuItem importCmd;
 	@FXML
@@ -50,7 +61,13 @@ public class RootLayoutController {
 	private MenuItem setCashCmd;
 	@FXML
 	private MenuItem addStockCmd;
-	
+
+
+	public static final int productsTabIndex = 0;
+	public static final int historyTabIndex = 1;
+	public static final int clientsTabIndex = 2;
+
+	private final List<TextField> searchFields = new ArrayList<>();
 	
 	
 	/**
@@ -60,9 +77,9 @@ public class RootLayoutController {
     @FXML
     private void initialize() {
 
-    	closeCmd.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
+    	//closeCmd.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
     	
-    	
+    	/*
     	Admin.adminProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -70,13 +87,69 @@ public class RootLayoutController {
 				addStockCmd.setDisable(!newValue);
 			}
 		});
+    	*/
+    	/*
+    	CashBox.sessionBalanceProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				setBalanceFieldTextColor();
+			}
+		});*/
     }
-	
+    
+    /*
+    private void setBalanceFieldTextColor() {
+
+    	float balance = CashBox.getSessionBalance();
+    	
+    	if (balance == 0f) {
+        	sesionBalanceField.setTextFill(null);
+    	}
+    	if (balance < 0f) {
+        	sesionBalanceField.setTextFill(Color.RED);
+    	}
+    	else {
+        	sesionBalanceField.setTextFill(Color.LIGHTGREEN);
+    	}
+    	
+    }
+    */
+    
 	public void setMainApp(MainApp m) {
 		this.mainApp = m;
+		
+		loadUpTab("view/ProductOverview.fxml", productsTab);
+    	loadUpTab("view/HistoryViewer.fxml", historyTab);
+    	loadUpTab("view/ClientOverview.fxml", clientsTab);
 	}
+
+    private void loadUpTab(String resource, Tab tab) {
+    	try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource(resource));
+			AnchorPane pane = (AnchorPane) loader.load();
+			
+			((DialogController) loader.getController()).setMainApp(mainApp);
+			
+			tab.setContent(pane);
+		
+		} catch (IOException e) {
+			ExceptionUtil.printStackTrace(e);
+		}
+    }
+    
+    
+    public void selectTab(int index) {
+    	productsTab.getTabPane().getSelectionModel().select(index);
+    }
+    
 	
-	public void setPrimaryStage(Stage stage) {
+	public SingleSelectionModel<Tab> getTabSelectionModel() {
+		return productsTab.getTabPane().getSelectionModel();
+	}
+    
+    public void setPrimaryStage(Stage stage) {
 		primaryStage = stage;
 	}
 	
@@ -91,6 +164,60 @@ public class RootLayoutController {
 	public BorderPane getRootPage() {
 		return rootPage;
 	}
+	
+	public List<TextField> getSearchFields() {
+		return searchFields;
+	}
+	
+	
+	@FXML
+    private void handleNewSale() {
+    	
+    	try {
+	    	SaleDialogController controller = Dialog.saleDialog.init();
+	    	controller.showAndWait();
+	    	
+	    	Sale sale = controller.getSale();
+	    	
+	    	if (sale != null) {
+	    		
+	    		History.getHistory().add(sale);
+	    		
+	    		sale._do();
+	        	
+	        	SaveUtil.saveToFile();
+	    	}
+    	}
+	    catch (IOException e) {
+	    	
+	    	ExceptionUtil.printStackTrace(e);
+	    }
+    }
+    
+    @FXML
+    private void handleNewPayment() {
+    	
+    	try {
+	    	PaymentDialogController controller = Dialog.paymentDialogController.init();
+	    	controller.showAndWait();
+	    	
+	    	Payment payment = controller.getPayment();
+	    	
+	    	if (payment != null) {
+	    		
+	    		History.getHistory().add(payment);
+	    		
+	    		CashBox.put(payment.getBalance());
+	        	
+	        	SaveUtil.saveToFile();
+	    	}
+    	}
+	    catch (IOException e) {
+	    	
+	    	ExceptionUtil.printStackTrace(e);
+	    }
+    }
+	
 	
 	private File saveLoadDirectory() {
 		
@@ -116,8 +243,6 @@ public class RootLayoutController {
 		
 		if (file != null) {
 			SaveUtil.loadFromFile(file);
-			
-			mainApp.getHomeController().onFileLoad();
 		}
 	}
 	
@@ -202,30 +327,6 @@ public class RootLayoutController {
 		}
 		catch (IOException e) {
 			
-			ExceptionUtil.printStackTrace(e);
-		}
-	}
-	
-	@FXML
-	private void handleOpenClients() {
-		
-		try {
-			Dialog.clientOverviewDialog.init().showAndWait();
-		} 
-		catch (IOException e) {
-
-			ExceptionUtil.printStackTrace(e);
-		}
-	}
-	
-	@FXML
-	private void handleOpenHistory() {
-		
-		try {
-			Dialog.historyViewerDialog.init().showAndWait();
-		} 
-		catch (IOException e) {
-
 			ExceptionUtil.printStackTrace(e);
 		}
 	}

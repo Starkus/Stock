@@ -3,31 +3,40 @@ package net.starkus.stock.view;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.TemporalAmount;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableCell;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
+import net.starkus.stock.MainApp;
+import net.starkus.stock.control.BigButton;
+import net.starkus.stock.control.MainToolbar;
 import net.starkus.stock.model.Admin;
+import net.starkus.stock.model.ClientBox;
 import net.starkus.stock.model.History;
-import net.starkus.stock.model.Product;
-import net.starkus.stock.model.ProductListWithTotal;
+import net.starkus.stock.model.ProductTransaction;
 import net.starkus.stock.model.Sale;
 import net.starkus.stock.model.Transaction;
 import net.starkus.stock.model.TransactionType;
 import net.starkus.stock.save.SaveUtil;
+import net.starkus.stock.util.SearchEngine;
 
 public class HistoryViewerController extends DialogController {
 	
@@ -35,41 +44,26 @@ public class HistoryViewerController extends DialogController {
 	private final String NONE = "Nadie";
 
 	@FXML
-	private TableView<Transaction> transactionTable;
+	private TreeTableView<Transaction> transactionTable;
 
 	@FXML
-	private TableColumn<Transaction, TransactionType> typeColumn;
+	private TreeTableColumn<Transaction, TransactionType> typeColumn;
 	@FXML
-	private TableColumn<Transaction, String> clientColumn;
+	private TreeTableColumn<Transaction, String> clientColumn;
 	@FXML
-	private TableColumn<Transaction, LocalDateTime> dateColumn;
+	private TreeTableColumn<Transaction, LocalDateTime> dateColumn;
 	@FXML
-	private TableColumn<Transaction, Number> balanceColumn;
+	private TreeTableColumn<Transaction, Number> balanceColumn;
 	
 	@FXML
-	private TableView<Product> productTable;
+	private MainToolbar toolBar;
 	
-	@FXML
-	private TableColumn<Product, String> productNameColumn;
-	@FXML
-	private TableColumn<Product, Number> productQuantColumn;
-	@FXML
-	private TableColumn<Product, Number> productPriceColumn;
-
-	@FXML
-	private Label paidLabel;
-	@FXML
-	private Label balanceLabel;
-	
-	@FXML
-	private TextField clientFilterBox;
-	@FXML
 	private ChoiceBox<DateFilter> dateFilterBox;
+	private BigButton nullifyButton;
+	private TextField searchField;
 	
-	@FXML
-	private Button nullifyButton;
 	
-	
+	private final List<TreeItem<Transaction>> treeTransactionList = new ArrayList<>();
 	private FilteredList<Transaction> filteredTransactionList;
 	private SortedList<Transaction> sortedTransactionList;
 
@@ -80,7 +74,7 @@ public class HistoryViewerController extends DialogController {
 			return "-fx-text-fill:#4d4d4d";
 		}
 		
-		switch (t.getType()) {
+		if (t.getType() != null) switch (t.getType()) {
 		case SALE:
 			return "-fx-text-fill:#e88d8d";
 		
@@ -92,147 +86,139 @@ public class HistoryViewerController extends DialogController {
 		
 		case LEGACYDEBT:
 			return "-fx-text-fill:#c1c1c1";
+			
+		case PRODUCT:
+			return "-fx-text-fill:#d1d1d1";
 		}
 		
 		return "";
 	}
 	
 	
+	private class StyledTreeTableCell<S extends Transaction, T> extends TreeTableCell<S, T> {
+		@Override
+		protected void updateItem(T item, boolean empty) {
+			super.updateItem(item, empty);
+			
+			Transaction t = (Transaction) getTreeTableRow().getItem();
+			
+			if (empty || t == null || item == null) {
+				setStyle("");
+				setText("");
+			}
+			else {
+				setStyle(transactionClassToStyle(t));
+				setText(item.toString());
+			}
+		}
+	}
+	
+	
+	
+	
 	@FXML
-	void initialize() {		
+	void initialize() {
 		
-		nullifyButton.setDisable(!Admin.getAdmin());
+		searchField = toolBar.getSearchField();
+		
+		initToolbar();
 		
 		
-		typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
-		typeColumn.setCellFactory(column -> new TableCell<Transaction, TransactionType>() {
+		nullifyButton.disableProperty().bind(Bindings.not(Admin.adminProperty()));
+		
+		
+		
+		filteredTransactionList = History.getHistory().filtered(t -> true);
+		sortedTransactionList = new SortedList<>(filteredTransactionList);
+		
+		// FIXME
+		sortedTransactionList.addListener(new ListChangeListener<Transaction>() {
+
 			@Override
-			protected void updateItem(TransactionType item, boolean empty) {
-				super.updateItem(item, empty);
-				
-				Transaction t = (Transaction) getTableRow().getItem();
-				if (empty || t == null) {
-					setText("");
-					setStyle("");
-				}
-				else {
-					setText(item.toString());
-					setStyle(transactionClassToStyle(t));
-				}
-				setGraphic(null);
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Transaction> c) {
+				treeTransactionList.clear();
+				sortedTransactionList.forEach(t -> {
+					if (t == null)
+						return;
+					
+					TreeItem<Transaction> item = new TreeItem<Transaction>(t);
+					if (t.getType() == TransactionType.SALE || t.getType() == TransactionType.PURCHASE) {
+						
+						((Sale) t).getProductData().forEach(p -> {
+							
+							ProductTransaction prodT = new ProductTransaction();
+							prodT.setClient("    " + p.getName());
+							prodT.setQuantity(p.getQuantity());
+							prodT.setSubtotal(p.getSubtotal());
+							
+							TreeItem<Transaction> tp = new TreeItem<Transaction>(prodT);
+							item.getChildren().add(tp);							
+						});
+					}
+					
+					treeTransactionList.add(item);
+				});
+				transactionTable.getRoot().getChildren().setAll(treeTransactionList);
 			}
 		});
+
 		
-		clientColumn.setCellValueFactory(cellData -> cellData.getValue().clientProperty());
-		clientColumn.setCellFactory(column -> new TableCell<Transaction, String>() {
-			@Override
-			protected void updateItem(String item, boolean empty) {
-				super.updateItem(item, empty);
-				
-				Transaction t = (Transaction) getTableRow().getItem();
-				
-				if (empty || t == null) {
-					setText("");
-					setStyle("");
-				} 
-				else {
-					setText(item);
-					setStyle(transactionClassToStyle(t));
-				}
-				
-				setGraphic(null);
-			}
-		});
+		TreeItem<Transaction> root = new TreeItem<>();
+		root.getChildren().setAll(treeTransactionList);
+		root.setExpanded(true);
+		transactionTable.setRoot(root);
 		
-		dateColumn.setCellValueFactory(cellData -> cellData.getValue().creationDateProperty());
-		dateColumn.setCellFactory(column -> new TableCell<Transaction, LocalDateTime>() {
+		
+		typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("type"));
+		typeColumn.setCellFactory(column -> new StyledTreeTableCell<Transaction, TransactionType>());
+		
+		clientColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("client"));
+		clientColumn.setCellFactory(column -> new StyledTreeTableCell<Transaction, String>());
+		
+		dateColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("creationDate"));
+		dateColumn.setCellFactory(column -> new StyledTreeTableCell<Transaction, LocalDateTime>() {
 			@Override
 			protected void updateItem(LocalDateTime item, boolean empty) {
 				super.updateItem(item, empty);
 				
-				Transaction t = (Transaction) getTableRow().getItem();
+				Transaction t = (Transaction) getTreeTableRow().getItem();
 				
-				if (empty || t == null) {
+				if (t != null && getTreeTableRow().getItem().getType() == TransactionType.PRODUCT) {
+					ProductTransaction pt = (ProductTransaction) t;
+					String formatted = String.format("    Cantidad: %.1f         Subtotal: %.1f", pt.getQuantity(), pt.getSubtotal());
+					
+					setText(formatted);
+					
+					return;
+				}
+				
+				if (empty || t == null || item == null) {
 					setText("");
-					setStyle("");
 				} 
 				else {
 					String formatted = String.format("%d/%d/%d - %d:%d:%d", item.getDayOfMonth(), item.getMonthValue(),
 							item.getYear(), item.getHour(), item.getMinute(), item.getSecond());
 					
 					setText(formatted);
-					setStyle(transactionClassToStyle(t));
 				}
 				
 				setGraphic(null);
 			}
 		});
 		
-		balanceColumn.setCellValueFactory(cellData -> cellData.getValue().balanceProperty());
-		balanceColumn.setCellFactory(column -> new TableCell<Transaction, Number>() {
-			@Override
-			protected void updateItem(Number item, boolean empty) {
-				super.updateItem(item, empty);
-				
-				Transaction t = (Transaction) getTableRow().getItem();
-				
-				if (empty || t == null) {
-					setText("");
-					setStyle("");
-				} 
-				else {
-					setText(item.toString());
-					setStyle(transactionClassToStyle(t));
-				}
-				
-				setGraphic(null);
-			}
-		});
-		
-		productNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-		productQuantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
-		productPriceColumn.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty());
+		balanceColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("balance"));
+		balanceColumn.setCellFactory(column -> new StyledTreeTableCell<Transaction, Number>());
 		
 		transactionTable.getSortOrder().setAll(Collections.singletonList(dateColumn));
 		
-		transactionTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Transaction>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Transaction> observable, Transaction oldValue, Transaction newValue) {
-				
-				if (newValue.getType() == TransactionType.SALE || newValue.getType() == TransactionType.PURCHASE) {
-					productTable.setItems(new ProductListWithTotal(((Sale) newValue).getProductData()));
-					paidLabel.setText(Float.toString(((Sale) newValue).getPaid()));
-					balanceLabel.setText(Float.toString(((Sale) newValue).getBalance()));
-				}
-				else {
-					productTable.setItems(null);
-					paidLabel.setText("");
-				}
-			}
-		});
-		
-		clientFilterBox.textProperty().addListener(new ChangeListener<String>() {
+		searchField.textProperty().addListener(new ChangeListener<String>() {
 
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				filterByClient();
 			}
 		});
-
 		
-		filteredTransactionList = History.getHistory().filtered(t -> true);
-		sortedTransactionList = new SortedList<>(filteredTransactionList);
-		sortedTransactionList.comparatorProperty().bind(transactionTable.comparatorProperty());
-		
-		
-		List<DateFilter> dateFilters = Arrays.asList(
-				new DateFilter("Todo", Period.ofYears(99)),
-				new DateFilter("Este mes", Period.ofMonths(1)),
-				new DateFilter("Esta semana", Period.ofWeeks(1)),
-				new DateFilter("Hoy", Period.ofDays(1))
-				);
-		dateFilterBox.setItems(FXCollections.observableArrayList(dateFilters));
 		dateFilterBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<DateFilter>() {
 
 			@Override
@@ -240,21 +226,64 @@ public class HistoryViewerController extends DialogController {
 					DateFilter newValue) {
 				
 				filterByClient();
-				transactionTable.scrollTo(transactionTable.getItems().size() - 1);
+				transactionTable.scrollTo(transactionTable.getExpandedItemCount() - 1);
 			}
 		});
 		dateFilterBox.getSelectionModel().select(1);
-		transactionTable.scrollTo(transactionTable.getItems().size() - 1);
+		transactionTable.scrollTo(transactionTable.getExpandedItemCount() - 1);
 		
-		transactionTable.setItems(sortedTransactionList);
+		
 		filterByClient();
+	}
+	
+	void initToolbar() {
+		
+		Image image = new Image(MainApp.class.getResource("media/erase_icon.png").toExternalForm());
+		nullifyButton = new BigButton(image, "Anular");
+		nullifyButton.setOnAction(e -> nullifyTransaction());
+		nullifyButton.disableProperty().bind(Bindings.not(Admin.adminProperty()));
+		
+		DateFilter[] dateFilters = new DateFilter[] {
+				new DateFilter("Todo", Period.ofYears(99)),
+				new DateFilter("Este mes", Period.ofMonths(1)),
+				new DateFilter("Esta semana", Period.ofWeeks(1)),
+				new DateFilter("Hoy", Period.ofDays(1))
+		};
+		dateFilterBox = new ChoiceBox<>(FXCollections.observableArrayList(dateFilters));
+		dateFilterBox.setPrefSize(150, 30);
+		
+		String[] types = new String[] {
+				"Todos",
+				"Venta",
+				"Pago",
+				"Compra",
+				"Deuda legado"
+		};
+		ChoiceBox<String> typeChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(types));
+		typeChoiceBox.getSelectionModel().select(0);
+		typeChoiceBox.setPrefSize(150, 30);
+		
+		VBox vBox = new VBox(5);
+		vBox.setAlignment(Pos.CENTER_LEFT);
+		vBox.getChildren().add(dateFilterBox);
+		vBox.getChildren().add(typeChoiceBox);
+
+		toolBar.getLeftItems().add(nullifyButton);
+		toolBar.getLeftItems().add(vBox);
+	}
+	
+	@Override
+	public void setMainApp(MainApp mainApp) {
+		super.setMainApp(mainApp);
+		
+		mainApp.getRootLayout().getSearchFields().add(searchField);
 	}
 	
 	
 	@FXML
 	void filterByClient() {
 		
-		String chosen = clientFilterBox.getText();
+		String chosen = searchField.getText();
 		
 		if (chosen.isEmpty())
 			filteredTransactionList.setPredicate(t -> true);
@@ -266,7 +295,15 @@ public class HistoryViewerController extends DialogController {
 			filteredTransactionList.setPredicate(t -> t.getClient() == null || t.getClient().isEmpty());
 		
 		else 
-			filteredTransactionList.setPredicate(t -> t.getClient() != null && t.getClient().equals(chosen));
+			filteredTransactionList.setPredicate(t -> {
+				
+				if (t.getClient() == null)
+					return false;
+				
+				List<String> results = SearchEngine.filterObjects(chosen, ClientBox.getClients().listIterator(), c -> c.getName());
+				
+				return results.contains(t.getClient());
+			});
 		
 		filteredTransactionList.setPredicate(filteredTransactionList.getPredicate().and(t -> 
 		((Transaction) t).getCreationDate().compareTo(dateFilterBox.getSelectionModel().getSelectedItem().from()) > 0));
@@ -284,7 +321,7 @@ public class HistoryViewerController extends DialogController {
 	private void nullifyTransaction() {
 		
 		// Get selected transaction
-		Transaction transaction = transactionTable.getSelectionModel().getSelectedItem();
+		Transaction transaction = transactionTable.getSelectionModel().getSelectedItem().getValue();
 		
 		// If already cancelled, return
 		if (transaction.getCancelled() == true)
@@ -300,12 +337,12 @@ public class HistoryViewerController extends DialogController {
 		SaveUtil.saveToFile();
 		
 		// Update table
-		transactionTable.setItems(sortedTransactionList);
+		//transactionTable.setItems(sortedTransactionList);
 	}
 	
 	public void setFilterClient(String client) {
 		
-		clientFilterBox.setText(client);
+		searchField.setText(client);
 		filterByClient();
 	}
 	

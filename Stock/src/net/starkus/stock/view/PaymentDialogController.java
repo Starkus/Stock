@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Optional;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.control.AutoCompleteTextField;
 import net.starkus.stock.model.AlertWrapper;
-import net.starkus.stock.model.AutoCompleteTextField;
-import net.starkus.stock.model.Client;
-import net.starkus.stock.model.History;
+import net.starkus.stock.model.ClientBox;
 import net.starkus.stock.model.Payment;
 
 public class PaymentDialogController extends DialogController {
@@ -31,8 +30,10 @@ public class PaymentDialogController extends DialogController {
 	
 	void populateEntries() {
 		
-		clientList = Client.getClientsFromHistory(History.getHistory());
-		clientField.getEntries().addAll(clientList);
+		List<String> entries = clientField.getEntries();
+		
+		entries.clear();
+		ClientBox.getClients().forEach(c -> entries.add(c.getName()));
 	}
 	
 	@Override

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.transformation.FilteredList;
@@ -20,28 +19,21 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import net.starkus.stock.MainApp;
-import net.starkus.stock.model.Admin;
+import net.starkus.stock.control.BigButton;
+import net.starkus.stock.control.MainToolbar;
 import net.starkus.stock.model.AlertWrapper;
-import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Dialog;
-import net.starkus.stock.model.History;
-import net.starkus.stock.model.Payment;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductBox;
-import net.starkus.stock.model.Sale;
 import net.starkus.stock.save.SaveUtil;
 import net.starkus.stock.util.ExceptionUtil;
 import net.starkus.stock.util.SearchEngine;
 
-public class HomeController extends DialogController {
+public class ProductOverviewController extends DialogController {
 	
 	@FXML
 	private TableView<Product> stockTable;
@@ -53,17 +45,11 @@ public class HomeController extends DialogController {
 	private TableColumn<Product, Number> priceColumn;
 	@FXML
 	private TableColumn<Product, Number> quanColumn;
-	
-	@FXML
-	private ToggleButton adminToggle;
 
 	@FXML
-	private Label cashField;
-	@FXML
-	private Label sesionBalanceField;
+	private MainToolbar toolBar;
 	
-	@FXML
-	private TextField filterField;
+	private BigButton addButton, editButton, eraseButton;
 	
 	
 	private FilteredList<Product> filteredProductList;
@@ -76,7 +62,7 @@ public class HomeController extends DialogController {
      * The constructor.
      * The constructor is called before the initialize() method.
      */
-	public HomeController() {
+	public ProductOverviewController() {
 	}
 	
 	/**
@@ -85,38 +71,9 @@ public class HomeController extends DialogController {
      */
     @FXML
     void initialize() {
-
-    	/* Set up admin button. */
-    	final Image noAdmin = new Image(MainApp.class.getResource("key_no.png").toExternalForm());
-    	final Image admin = new Image(MainApp.class.getResource("key_yes.png").toExternalForm());
     	
-    	ImageView toggleButtonImageView = new ImageView();
-    	toggleButtonImageView.imageProperty().bind(Bindings.when(adminToggle.selectedProperty())
-    			.then(admin).otherwise(noAdmin));
-    	Admin.adminProperty().bind(adminToggle.selectedProperty());
-    	
-    	adminToggle.setGraphic(toggleButtonImageView);
-    	
-    	adminToggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if (newValue == true) {
-					try {
-						PasswordDialogController cont = Dialog.passwordDialog.init();
-						cont.showAndWait();
-						
-						if (!cont.wasPasswordCorrect()) {
-							adminToggle.setSelected(false);
-						}
-						
-					} catch (IOException e) {
-						adminToggle.setSelected(false); // Extra security?
-						ExceptionUtil.printStackTrace(e);
-					}
-				}
-			}
-		});;
-    	
+    	initToolbar();
+		
     	
     	stockTable.setPlaceholder(new Label("Nada por aquí"));
     	
@@ -177,21 +134,9 @@ public class HomeController extends DialogController {
     		return cell;
     	});
     	
-
-    	cashField.textProperty().bind(CashBox.cashProperty());
-    	sesionBalanceField.textProperty().bind(CashBox.sessionBalanceProperty());
-    	
-    	CashBox.sessionBalanceProperty().addListener(new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				setBalanceFieldTextColor();
-			}
-		});
-    	
     	setUpContextMenu();
     	
-    	filterField.textProperty().addListener(new ChangeListener<String>() {
+    	toolBar.getSearchField().textProperty().addListener(new ChangeListener<String>() {
 
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -208,41 +153,31 @@ public class HomeController extends DialogController {
     	stockTable.getSortOrder().setAll(Collections.singletonList(nameColumn));
     }
     
-    /**
-     * Is called by the main app to give a reference back to itself.
-     * 
-     * @param mainApp
-     */
+    void initToolbar() {
+    	
+    	Image image = new Image(MainApp.class.getResource("media/add_icon.png").toExternalForm());
+    	addButton = new BigButton(image, "Nuevo");
+    	addButton.setOnAction(e -> handleNewProduct());
+    	
+    	image = new Image(MainApp.class.getResource("media/edit_icon.png").toExternalForm());
+    	editButton = new BigButton(image, "Editar");
+    	editButton.setOnAction(e -> handleEditProduct());
+    	
+    	image = new Image(MainApp.class.getResource("media/erase_icon.png").toExternalForm());
+    	eraseButton = new BigButton(image, "Borrar");
+    	eraseButton.setOnAction(e -> handleDeleteProduct());
+    	
+    	toolBar.getLeftItems().add(addButton);
+    	toolBar.getLeftItems().add(editButton);
+    	toolBar.getLeftItems().add(eraseButton);
+    }
+    
     @Override
     public void setMainApp(MainApp mainApp) {
     	super.setMainApp(mainApp);
     	
-    	RootLayoutController root = mainApp.getRootLayout();
-    	root.getNewCmd().setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				handleNewProduct();
-			}
-		});
-    	
-    	root.getEditCmd().setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				handleEditProduct();
-			}
-		});
-    	
-    	root.getDeleteCmd().setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				handleDeleteProduct();
-			}
-		});
+		mainApp.getRootLayout().getSearchFields().add(toolBar.getSearchField());
     }
-    
     
     
     private void setUpContextMenu() {
@@ -306,23 +241,6 @@ public class HomeController extends DialogController {
     }
     
     
-    
-    private void setBalanceFieldTextColor() {
-
-    	float balance = CashBox.getSessionBalance();
-    	
-    	if (balance == 0f) {
-        	sesionBalanceField.setTextFill(null);
-    	}
-    	if (balance < 0f) {
-        	sesionBalanceField.setTextFill(Color.RED);
-    	}
-    	else {
-        	sesionBalanceField.setTextFill(Color.LIGHTGREEN);
-    	}
-    	
-    }
-    
     private void filter(String s) {
 
     	List<String> results = SearchEngine.filterObjects(s, ProductBox.getProducts().listIterator(), p -> ((Product) p).getName());
@@ -333,79 +251,7 @@ public class HomeController extends DialogController {
     
     @FXML
     private void handleFilter() {
-    	filter(filterField.getText());
-    }
-    
-    @FXML
-    private void handleNewSale() {
-    	
-    	try {
-	    	SaleDialogController controller = Dialog.saleDialog.init();
-	    	controller.showAndWait();
-	    	
-	    	Sale sale = controller.getSale();
-	    	
-	    	if (sale != null) {
-	    		
-	    		History.getHistory().add(sale);
-	    		
-	    		sale._do();
-	        	
-	        	SaveUtil.saveToFile();
-	    	}
-    	}
-	    catch (IOException e) {
-	    	
-	    	ExceptionUtil.printStackTrace(e);
-	    }
-    }
-    
-    @FXML
-    private void handleNewPayment() {
-    	
-    	try {
-	    	PaymentDialogController controller = Dialog.paymentDialogController.init();
-	    	controller.showAndWait();
-	    	
-	    	Payment payment = controller.getPayment();
-	    	
-	    	if (payment != null) {
-	    		
-	    		History.getHistory().add(payment);
-	    		
-	    		CashBox.put(payment.getBalance());
-	        	
-	        	SaveUtil.saveToFile();
-	    	}
-    	}
-	    catch (IOException e) {
-	    	
-	    	ExceptionUtil.printStackTrace(e);
-	    }
-    }
-    
-    @FXML
-    private void handleEditClients() {
-    	
-    	try {
-			Dialog.clientOverviewDialog.init().showAndWait();
-			
-		} catch (IOException e) {
-
-			ExceptionUtil.printStackTrace(e);
-		}
-    }
-    
-    @FXML
-    private void handleOpenHistory() {
-    	
-    	try {
-    		Dialog.historyViewerDialog.init().showAndWait();
-    		
-    	} catch (IOException e) {
-    		
-    		ExceptionUtil.printStackTrace(e);
-    	}
+    	filter(toolBar.getSearchField().getText());
     }
     
     @FXML

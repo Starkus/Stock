@@ -7,10 +7,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.starkus.stock.legacy.UpdateSavefile;
+import net.starkus.stock.model.ClientBox;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.History;
 import net.starkus.stock.model.Product;
@@ -19,7 +19,7 @@ import net.starkus.stock.model.Transaction;
 import net.starkus.stock.save.SaveUtil;
 import net.starkus.stock.util.PasswordUtils;
 import net.starkus.stock.view.DialogController;
-import net.starkus.stock.view.HomeController;
+import net.starkus.stock.view.ProductOverviewController;
 import net.starkus.stock.view.RootLayoutController;
 
 public class MainApp extends Application {
@@ -28,7 +28,7 @@ public class MainApp extends Application {
 	
 	private String password;
 	
-	private HomeController homeController;
+	private ProductOverviewController homeController;
 	private DialogController currentDialogController;
 
 	
@@ -39,10 +39,7 @@ public class MainApp extends Application {
 		password = PasswordUtils.encodePassword("tigre");
 		
 		ProductBox.getProducts().add(new Product(12345679L, "Samsung Galaxy S6", 13000, 20000));
-		
-		//clientMap.put("Castor", new Client("Castor", 1));
-		
-		//sortedProducts = productList.sorted();
+		ClientBox.init();
 		
 		Dialog.setMainApp(this);
 	}
@@ -74,7 +71,7 @@ public class MainApp extends Application {
 	}
 	
 	
-	public HomeController getHomeController() {
+	public ProductOverviewController getHomeController() {
 		return homeController;
 	}
 	
@@ -88,34 +85,12 @@ public class MainApp extends Application {
 	}
 	
 	
-	public void showHome() {
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("view/Home.fxml"));
-			AnchorPane home = (AnchorPane) loader.load();
-			
-			rootLayoutController.getRootPage().setCenter(home);
-			
-			// Give the controller access to the main app
-			HomeController controller = loader.getController();
-			controller.setMainApp(this);
-			
-			homeController = controller;
-		
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 	@Override
 	public void start(Stage primaryStage) {
 		
 		initRootLayout(primaryStage);
 		
 		SaveUtil.setMainApp(this);
-		
-		showHome();
 		
 	}
 	
@@ -136,7 +111,7 @@ public class MainApp extends Application {
 			rootLayoutController.setPrimaryStage(primaryStage);
 			rootLayoutController.setRootPage(page);
 			
-			primaryStage.getIcons().add(new Image(getClass().getResource("icon.png").toExternalForm()));
+			primaryStage.getIcons().add(new Image(getClass().getResource("media/icon.png").toExternalForm()));
 			
 			primaryStage.show();
 			

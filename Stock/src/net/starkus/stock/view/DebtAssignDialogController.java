@@ -4,22 +4,26 @@ import java.util.List;
 import java.util.Optional;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.control.AutoCompleteTextField;
 import net.starkus.stock.model.AlertWrapper;
-import net.starkus.stock.model.AutoCompleteTextField;
 import net.starkus.stock.model.Client;
-import net.starkus.stock.model.History;
+import net.starkus.stock.model.ClientBox;
 
 public class DebtAssignDialogController extends DialogController {
 	
 	@FXML
 	private AutoCompleteTextField clientField;
+	@FXML
+	private Label currentDebtLabel;
 	
 	
-	private List<String> clientList;
 	String client;
 	
 	
@@ -36,12 +40,26 @@ public class DebtAssignDialogController extends DialogController {
 				clientField.requestFocus();
 			}
 		});
+		
+		clientField.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				
+				if (ClientBox.getClients().contains(newValue)) {
+					float balance = new Client(newValue).calculateBalance();
+					
+					currentDebtLabel.setText("Deuda actual: " + Float.toString(balance));
+				}
+			}
+		});
 	}
 	
 	void populateEntries() {
 		
-		clientList = Client.getClientsFromHistory(History.getHistory());
-		clientField.getEntries().addAll(clientList);
+		List<String> entries = clientField.getEntries();
+		
+		entries.clear();
+		ClientBox.getClients().forEach(c -> entries.add(c.getName()));
 	}
 	
 	@Override
@@ -87,7 +105,7 @@ public class DebtAssignDialogController extends DialogController {
 			// Reference it in "client" variable
 			client = clientField.getText();
 			
-			System.out.println("Client \"" + client + "\" created.");
+			dialogStage.close();
 		}
 	}
 	
@@ -98,13 +116,14 @@ public class DebtAssignDialogController extends DialogController {
 		client = clientField.getText();
 		
 		// If given client isn't found
-		if (!clientList.contains(client)) {
+		if (!ClientBox.getClients().contains(client)) {
 			// Ask user if he wants to create it
 			confirmClient();
 		}
-		
-		
-		dialogStage.close();
+		else {
+			
+			dialogStage.close();
+		}
 	}
 	
 	@FXML

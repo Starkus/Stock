@@ -10,7 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import net.starkus.stock.model.AutoCompleteTextField;
+import net.starkus.stock.control.AutoCompleteTextField;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductBox;
 //import net.starkus.stock.model.ProductList;

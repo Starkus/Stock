@@ -30,9 +30,6 @@ public class DialogController {
 		this.page = pane;
 	}
 	
-	public void onFileLoad() {
-	}
-	
 	public void show() {
 		dialogStage.show();
 	}

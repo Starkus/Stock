@@ -1,6 +1,7 @@
 package net.starkus.stock.save;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
@@ -122,6 +123,12 @@ public class SaveUtil {
 							((Sale) t).addAll(tw.getProducts());
 						else
 							continue;
+						
+						break;
+						
+					default:
+						
+						new IOException("Invalid transaction type found on save file!").printStackTrace();
 						
 						break;
 					}
