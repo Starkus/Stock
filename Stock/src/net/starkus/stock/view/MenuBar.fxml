@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.starkus.stock.view.MenuBarController">
+	<MenuBar AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+		AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+		<menus>
+			<Menu fx:id="fileMenu" mnemonicParsing="false" text="Archivo">
+				<items>
+					<MenuItem fx:id="importCmd" mnemonicParsing="false"
+						onAction="#handleImport" text="Importar..." />
+					<MenuItem fx:id="exportCmd" mnemonicParsing="false"
+						onAction="#handleExport" text="Exportar..." />
+					<MenuItem fx:id="closeCmd" mnemonicParsing="false"
+						onAction="#handleClose" text="Salir" />
+				</items>
+			</Menu>
+			<Menu mnemonicParsing="false" text="Admin">
+				<items>
+					<MenuItem fx:id="setCashCmd" disable="true"
+						mnemonicParsing="false" onAction="#handleSetCash" text="Caja..." />
+					<SeparatorMenuItem />
+					<MenuItem mnemonicParsing="false" onAction="#handleChangePassword"
+						text="Cambiar contraseña..." />
+				</items>
+			</Menu>
+			<Menu mnemonicParsing="false" text="Ayuda">
+				<items>
+					<MenuItem mnemonicParsing="false" onAction="#handleAbout"
+						text="Acerca de" />
+				</items>
+			</Menu>
+		</menus>
+	</MenuBar>
+</AnchorPane>
+

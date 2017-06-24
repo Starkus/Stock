@@ -136,7 +136,6 @@
 .button:default {
     -fx-background-color: #cc344c;
     -fx-text-fill: white;
-    -fx-font-weight: 3;
 }
 
 .button:default:hover {
@@ -150,14 +149,14 @@
 
 
 .toggle-button {
-    -fx-padding: 5 22 5 22;
+    -fx-padding: 0;
     -fx-border-width: 0;
-    -fx-background-radius: 4px;
+    -fx-background-radius: 15px;
     -fx-background-color: white;
     -fx-font-family: "Lato";
     -fx-font-size: 11pt;
     -fx-text-fill: black;
-    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-max-height: 30;
 }
 
 .toggle-button:hover {
@@ -170,15 +169,9 @@
 }
 
 .toggle-button:focused {
-    -fx-border-color: white, white;
-    -fx-border-width: 1, 1;
-    -fx-border-style: solid, segments(1, 1);
-    -fx-border-radius: 0, 0;
-    -fx-border-insets: 1 1 1 1, 0;
 }
 
 .toggle-button:selected {
-	-fx-border-color: derive(-fx-focus-color,50%);
 }
 
 

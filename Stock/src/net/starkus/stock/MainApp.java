@@ -7,7 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import net.starkus.stock.legacy.UpdateSavefile;
 import net.starkus.stock.model.ClientBox;
@@ -99,7 +99,7 @@ public class MainApp extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
-			BorderPane page = (BorderPane) loader.load();
+			AnchorPane page = (AnchorPane) loader.load();
 			page.getStylesheets().add(MainApp.class.getResource("DarkMetro.css").toExternalForm());
 			
 			Scene scene = new Scene(page);

@@ -90,6 +90,9 @@ public class UpdateSavefile {
 							continue;
 						
 						break;
+						
+					default:
+						break;
 					}
 					
 					t.setClient(tw.getClient());

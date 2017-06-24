@@ -3,7 +3,6 @@ package net.starkus.stock.control;
 import java.io.IOException;
 import java.util.List;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -11,10 +10,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -24,9 +21,11 @@ import net.starkus.stock.model.CashBox;
 import net.starkus.stock.model.Dialog;
 import net.starkus.stock.model.History;
 import net.starkus.stock.model.Payment;
+import net.starkus.stock.model.Purchase;
 import net.starkus.stock.model.Sale;
 import net.starkus.stock.save.SaveUtil;
 import net.starkus.stock.util.ExceptionUtil;
+import net.starkus.stock.view.AddStockDialogController;
 import net.starkus.stock.view.PasswordDialogController;
 import net.starkus.stock.view.PaymentDialogController;
 import net.starkus.stock.view.SaleDialogController;
@@ -34,6 +33,7 @@ import net.starkus.stock.view.SaleDialogController;
 public class MainToolbar extends ToolBar {
 	
 	final AdminButton adminButton;
+	final BigButton purchaseButton;
 	final BigButton saleButton;
 	final BigButton paymentButton;
 	
@@ -49,8 +49,13 @@ public class MainToolbar extends ToolBar {
 		// Admin mode toggle button
 		adminButton = new AdminButton();
 		
+		// New payment icon
+		Image image = new Image(MainApp.class.getResource("media/payment_icon.png").toExternalForm());
+		purchaseButton = new BigButton(image, "Compra");
+		purchaseButton.setOnAction(e -> handleNewPurchase());
+		
 		// New sale button
-		Image image = new Image(MainApp.class.getResource("media/sale_icon.png").toExternalForm());
+		image = new Image(MainApp.class.getResource("media/sale_icon.png").toExternalForm());
 		saleButton = new BigButton(image, "Venta");
 		saleButton.setDefaultButton(true);
 		saleButton.setPrefWidth(85);
@@ -84,7 +89,7 @@ public class MainToolbar extends ToolBar {
 		
 		items.add(leftSpacer);
 		
-		items.add(adminButton);
+		items.add(purchaseButton);
 		items.add(saleButton);
 		items.add(paymentButton);
 		
@@ -102,28 +107,18 @@ public class MainToolbar extends ToolBar {
 	}
 
 	
-	private class AdminButton extends ToggleButton {
+	private class AdminButton extends AnimatedToggleButton {
 		
 		public AdminButton() {
 			super();
-			
-			setText("Admin");
 			
 			setAlignment(Pos.BOTTOM_CENTER);
 			setContentDisplay(ContentDisplay.TOP);
 			
 			getStyleClass().add("big-button");
 			
-			setPrefHeight(70);
+			setPrefHeight(30);
 			setPrefWidth(70);
-			
-			final Image noAdmin = new Image(MainApp.class.getResource("media/noadmin_icon.png").toExternalForm());
-	    	final Image admin = new Image(MainApp.class.getResource("media/admin_icon.png").toExternalForm());
-	    	
-	    	ImageView toggleButtonImageView = new ImageView();
-	    	toggleButtonImageView.imageProperty().bind(Bindings.when(this.selectedProperty())
-	    			.then(admin).otherwise(noAdmin));
-	    	setGraphic(toggleButtonImageView);
 	    	
 	    	selectedProperty().addListener(new ChangeListener<Boolean>() {
 				@Override
@@ -149,7 +144,7 @@ public class MainToolbar extends ToolBar {
 						Admin.setAdmin(false);
 					}
 				}
-			});;
+			});
 		}
 	}
 
@@ -193,6 +188,28 @@ public class MainToolbar extends ToolBar {
 			}
 		} catch (IOException e) {
 
+			ExceptionUtil.printStackTrace(e);
+		}
+	}
+	
+private void handleNewPurchase() {
+		
+		try {
+			AddStockDialogController controller = Dialog.addStockDialog.init();
+			controller.showAndWait();
+			
+			Purchase purchase = controller.getPurchase();
+	    	
+	    	if (purchase != null) {
+	    		purchase._do();
+	    		
+	    		History.getHistory().add(purchase);
+	        	
+	        	SaveUtil.saveToFile();
+	    	}
+		}
+		catch (IOException e) {
+			
 			ExceptionUtil.printStackTrace(e);
 		}
 	}
