@@ -42,7 +42,7 @@
 	<HBox fx:id="adminButtonBox" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="32.0" spacing="12" alignment="CENTER_RIGHT" >
 	<children>
 		<Label text="Admin mode:"/>
-      <AnimatedToggleButton mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0"/>
+      <AnimatedToggleButton fx:id="adminButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0"/>
       </children>
     </HBox>
 </children>

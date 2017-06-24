@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.MenuItem;
@@ -16,6 +18,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import net.starkus.stock.MainApp;
+import net.starkus.stock.control.AnimatedToggleButton;
+import net.starkus.stock.model.Admin;
+import net.starkus.stock.model.Dialog;
 import net.starkus.stock.util.ExceptionUtil;
 
 public class RootLayoutController {
@@ -47,7 +52,9 @@ public class RootLayoutController {
 	
 	@FXML
 	private HBox adminButtonBox;
-
+	@FXML
+	private AnimatedToggleButton adminButton;
+	
 
 	public static final int productsTabIndex = 0;
 	public static final int historyTabIndex = 1;
@@ -82,6 +89,31 @@ public class RootLayoutController {
 				setBalanceFieldTextColor();
 			}
 		});*/
+    	adminButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (newValue == true) {
+					try {
+						PasswordDialogController cont = Dialog.passwordDialog.init();
+						cont.showAndWait();
+						
+						if (!cont.wasPasswordCorrect()) {
+							adminButton.setSelected(false);
+						}
+						else {
+							Admin.setAdmin(true);
+						}
+						
+					} catch (IOException e) {
+						adminButton.setSelected(false); // Extra security?
+						ExceptionUtil.printStackTrace(e);
+					}
+				}
+				else {
+					Admin.setAdmin(false);
+				}
+			}
+		});
     }
     
     /*
