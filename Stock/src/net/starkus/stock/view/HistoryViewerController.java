@@ -71,24 +71,24 @@ public class HistoryViewerController extends DialogController {
 	private String transactionClassToStyle(Transaction t) {
 		
 		if (t.getCancelled()) {
-			return "-fx-text-fill:#4d4d4d";
+			return "-fx-text-fill:#95A5A6; -fx-font-family: \"Lato Light\";";
 		}
 		
 		if (t.getType() != null) switch (t.getType()) {
 		case SALE:
-			return "-fx-text-fill:#e88d8d";
+			return "-fx-text-fill:#C0392B; -fx-font-family: \"Lato Bold\";";
 		
 		case PURCHASE:
-			return "-fx-text-fill:#3872d1";
+			return "-fx-text-fill:#2980B9; -fx-font-family: \"Lato Bold\";";
 		
 		case PAYMENT:
-			return "-fx-text-fill:#9ed36b";
+			return "-fx-text-fill:#27AE60; -fx-font-family: \"Lato Bold\";";
 		
 		case LEGACYDEBT:
-			return "-fx-text-fill:#c1c1c1";
+			return "-fx-text-fill:#34495E; -fx-font-family: \"Lato Bold\";";
 			
 		case PRODUCT:
-			return "-fx-text-fill:#d1d1d1";
+			return "-fx-text-fill:#2C3E50; -fx-font-family: \"Lato Bold\";";
 		}
 		
 		return "";
@@ -242,6 +242,7 @@ public class HistoryViewerController extends DialogController {
 		nullifyButton = new BigButton(image, "Anular");
 		nullifyButton.setOnAction(e -> nullifyTransaction());
 		nullifyButton.disableProperty().bind(Bindings.not(Admin.adminProperty()));
+		nullifyButton.setTransparent(true);
 		
 		DateFilter[] dateFilters = new DateFilter[] {
 				new DateFilter("Todo", Period.ofYears(99)),
@@ -268,8 +269,8 @@ public class HistoryViewerController extends DialogController {
 		vBox.getChildren().add(dateFilterBox);
 		vBox.getChildren().add(typeChoiceBox);
 
-		toolBar.getLeftItems().add(nullifyButton);
 		toolBar.getLeftItems().add(vBox);
+		toolBar.getLeftItems().add(nullifyButton);
 	}
 	
 	@Override

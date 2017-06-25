@@ -29,13 +29,13 @@
 					prefWidth="186.0" VBox.vgrow="ALWAYS" styleClass="panel">
 					<columns>
 						<TableColumn fx:id="codeColumn" maxWidth="140.0"
-							minWidth="120.0" prefWidth="120.0" text="CODIGO" />
+							minWidth="120.0" prefWidth="120.0" text="Codigo" />
 						<TableColumn fx:id="nameColumn" maxWidth="3000.0"
-							minWidth="100.0" prefWidth="200.0" text="NOMBRE" />
+							minWidth="100.0" prefWidth="200.0" text="Nombre" />
 						<TableColumn fx:id="priceColumn" maxWidth="100.0"
-							minWidth="100.0" prefWidth="100.0" text="PRECIO" />
+							minWidth="100.0" prefWidth="100.0" text="Precio" />
 						<TableColumn fx:id="quanColumn" maxWidth="100.0"
-							minWidth="100.0" prefWidth="100.0" text="DISPONIBLES" />
+							minWidth="100.0" prefWidth="100.0" text="Disponible" />
 					</columns>
 					<columnResizePolicy>
 						<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

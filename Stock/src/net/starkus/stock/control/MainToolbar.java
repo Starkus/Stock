@@ -50,7 +50,7 @@ public class MainToolbar extends ToolBar {
 		adminButton = new AdminButton();
 		
 		// New payment icon
-		Image image = new Image(MainApp.class.getResource("media/payment_icon.png").toExternalForm());
+		Image image = new Image(MainApp.class.getResource("media/purchase_icon.png").toExternalForm());
 		purchaseButton = new BigButton(image, "Compra");
 		purchaseButton.setOnAction(e -> handleNewPurchase());
 		
@@ -78,7 +78,7 @@ public class MainToolbar extends ToolBar {
 		searchBox.setPrefWidth(300);
 		
 		// Custom left items
-		leftItems = new HBox(5);
+		leftItems = new HBox(8);
 		leftItems.setPrefWidth(300);
 		leftItems.setAlignment(Pos.CENTER_LEFT);
 		
@@ -192,7 +192,7 @@ public class MainToolbar extends ToolBar {
 		}
 	}
 	
-private void handleNewPurchase() {
+	private void handleNewPurchase() {
 		
 		try {
 			AddStockDialogController controller = Dialog.addStockDialog.init();

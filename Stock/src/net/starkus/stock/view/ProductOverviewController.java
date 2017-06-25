@@ -158,14 +158,17 @@ public class ProductOverviewController extends DialogController {
     	Image image = new Image(MainApp.class.getResource("media/add_icon.png").toExternalForm());
     	addButton = new BigButton(image, "Nuevo");
     	addButton.setOnAction(e -> handleNewProduct());
+    	addButton.setTransparent(true);
     	
     	image = new Image(MainApp.class.getResource("media/edit_icon.png").toExternalForm());
     	editButton = new BigButton(image, "Editar");
     	editButton.setOnAction(e -> handleEditProduct());
+    	editButton.setTransparent(true);
     	
     	image = new Image(MainApp.class.getResource("media/erase_icon.png").toExternalForm());
     	eraseButton = new BigButton(image, "Borrar");
     	eraseButton.setOnAction(e -> handleDeleteProduct());
+    	eraseButton.setTransparent(true);
     	
     	toolBar.getLeftItems().add(addButton);
     	toolBar.getLeftItems().add(editButton);

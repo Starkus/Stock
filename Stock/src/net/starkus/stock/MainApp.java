@@ -3,7 +3,6 @@ package net.starkus.stock;
 import java.io.IOException;
 
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -12,10 +11,8 @@ import javafx.stage.Stage;
 import net.starkus.stock.legacy.UpdateSavefile;
 import net.starkus.stock.model.ClientBox;
 import net.starkus.stock.model.Dialog;
-import net.starkus.stock.model.History;
 import net.starkus.stock.model.Product;
 import net.starkus.stock.model.ProductBox;
-import net.starkus.stock.model.Transaction;
 import net.starkus.stock.save.SaveUtil;
 import net.starkus.stock.util.PasswordUtils;
 import net.starkus.stock.view.DialogController;
@@ -42,23 +39,6 @@ public class MainApp extends Application {
 		ClientBox.init();
 		
 		Dialog.setMainApp(this);
-	}
-	
-	
-	/*
-	 * Returns the data as an observable list of Products.
-	 * 
-	 * @return ObservableList<Product>
-	 */
-	@Deprecated
-	public ObservableList<Product> getProductData() {
-		return ProductBox.getProducts();
-	}
-	
-	
-	@Deprecated
-	public ObservableList<Transaction> getHistory() {
-		return History.getHistory();
 	}
 	
 	
@@ -105,6 +85,8 @@ public class MainApp extends Application {
 			Scene scene = new Scene(page);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Stock");
+			primaryStage.setMinWidth(700);
+			primaryStage.setMinHeight(450);
 			
 			rootLayoutController = loader.getController();
 			rootLayoutController.setMainApp(this);

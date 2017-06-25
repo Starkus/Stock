@@ -21,8 +21,9 @@ public class AddStockDialogController extends DialogController {
 	
 	
 	private Purchase purchase;
-	
 	private Product currentProduct;
+	
+	private boolean success = false;
 	
 	
 	@FXML
@@ -179,17 +180,7 @@ public class AddStockDialogController extends DialogController {
 		});
     }
     
-    private boolean readCodeName() {
-    	
-    	String text = codeNameField.getText();
-		
-		// If no text, focus OK button
-		if (text.length() == 0 || text == null) {
-			
-			//OKButton.requestFocus();
-			handleOK();
-			return true;
-		}
+    private void readCodeName() {
 		
 		
 		// If number entered, look up product by code.
@@ -211,7 +202,7 @@ public class AddStockDialogController extends DialogController {
 		
 		currentProduct.setName(codeNameField.getText());
 		
-		return false;
+		return;
     }
     
     private boolean readQuantity() {
@@ -238,9 +229,16 @@ public class AddStockDialogController extends DialogController {
 	
 	@FXML
 	private void handleCodeEntered() {
+    	
+    	String text = codeNameField.getText();
 		
-		if (readCodeName())
+		if (text.length() == 0 || text == null) {
+			
+			handleOK();
 			return;
+		}
+		
+		readCodeName();
 		
 		quantField.requestFocus();
 	}
@@ -295,6 +293,8 @@ public class AddStockDialogController extends DialogController {
 		
 		purchase.setCreationDate(LocalDateTime.now());
 		
+		success = true;
+		
 		dialogStage.close();
 	}
 	
@@ -304,7 +304,7 @@ public class AddStockDialogController extends DialogController {
 	}
 	
 	public Purchase getPurchase() {
-		return purchase;
+		return success ? purchase : null;
 	}
 
 }

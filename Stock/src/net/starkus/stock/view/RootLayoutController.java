@@ -12,6 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -140,6 +141,10 @@ public class RootLayoutController {
 		loadUpTab("view/ProductOverview.fxml", productsTab);
     	loadUpTab("view/HistoryViewer.fxml", historyTab);
     	loadUpTab("view/ClientOverview.fxml", clientsTab);
+
+    	productsTab.setGraphic(new ImageView(MainApp.class.getResource("media/products_tab.png").toExternalForm()));
+    	historyTab.setGraphic(new ImageView(MainApp.class.getResource("media/history_tab.png").toExternalForm()));
+    	clientsTab.setGraphic(new ImageView(MainApp.class.getResource("media/clients_tab.png").toExternalForm()));
 	}
 	
 	private void loadMenuBar() {
