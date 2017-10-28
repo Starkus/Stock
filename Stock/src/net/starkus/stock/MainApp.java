@@ -1,6 +1,7 @@
 package net.starkus.stock;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -68,19 +69,22 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		
-		initRootLayout(primaryStage);
-		
 		SaveUtil.setMainApp(this);
+		
+		initRootLayout(primaryStage);
 		
 	}
 	
 	public void initRootLayout(Stage primaryStage) {
 		
 		try {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+			ResourceBundle bundle = ResourceBundle.getBundle("net.starkus.stock.locale.Locale");
+			FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("view/RootLayout.fxml"), bundle);
 			AnchorPane page = (AnchorPane) loader.load();
-			page.getStylesheets().add(MainApp.class.getResource("DarkMetro.css").toExternalForm());
+
+			page.getStylesheets().add(MainApp.class.getResource("Flatus.css").toExternalForm());
+			page.getStylesheets().add(MainApp.class.getResource("Flatus_table.css").toExternalForm());
+			page.getStylesheets().add(MainApp.class.getResource("Flatus_custom.css").toExternalForm());
 			
 			Scene scene = new Scene(page);
 			primaryStage.setScene(scene);
@@ -135,6 +139,6 @@ public class MainApp extends Application {
 	}
 	
 	public static String getVersion() {
-		return "0.5.2";
+		return "0.6";
 	}
 }

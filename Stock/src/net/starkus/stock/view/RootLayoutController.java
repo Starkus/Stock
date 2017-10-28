@@ -3,6 +3,7 @@ package net.starkus.stock.view;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,9 +35,9 @@ public class RootLayoutController {
 	
 
 	@FXML
-	private Tab productsTab;
+	private Tab sellTab;
 	@FXML
-	private Tab historyTab;
+	private Tab manageTab;
 	@FXML
 	private Tab clientsTab;
 	
@@ -57,8 +58,8 @@ public class RootLayoutController {
 	private AnimatedToggleButton adminButton;
 	
 
-	public static final int productsTabIndex = 0;
-	public static final int historyTabIndex = 1;
+	public static final int SELL_TAB_INDEX = 0;
+	public static final int MANAGE_TAB_INDEX = 1;
 	public static final int clientsTabIndex = 2;
 
 	private final List<TextField> searchFields = new ArrayList<>();
@@ -138,12 +139,12 @@ public class RootLayoutController {
 	public void setMainApp(MainApp m) {
 		this.mainApp = m;
 		
-		loadUpTab("view/ProductOverview.fxml", productsTab);
-    	loadUpTab("view/HistoryViewer.fxml", historyTab);
+		loadUpTab("view/SellTab.fxml", sellTab);
+    	loadUpTab("view/ManageTab.fxml", manageTab);
     	loadUpTab("view/ClientOverview.fxml", clientsTab);
 
-    	productsTab.setGraphic(new ImageView(MainApp.class.getResource("media/products_tab.png").toExternalForm()));
-    	historyTab.setGraphic(new ImageView(MainApp.class.getResource("media/history_tab.png").toExternalForm()));
+    	sellTab.setGraphic(new ImageView(MainApp.class.getResource("media/sell_tab.png").toExternalForm()));
+    	manageTab.setGraphic(new ImageView(MainApp.class.getResource("media/history_tab.png").toExternalForm()));
     	clientsTab.setGraphic(new ImageView(MainApp.class.getResource("media/clients_tab.png").toExternalForm()));
 	}
 	
@@ -163,11 +164,13 @@ public class RootLayoutController {
 
     private void loadUpTab(String resource, Tab tab) {
     	try {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(resource));
+    		ResourceBundle bundle = ResourceBundle.getBundle("net.starkus.stock.locale.Locale");
+			FXMLLoader loader = new FXMLLoader(MainApp.class.getResource(resource), bundle);
 			AnchorPane pane = (AnchorPane) loader.load();
 			
-			((DialogController) loader.getController()).setMainApp(mainApp);
+			DialogController cont = loader.getController();
+			cont.setMainApp(mainApp);
+			cont.setDialogStage(mainApp.getPrimaryStage());
 			
 			tab.setContent(pane);
 		
@@ -178,12 +181,12 @@ public class RootLayoutController {
     
     
     public void selectTab(int index) {
-    	productsTab.getTabPane().getSelectionModel().select(index);
+    	sellTab.getTabPane().getSelectionModel().select(index);
     }
     
 	
 	public SingleSelectionModel<Tab> getTabSelectionModel() {
-		return productsTab.getTabPane().getSelectionModel();
+		return sellTab.getTabPane().getSelectionModel();
 	}
     
     public void setPrimaryStage(Stage stage) {

@@ -112,9 +112,6 @@ public class SaleDialogController extends DialogController {
     	formatLastRow();
     	
     	
-    	codeNameField.setAutoProc(true);
-    	
-    	
     	total.bind(Bindings.createObjectBinding(() -> 
     			items.stream().collect(Collectors.summingDouble(Product::getSubtotal)), items));
     	totalField.textProperty().bind(Bindings.convert(total));

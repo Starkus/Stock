@@ -17,7 +17,7 @@ public class AlertWrapper {
 		actualAlert = new Alert(type);
 		
 		DialogPane pane = actualAlert.getDialogPane();
-		pane.getStylesheets().add(MainApp.class.getResource("DarkMetro.css").toExternalForm());
+		pane.getStylesheets().add(MainApp.class.getResource("Flatus_alert.css").toExternalForm());
 	}
 	
 	

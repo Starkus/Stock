@@ -42,6 +42,17 @@ public class Sale extends Transaction {
 	}
 	
 
+	public Sale(Sale currentSale) {
+		this();
+		
+		client.set(currentSale.getClient());
+		paid.set(currentSale.getPaid());
+		productList.getProductData().setAll(currentSale.getProductData());
+		creationDate.set(currentSale.getCreationDate());
+		cancelled.set(currentSale.getCancelled());
+	}
+
+
 	@XmlJavaTypeAdapter(ProductListAdapter.class)
 	public ObservableList<Product> getProductData() {
 		return productList.getProductData();
@@ -56,6 +67,11 @@ public class Sale extends Transaction {
 	}
 	public void addAll(Collection<? extends Product> c) {
 		productList.addAll(c);
+	}
+	
+	public void addOrStack(Product toadd) {
+
+		productList.addOrStack(toadd);
 	}
 
 	

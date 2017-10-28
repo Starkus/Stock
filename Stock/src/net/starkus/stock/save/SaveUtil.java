@@ -168,6 +168,8 @@ public class SaveUtil {
 	}
 	public static void saveToFile(File file) {
 		
+		System.out.println("Saving to file...");
+		
 		if (file.getParentFile().exists() == false) {
 			file.getParentFile().mkdirs();
 		}

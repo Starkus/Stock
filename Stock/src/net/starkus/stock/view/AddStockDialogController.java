@@ -71,8 +71,6 @@ public class AddStockDialogController extends DialogController {
     	quantColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty());
     	subtotalColumn.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty());
     	
-    	codeNameField.setAutoProc(true);
-    	
     	Platform.runLater(new Runnable() {
 			
 			@Override

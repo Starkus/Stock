@@ -1,0 +1,36 @@
+.calendar-view {
+}
+
+.day-header {
+	-fx-pref-height: 40px;
+}
+
+.day-cell {
+	-fx-font-size: 9pt;
+	-fx-font-family: "Lato";
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+	
+	-fx-background-color: transparent !important;
+	-fx-background-radius: 0;
+	
+	-fx-padding: 0;
+	
+	-fx-pref-height: 40px;
+	-fx-max-width: 3000;
+	
+	-fx-content-display: center;
+}
+
+.day-cell:hover {
+	-fx-text-fill: lightgray;
+}
+
+.day-cell:pressed {
+	-fx-text-fill: #8895c4;
+}
+
+
+.day-cell-offmonth {
+	-fx-opacity: 0.5;
+}

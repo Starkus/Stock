@@ -1,0 +1,91 @@
+.cell {
+	-fx-cell-size: 36;
+	-fx-alignment: center-left;
+	
+	-fx-font-family: "PageSans-Regular";
+	-fx-font-size: 11pt;
+	-fx-text-fill: white;
+	-fx-background-color: transparent;
+	
+	-fx-border-color: transparent;
+	
+	-fx-padding: 0 -5px 0 5px;
+}
+
+.table-view:focused {
+	-fx-border-style: none;
+	-fx-background-insets: 0;
+	-fx-background-radius: 0;
+}
+
+.table-view {
+    -fx-base: transparent;
+    -fx-control-inner-background: transparent;
+	-fx-background-color: transparent;
+    -fx-border-color: transparent;
+    
+    -fx-padding: 0 -1px -1px -1px;
+}
+
+.table-view .arrow {
+	-fx-background-color: white;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+	-fx-background-radius: 3px 3px 0 0;
+	-fx-padding: 5px 5px 0 5px;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-size: 35;
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 10pt;
+    -fx-font-family: "Lato";
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-alignment: center-left;
+    -fx-opacity: 0.9;
+}
+
+.table-view .table-row-cell {
+	-fx-background-color: #394263;
+	-fx-border-style: solid;
+	-fx-border-width: 0 0 1px 0;
+	-fx-border-color: #20243d;
+}
+
+.table-view .table-row-cell:filled:hover {
+	-fx-background-color: derive(#394263, 8%);
+}
+
+.table-view .table-row-cell:filled:focused:selected {
+    -fx-background-color: derive(#394263, 25%);
+}
+
+/* TableView scrollbar */
+
+.table-view .increment-button, .table-view .decrement-button {
+	-fx-background-color: transparent;
+	-fx-padding: 0;
+}
+
+.table-view .scroll-bar:horizontal, .table-view .scroll-bar:vertical {
+	-fx-background-color: #394263;
+	-fx-padding: 0 7px 0 7px;
+}
+
+.table-view .scroll-bar:horizontal .track, .table-view .scroll-bar:vertical .track {
+	-fx-background-color: white;
+	-fx-background-radius: 10;
+}
+
+.table-view .scroll-bar:horizontal .thumb, .table-view .scroll-bar:vertical .thumb {
+	-fx-background-color: #1abc9c;
+	-fx-background-insets: -1px;
+	-fx-background-radius: 10;
+}

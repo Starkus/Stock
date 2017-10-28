@@ -93,7 +93,7 @@ public class ClientOverviewController extends DialogController {
 				
 				if (event.getClickCount() == 2 && clientTable.getSelectionModel().getSelectedIndex() != -1) {
 					
-					int index = RootLayoutController.historyTabIndex;
+					int index = RootLayoutController.MANAGE_TAB_INDEX;
 					
 					String name = clientTable.getSelectionModel().getSelectedItem().getName();
 					

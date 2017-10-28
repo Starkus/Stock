@@ -1,0 +1,22 @@
+.item {
+	-fx-background-color: derive(white,-5%);
+	-fx-background-radius: 0;
+	
+	-fx-border-style: solid;
+	-fx-border-insets: 0 0 -1px 0;
+	-fx-border-width: 0 0 1px 0;
+	-fx-border-color: derive(black,80%);
+	
+    -fx-font-size: 12pt;
+    -fx-font-family: "Lato Light";
+    -fx-text-fill: derive(black,20%);
+    
+    -fx-alignment: center-left;
+}
+
+.item-selected {
+	-fx-background-color: #27ae60;
+	-fx-text-fill: white;
+	
+    -fx-font-family: "Lato";
+}

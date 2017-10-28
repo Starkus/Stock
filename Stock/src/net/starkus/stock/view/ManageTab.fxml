@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import net.starkus.stock.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import net.starkus.stock.control.CalendarView?>
+
+<AnchorPane prefHeight="638.0" prefWidth="1054.0" styleClass="background"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="net.starkus.stock.view.ManageTabController">
+	<children>
+		<VBox prefHeight="200.0" prefWidth="100.0" spacing="16.0"
+			AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+			AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<children>
+				<HBox prefHeight="488.0" prefWidth="762.0" spacing="20.0"
+					VBox.vgrow="ALWAYS">
+					<children>
+						<VBox prefHeight="638.0" prefWidth="261.0" spacing="20.0">
+							<children>
+								<VBox prefHeight="200.0" prefWidth="100.0"
+									style="-fx-background-color: #1c4e96;" styleClass="panel"
+									VBox.vgrow="SOMETIMES">
+									<children>
+										<Label alignment="CENTER" prefWidth="2000.0" styleClass="label-title"
+											text="%label.accounts">
+											<padding>
+												<Insets bottom="12.0" />
+											</padding>
+										</Label>
+										<TableView fx:id="accountTable" prefHeight="200.0"
+											prefWidth="200.0" style="-fx-background-color: #394263;"
+											styleClass="table-view-noheaders" VBox.vgrow="SOMETIMES">
+											<columns>
+												<TableColumn fx:id="accountNameColumn"
+													prefWidth="75.0" text="Client" />
+												<TableColumn fx:id="accountBalanceColumn"
+													maxWidth="2500.0" prefWidth="75.0" text="Balance" />
+											</columns>
+											<columnResizePolicy>
+												<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+											</columnResizePolicy>
+										</TableView>
+										<Pane prefHeight="12.0" style="-fx-background-radius: 0 0 3px 3px;"
+											styleClass="panel" />
+									</children>
+									<padding>
+										<Insets top="15.0" />
+									</padding>
+								</VBox>
+								<VBox prefHeight="260.0" style="-fx-background-color: #1c4e96;"
+									styleClass="panel">
+									<children>
+										<HBox alignment="CENTER">
+											<children>
+												<ImageView fx:id="monthDecrease" fitHeight="32.0" fitWidth="32.0"
+													pickOnBounds="true" preserveRatio="true">
+													<image>
+														<Image url="@../media/month_back.png" />
+													</image>
+												</ImageView>
+												<Label fx:id="monthLabel" alignment="TOP_CENTER" prefWidth="2000.0"
+													styleClass="label-title" text="SEPTEMBER" HBox.hgrow="SOMETIMES" />
+												<ImageView fx:id="monthIncrease" fitHeight="32.0" fitWidth="32.0"
+													pickOnBounds="true" preserveRatio="true">
+													<image>
+														<Image url="@../media/month_advance.png" />
+													</image>
+												</ImageView>
+											</children>
+											<padding>
+												<Insets bottom="6.0" left="8.0" right="8.0" top="6.0" />
+											</padding>
+										</HBox>
+										<CalendarView fx:id="calendar"
+											style="-fx-background-radius: 0 0 4px 4px; -fx-background-color: #394263;">
+											<VBox.margin>
+												<Insets />
+											</VBox.margin>
+											<padding>
+												<Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+											</padding>
+										</CalendarView>
+									</children>
+								</VBox>
+							</children>
+							<HBox.margin>
+								<Insets />
+							</HBox.margin>
+						</VBox>
+						<VBox prefWidth="400.0" styleClass="panel" HBox.hgrow="SOMETIMES">
+							<children>
+								<Label alignment="TOP_CENTER" prefWidth="2000.0"
+									styleClass="label-title" text="%label.history">
+									<padding>
+										<Insets bottom="20.0" />
+									</padding>
+								</Label>
+								<TableView fx:id="transactionTable" prefHeight="200.0"
+									prefWidth="200.0" VBox.vgrow="ALWAYS">
+									<columns>
+										<TableColumn fx:id="transactionIconColumn"
+											maxWidth="35.0" minWidth="35.0" prefWidth="-1.0" resizable="false" />
+										<TableColumn fx:id="transactionTabColumn"
+											prefWidth="75.0" text="%account" />
+										<TableColumn fx:id="transactionBalanceColumn"
+											maxWidth="3000.0" prefWidth="90.0" text="%column.balance" />
+									</columns>
+									<columnResizePolicy>
+										<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+									</columnResizePolicy>
+								</TableView>
+								<Pane prefHeight="12.0" style="-fx-background-radius: 0 0 3px 3px;"
+									styleClass="panel" />
+							</children>
+							<padding>
+								<Insets top="15.0" />
+							</padding>
+						</VBox>
+						<VBox prefWidth="420.0"
+							style="-fx-background-color: #cc344d; -fx-background-radius: 4px;"
+							HBox.hgrow="SOMETIMES">
+							<children>
+								<VBox prefHeight="200.0" prefWidth="100.0">
+									<children>
+										<Label alignment="TOP_CENTER" prefWidth="2000.0"
+											style="-fx-background-radius: 3px 3px 0 0;" styleClass="label-title"
+											text="%label.transaction">
+											<padding>
+												<Insets bottom="15.0" top="15.0" />
+											</padding>
+											<VBox.margin>
+												<Insets />
+											</VBox.margin>
+										</Label>
+										<HBox prefHeight="130.0" prefWidth="200.0" VBox.vgrow="NEVER">
+											<children>
+												<VBox prefWidth="100.0" HBox.hgrow="SOMETIMES" />
+												<VBox alignment="CENTER" prefWidth="179.0">
+													<children>
+														<Label fx:id="transactionAccountNameLabel"
+															styleClass="label-header" text="Goodman" />
+														<HBox alignment="CENTER">
+															<children>
+																<Label text="%label.currentdebt" />
+																<Label fx:id="transactionAccountDebtLabel" text="?" />
+															</children>
+															<padding>
+																<Insets top="4.0" />
+															</padding>
+														</HBox>
+													</children>
+												</VBox>
+											</children>
+										</HBox>
+									</children>
+								</VBox>
+								<TableView fx:id="productTable" prefHeight="200.0"
+									prefWidth="200.0" style="-fx-background-color: #394263;"
+									styleClass="table-view-noheaders" VBox.vgrow="SOMETIMES">
+									<columns>
+										<TableColumn fx:id="productNameColumn" prefWidth="-1.0"
+											text="%product" />
+										<TableColumn fx:id="productAmmountColumn"
+											maxWidth="2000.0" prefWidth="-1.0" text="%ammount" />
+										<TableColumn fx:id="productSubtotalColumn"
+											maxWidth="2000.0" prefWidth="75.0" text="%subtotal" />
+									</columns>
+									<columnResizePolicy>
+										<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+									</columnResizePolicy>
+									<VBox.margin>
+										<Insets />
+									</VBox.margin>
+								</TableView>
+								<Pane prefHeight="12.0" style="-fx-background-radius: 0 0 3px 3px;"
+									styleClass="panel" />
+							</children>
+						</VBox>
+					</children>
+				</HBox>
+			</children>
+			<padding>
+				<Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+			</padding>
+		</VBox>
+	</children>
+</AnchorPane>

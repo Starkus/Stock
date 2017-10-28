@@ -1,5 +1,6 @@
 package net.starkus.stock.model;
 
+import javafx.beans.property.FloatProperty;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.TransformationList;
@@ -8,15 +9,20 @@ public class ProductListWithTotal extends TransformationList<Product, Product>{
 	
 	private Product total;
 	
+	
 	public ProductListWithTotal(ObservableList<? extends Product> source) {
 		super(source);
 		
 		total = new ProductTotal(source);
 	}
-
-	@Override
-	protected void sourceChanged(Change<? extends Product> c) {
-		fireChange(c);
+	
+	
+	public float getTotal() {
+		return total.getSubtotal();
+	}
+	
+	public FloatProperty totalProperty() {
+		return total.subtotalProperty();
 	}
 
 	@Override
@@ -38,19 +44,21 @@ public class ProductListWithTotal extends TransformationList<Product, Product>{
 
 	@Override
 	public int size() {
-		// FIXME
-		//if (getSource().size() == 0)
-		//	return 0;
 		return getSource().size() + 1;
-	}
-	
-	@Override
-	public boolean remove(Object o) {
-		return getSource().remove(o);
 	}
 
 	@Override
 	public void clear() {
 		getSource().clear();
+	}
+
+	@Override
+	protected void sourceChanged(Change<? extends Product> c) {
+		fireChange(c);
+	}
+	
+	@Override
+	public boolean remove(Object o) {
+		return getSource().remove(o);
 	}
 }

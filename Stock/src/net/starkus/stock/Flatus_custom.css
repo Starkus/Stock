@@ -1,0 +1,171 @@
+.label-bright {
+	-fx-font-size: 11pt;
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+	-fx-opacity: 1;
+}
+
+.label-title {
+	-fx-font-size: 10pt;
+    -fx-font-family: "Lato Black";
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+	-fx-opacity: 1;
+}
+
+.label-important {
+    -fx-font-size: 15pt;
+    -fx-font-family: "Lato";
+    -fx-font-weight: normal;
+    -fx-text-fill: white;
+    -fx-opacity: 1;
+}
+
+.label-header {
+    -fx-font-size: 20pt;
+    -fx-font-family: "Lato";
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-opacity: 1;
+}
+
+.label-huge {
+    -fx-font-size: 32pt;
+    -fx-font-family: "Lato";
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-opacity: 1;
+}
+
+.cell-total {
+	-fx-font: 12pt "PageSans-DemiBold";
+}
+
+.table-view-noheaders .column-header-background {
+	-fx-padding: 0;
+}
+
+.table-view-noheaders .column-header, .table-view-noheaders .filler {
+	-fx-size: 1;
+	-fx-padding: 0;
+}
+
+.table-view-noheaders .column-header .label {
+    -fx-opacity: 0;
+}
+
+
+.text-field-dark {
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    
+	-fx-background-color: #515a7b;
+	-fx-border-style: solid;
+	-fx-border-width: 1px;
+	-fx-border-color: #20243d;
+	
+	-fx-padding: 10px;
+}
+
+.text-field-withicon {
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: left 12px center;
+	
+	-fx-padding: 10px 10px 10px 40px;
+}
+
+.text-field-dark:hover {
+	-fx-background-color: derive(#515a7b, 10%);
+}
+
+.text-field-dark:focused {
+	-fx-border-color: #1abc9c;
+}
+
+
+.total-row {
+    -fx-font-family: "Lato";
+    -fx-font-size: 34pt;
+}
+
+
+.table-view .table-row-danger {
+	-fx-background-color: #f39c12;
+}
+
+.table-view .table-row-danger:filled:hover {
+	-fx-background-color: derive(#f39c12, 10%);
+}
+
+.table-view .table-row-danger:filled:focused:selected {
+	-fx-background-color: #f1c40f;
+}
+
+
+.table-view .table-row-void {
+	-fx-background-color: #202020;
+}
+
+.table-view .table-row-void:filled:hover {
+	-fx-background-color: derive(#202020, 10%);
+}
+
+.table-view .table-row-void:filled:focused:selected {
+	-fx-background-color: #202020;
+}
+
+
+.table-view .table-row-filter {
+	-fx-background-color: #3668af;
+}
+
+.table-view .table-row-filter:filled:hover {
+	-fx-background-color: derive(#3668af, 10%);
+}
+
+.table-view .table-row-filter:filled:focused:selected {
+	-fx-background-color: #3668af;
+}
+
+
+.panel {
+	-fx-background-color: #394263;
+	-fx-background-radius: 3px;
+}
+
+
+.big-button {
+	-fx-graphic-text-gap: 4px;
+	-fx-font-family: "Nato Bold";
+	-fx-font-size: 9pt;
+	-fx-padding: 4;
+	
+	-fx-alignment: bottom-center;
+	-fx-content-display: top;
+}
+
+.big-button:transparent {
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+}
+
+.search-field {
+	-fx-background-radius: 0px;
+	-fx-background-color: white, white, white;
+	-fx-border-style: none;
+	-fx-padding: 3;
+    -fx-font-size: 10pt;
+}
+
+.search-field:focused {
+	-fx-border-style: none;
+	-fx-background-insets: 0;
+}
+
+
+.bordered {
+	-fx-border-style: solid;
+	-fx-border-color: rgb(192,192,192);
+	-fx-border-radius: 5;
+	-fx-border-insets: -3;
+}

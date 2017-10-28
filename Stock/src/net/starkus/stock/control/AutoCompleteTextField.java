@@ -2,40 +2,33 @@ package net.starkus.stock.control;
 
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import com.sun.javafx.event.EventUtil;
-
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Side;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import net.starkus.stock.util.SearchEngine;
 
 /**
  * This class is a TextField which implements an "autocomplete" functionality, based on a supplied list of entries.
- * @author Caleb Brinkman
+ * JavaFX ContextMenu is a piece of shit, so I made my own from scratch.
+ * @author Starkus
  */
 public class AutoCompleteTextField extends TextField
 {
 	/** The existing autocomplete entries. */
 	private final List<String> entries;
-	
 	private final List<String> searchResult;
+	
 	/** The popup used to select an entry. */
-	private ContextMenu entriesPopup;
+	private DecentContextMenu entriesPopup;
 	
-	private boolean autoProc = false;
-	private boolean keyPressedOnThisField = false;
-	
+	private final ObjectProperty<EventHandler<ActionEvent>> secondOnAction;
 	
 	
 	/** Construct a new AutoCompleteTextField. */
@@ -44,9 +37,11 @@ public class AutoCompleteTextField extends TextField
 		super();
 		
 		entries = new ArrayList<>();
-		searchResult = new LinkedList<>();
-		entriesPopup = new ContextMenu();
+		searchResult = new ArrayList<>();
 		
+		entriesPopup = new DecentContextMenu();
+		
+		AutoCompleteTextField this_ = this;
 		textProperty().addListener(new ChangeListener<String>()
 		{
 			@Override
@@ -66,9 +61,7 @@ public class AutoCompleteTextField extends TextField
 					{
 						populatePopup();
 						if (!entriesPopup.isShowing())
-						{
-							entriesPopup.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
-						}
+							entriesPopup.show(this_, Side.BOTTOM);
 						
 					} else
 					{
@@ -79,9 +72,42 @@ public class AutoCompleteTextField extends TextField
 			}
 		});
 		
-		entriesPopup.setAutoHide(true);
-		entriesPopup.setConsumeAutoHidingEvents(false);
-		//entriesPopup.setOnAction(this.getOnAction());
+		secondOnAction = new SimpleObjectProperty<>();
+		
+		setOnAction(e -> {
+			
+			if (entriesPopup.getEntries().isEmpty() || entriesPopup.isShowing() == false) {
+				
+				if (secondOnAction.get() != null) {
+					secondOnAction.get().handle(e);
+				}
+			}
+			else {
+				
+				String selected = entriesPopup.getSelectionModel().getSelectedItem();
+
+				if (selected != null) {
+					setText(selected);
+					positionCaret(getLength());
+					selectAll();
+					
+					entriesPopup.hide();
+				}
+			}
+		});
+		
+		entriesPopup.setOnMouseClicked(e -> {
+			
+			String selected = entriesPopup.getSelectionModel().getSelectedItem();
+			
+			if (selected != null) {
+				setText(selected);
+				positionCaret(getLength());
+				selectAll();
+				
+				entriesPopup.hide();
+			}
+		});
 
 		/*
 		 * Hide popup when out of focus.
@@ -90,27 +116,6 @@ public class AutoCompleteTextField extends TextField
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean aBoolean2) {
 				entriesPopup.hide();
-				keyPressedOnThisField = false;
-			}
-		});
-		
-		this.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent event) {
-				keyPressedOnThisField = true;
-			}
-			
-		});
-		
-		this.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent event) {
-				
-				if (autoProc && event.getCode() == KeyCode.ENTER && keyPressedOnThisField) {
-					EventUtil.fireEvent(new ActionEvent(), event.getTarget());
-				}
 			}
 		});
 		
@@ -122,7 +127,7 @@ public class AutoCompleteTextField extends TextField
 	 */
 	public List<String> getEntries() { return entries; }
 	
-	public ContextMenu getPopup() {
+	public DecentContextMenu getPopup() {
 		return entriesPopup;
 	}
 	
@@ -130,41 +135,17 @@ public class AutoCompleteTextField extends TextField
 		return searchResult;
 	}
 	
-	public void setAutoProc(boolean b) {
-		autoProc = b;
+	public void setSecondOnAction(EventHandler<ActionEvent> e) {
+		secondOnAction.set(e);
 	}
+
 
 	/**
 	 * Populate the entry set with the given search results.  Display is limited to 10 entries, for performance.
 	 * @param searchResult The set of matching strings.
 	 */
 	private void populatePopup() {
-		List<CustomMenuItem> menuItems = new LinkedList<>();
-		// If you'd like more entries, modify this line.
-		int maxEntries = 10;
-		int count = Math.min(searchResult.size(), maxEntries);
-		for (int i = 0; i < count; i++)
-		{
-			final String result = searchResult.get(i);
-			Label entryLabel = new Label(result);
-			CustomMenuItem item = new CustomMenuItem(entryLabel, true);
-			item.setOnAction(new EventHandler<ActionEvent>()
-			{
-				@Override
-				public void handle(ActionEvent actionEvent) {
-					setText(result);
-					selectAll();
-					entriesPopup.hide();
-					
-					//if (autoProc)
-					//	getOnAction().handle(new ActionEvent());
-				}
-			});
-			
-			menuItems.add(item);
-		}
-		entriesPopup.getItems().clear();
-		entriesPopup.getItems().addAll(menuItems);
-
+		
+		entriesPopup.getEntries().setAll(searchResult);
 	}
 }

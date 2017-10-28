@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -12,7 +13,7 @@ import net.starkus.stock.save.ProductListWrapper;
 
 public class ProductList {
 	
-	protected ObservableList<Product> productList = FXCollections.observableArrayList();
+	private ObservableList<Product> productList = FXCollections.observableArrayList(p -> new Observable[] { p.subtotalProperty() });
 
 	public ProductList() {}
 	
@@ -25,6 +26,28 @@ public class ProductList {
 	}
 	public void addAll(Collection<? extends Product> c) {
 		productList.addAll(c);
+	}
+	
+	public void addOrStack(Product toadd) {
+			
+		if (productList.contains(toadd)) {
+			
+			for (Product sourcep : productList) {
+				
+				if (sourcep.equals(toadd)) {
+					
+					sourcep.setQuantity(sourcep.getQuantity() + toadd.getQuantity());
+					return;
+				}
+			}
+		}
+		else {
+			add(toadd);
+		}
+	}
+	
+	public boolean contains(Product p) {
+		return productList.contains(p);
 	}
 	
 	public void forEach(Consumer<? super Product> action) {

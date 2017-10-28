@@ -23,23 +23,15 @@ public class Product implements Comparable<Product> {
 		this(0, null, -1f);
 	}
 	
-	/*
-	 * Constructor with data input
-	 * 
-	 * @param code
-	 * @param name
-	 * @param buyPrice
-	 * @param sellPrice
-	 */
-	public Product(long code, String name, float sellPrice) {
-		this(code, name, sellPrice, 0);
+	public Product(long code, String name, float price) {
+		this(code, name, price, 0);
 	}
-	public Product(long code, String name, float sellPrice, float quantity) {
+	public Product(long code, String name, float price, float quantity) {
 		
 		this.code = new SimpleLongProperty(code);
 		this.name = new SimpleStringProperty(name);
 
-		this.price = new SimpleFloatProperty(sellPrice);
+		this.price = new SimpleFloatProperty(price);
 		
 		this.quantity = new SimpleFloatProperty(quantity);
 		
@@ -48,6 +40,11 @@ public class Product implements Comparable<Product> {
 	}
 	
 	
+	public Product(Product p) {
+		
+		this(p.getCode(), p.getName(), p.getPrice(), p.getQuantity());
+	}
+
 	public void setCode(long n) {
 		this.code.set(n);
 	}
@@ -109,6 +106,15 @@ public class Product implements Comparable<Product> {
 		return this.subtotal;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj.getClass() == Product.class)
+			return ((Product) obj).getName().equals(this.getName());
+		
+		return super.equals(obj);
+	}
+	
 	@Override
 	public int compareTo(Product o) {
 		if (o.getCode() > this.getCode())

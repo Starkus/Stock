@@ -105,7 +105,9 @@ public class Dialog <T extends DialogController> {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(MainApp.class.getResource(location));
 		Pane page = (Pane) loader.load();
-		page.getStylesheets().add(MainApp.class.getResource("DarkMetro.css").toExternalForm());
+		page.getStylesheets().add(MainApp.class.getResource("Flatus.css").toExternalForm());
+		page.getStylesheets().add(MainApp.class.getResource("Flatus_table.css").toExternalForm());
+		page.getStylesheets().add(MainApp.class.getResource("Flatus_custom.css").toExternalForm());
 			
 		Stage dialogStage = new Stage();
 		dialogStage.setTitle(title);

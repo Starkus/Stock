@@ -3,7 +3,6 @@ package net.starkus.stock.util;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.function.Function;
@@ -29,9 +28,9 @@ public class SearchEngine {
 		return s;
 	}
 	
-	public static <T> List<String> filterObjects(String filter, ListIterator<T> iterator, Function<T, String> function) {
+	public static <T> ArrayList<String> filterObjects(String filter, ListIterator<T> iterator, Function<T, String> function) {
 		
-		List<String> searchResults = new ArrayList<>();
+		ArrayList<String> searchResults = new ArrayList<>();
 		Map<String, Integer> weightedResults = new HashMap<>();
 		
 		String[] tags = cleanString(filter).split(" ");
@@ -46,8 +45,11 @@ public class SearchEngine {
 			
 			for (String tag : tags) {
 				
-				if (cleanEntry.startsWith(tag) || cleanEntry.contains(" " + tag))
+				if (cleanEntry.startsWith(tag))
 					score += 30;
+				
+				else if (cleanEntry.contains(" " + tag))
+					score += 10;
 				
 				else if (cleanEntry.contains(tag))
 					score += 2;
