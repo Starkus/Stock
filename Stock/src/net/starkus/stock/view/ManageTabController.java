@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.function.Predicate;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.transformation.FilteredList;
@@ -55,7 +56,7 @@ public class ManageTabController extends DialogController {
 	@FXML
 	private TableColumn<Transaction, String> transactionTabColumn;
 	@FXML
-	private TableColumn<Transaction, Number> transactionBalanceColumn;
+	private TableColumn<Transaction, String> transactionBalanceColumn;
 	
 	
 	@FXML
@@ -77,7 +78,7 @@ public class ManageTabController extends DialogController {
 	@FXML
 	private TableColumn<Product, Number> productAmmountColumn;
 	@FXML
-	private TableColumn<Product, Number> productSubtotalColumn;
+	private TableColumn<Product, String> productSubtotalColumn;
 	
 	
 	@FXML
@@ -85,7 +86,7 @@ public class ManageTabController extends DialogController {
 	@FXML
 	private TableColumn<Client, String> accountNameColumn;
 	@FXML
-	private TableColumn<Client, Number> accountBalanceColumn;
+	private TableColumn<Client, String> accountBalanceColumn;
 	
 
 	private Predicate<Transaction> accountPredicate;
@@ -188,7 +189,7 @@ public class ManageTabController extends DialogController {
 			}
 		});
 		
-		transactionBalanceColumn.setCellValueFactory(cell -> cell.getValue().balanceProperty());
+		transactionBalanceColumn.setCellValueFactory(cell -> Bindings.format("%.1f", cell.getValue().balanceProperty()));
 		
 		transactionTable.getSelectionModel().selectedItemProperty().addListener((obs, previous, selected) -> {
 			
@@ -231,7 +232,7 @@ public class ManageTabController extends DialogController {
 		
 		productNameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
 		productAmmountColumn.setCellValueFactory(cell -> cell.getValue().quantityProperty());
-		productSubtotalColumn.setCellValueFactory(cell -> cell.getValue().subtotalProperty());
+		productSubtotalColumn.setCellValueFactory(cell -> Bindings.format("%.1f", cell.getValue().subtotalProperty()));
 	}
 	
 	
@@ -284,7 +285,7 @@ public class ManageTabController extends DialogController {
 		}));
 
 		accountNameColumn.setCellValueFactory(cell -> cell.getValue().nameProperty());
-		accountBalanceColumn.setCellValueFactory(cell -> cell.getValue().getObservableBalance());
+		accountBalanceColumn.setCellValueFactory(cell -> Bindings.format("%.1f", cell.getValue().getObservableBalance()));
 		
 		accountTable.setRowFactory(t -> new TableRow<Client>() {
 			@Override

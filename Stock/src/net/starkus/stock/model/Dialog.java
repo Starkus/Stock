@@ -1,6 +1,7 @@
 package net.starkus.stock.model;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -25,6 +26,7 @@ import net.starkus.stock.view.SetCashDialogController;
 public class Dialog <T extends DialogController> {
 	
 	private static MainApp mainApp;
+	ResourceBundle bundle = ResourceBundle.getBundle("net.starkus.stock.locale.Locale");
 	
 	// Here be dialogs! -------------------------------------------------------------
 	
@@ -101,9 +103,12 @@ public class Dialog <T extends DialogController> {
 			new NullPointerException("No MainApp set in Dialog class!").printStackTrace();
 			return null;
 		}
+
+		ResourceBundle bundle = ResourceBundle.getBundle("net.starkus.stock.locale.Locale");
 		
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(MainApp.class.getResource(location));
+		FXMLLoader loader = new FXMLLoader(MainApp.class.getResource(location), bundle);
+		//loader.setLocation(MainApp.class.getResource(location));
+		
 		Pane page = (Pane) loader.load();
 		page.getStylesheets().add(MainApp.class.getResource("Flatus.css").toExternalForm());
 		page.getStylesheets().add(MainApp.class.getResource("Flatus_table.css").toExternalForm());

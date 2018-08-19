@@ -36,7 +36,7 @@ public class MainApp extends Application {
 		// Sample data
 		password = PasswordUtils.encodePassword("tigre");
 		
-		ProductBox.getProducts().add(new Product(12345679L, "Samsung Galaxy S6", 13000, 20000));
+		ProductBox.getProducts().add(new Product(12345679L, "Samsung Galaxy S7", 12000, 20000));
 		ClientBox.init();
 		
 		Dialog.setMainApp(this);

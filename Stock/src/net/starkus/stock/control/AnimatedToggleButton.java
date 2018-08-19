@@ -20,7 +20,7 @@ import javafx.util.Duration;
 public class AnimatedToggleButton extends ToggleButton {
 
 	final Color backgroundOff = Color.rgb(0xbd, 0xc3, 0xc7);
-	final Color backgroundOn = Color.rgb(0x2c, 0x3e, 0x50);
+	final Color backgroundOn = Color.rgb(0x20, 0x24, 0x3d);
 	
 	final Color handleOff = Color.rgb(0x7f, 0x8c, 0x8d);
 	final Color handleOn = Color.rgb(0xf8, 0xb1, 0x52);

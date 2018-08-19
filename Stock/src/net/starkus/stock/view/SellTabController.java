@@ -171,7 +171,6 @@ public class SellTabController extends DialogController {
 		productTable.setItems(productList);
 
 		productNameColumn.setCellValueFactory(p -> p.getValue().nameProperty());
-		productNameColumn.setCellFactory(column -> new TotalTableCell<>());
 		
 		ammountColumn.setCellValueFactory(p -> p.getValue().quantityProperty());
 		
@@ -359,12 +358,13 @@ public class SellTabController extends DialogController {
 			if (paidField.getText().isEmpty())
 				balance = 0;
 			
-			newDebtLabel.setText(Double.toString(account.get().getObservableBalance().getValue().doubleValue() - balance));
+			newDebtLabel.setText(String.format("%.2f", account.get().getObservableBalance().getValue().floatValue() - balance));
 		}
 	}
+
 	
 	
-	private class TotalTableCell<T> extends TableCell<Product, T> {
+	private class TotalTableCell<T extends Number> extends TableCell<Product, T> {
 		
 		@Override
 		protected void updateItem(T item, boolean empty) {
@@ -376,7 +376,8 @@ public class SellTabController extends DialogController {
 				return;
 			}
 			
-			setText((item.getClass().equals(Float.class) ? "$" : "") + item.toString());
+			String prefix = item.getClass().equals(Float.class) ? "$" : "";
+			setText(prefix + String.format("%.1f", item.floatValue()));
 			
 			if (p.getClass().equals(ProductTotal.class)) {
 				getStyleClass().add("cell-total");
